@@ -211,7 +211,7 @@ class StreamManager:
         for i in range(len(targets)):
             index=targets[i]["index"]
             # url=self.GetUrl(index)
-            url=re.sub("https://", "", targets[i]["host"])
+            url=re.sub("https://", "", targets[i]["url"])
             if url=="none":
                 malicious_num+=1
             else:

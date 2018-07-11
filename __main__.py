@@ -182,16 +182,27 @@ def make_flow(sniffed, *, path):
         if flag:    traceflow(data)
     traceindex = traceflow.index
 
+    def get_url(analysis):
+        """Make URL of HTTP request."""
+        if analysis.info.receipt == 'request':
+            host = analysis.info.header.get('Host', str())
+            uri = analysis.info.header.request.target
+            url = host + uri
+            return utl
+
     # Analysis
     index = list()
     for flow in traceindex:
-        templist = list()
         hostlist = list()
+        templist = list()
         for number in flow.index:
             analysis = pcapkit.analyse(file=bytes(sniffed[number]['TCP'].payload))
-            hostlist.append(analysis.info.get('header', dict()).get('Host', str()))
-            templist.append(analysis.info.get('header', dict()).get('User-Agent', 'UnknownUA'))
-        index.append(pcapkit.all.Info(flow, host=tuple(filter(None, set(hostlist))),
+            if pcapkit.protocols.application.httpv1.HTTPv1 in analysis.protochain:
+                templist.append(analysis.info.header.get('User-Agent', 'UnknownUA'))
+                hostlist.append(get_url(analysis))
+            else:
+                templist.append('UnknownUA')
+        index.append(pcapkit.all.Info(flow, url=tuple(filter(None, set(hostlist))),
                         ua=collections.Counter(templist).most_common(1)[0][0]))
 
     with open(f'{path}/index.json', 'w') as file:
