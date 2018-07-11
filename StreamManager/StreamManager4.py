@@ -1,6 +1,6 @@
 import os
 import re
-from scapy.all import *
+# from scapy.all import *
 from DataLabeler.DataLabeler import Datalabler
 
 class StreamManager:

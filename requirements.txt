@@ -1,0 +1,3 @@
+pypcapkit>=0.9.6.post2
+requests
+scapy

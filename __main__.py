@@ -1,23 +1,29 @@
 # -*- coding: utf-8 -*-
 """MAD -- Malicious Application Detector
 
-/usr/local/mad
-    |-- dataset                                 # where all dataset go
-    |   |-- YYYY-MM-DDTHH:MM:SS.US              # dataset named after ISO timestamp
+/usr/local/mad/
+    |-- dataset/                                # where all dataset go
+    |   |-- YYYY-MM-DDTHH:MM:SS.US/             # dataset named after ISO timestamp
     |   |   |-- fingerprint.json                # fingerprint filter report
     |   |   |-- index.json                      # TCP flow index record
     |   |   |-- record.json                     # WebGraphic group record
-    |   |   |-- Background_PC                   # where Background_PC dataset files go
-    |   |       |-- 0                           # clean ones
+    |   |   |-- Background_PC/                  # where Background_PC dataset files go
+    |   |       |-- 0/                          # clean ones
     |   |       |   |-- IP_PORT-IP_PORT-TS.dat  # dataset file
     |   |       |   |-- ...
-    |   |       |-- 1                           # malicious ones
+    |   |       |-- 1/                          # malicious ones
     |   |       |   |-- IP_PORT-IP_PORT-TS.dat  # dataset file
     |   |       |   |-- ...
     |   |-- ...
-    |-- model                                   # where CNN model go
-    |-- retrain                                 # where CNN retrain dataset go
+    |-- report/                                 # where CNN prediction report go
+    |   |-- YYYY-MM-DDTHH:MM:SS.US.json         # report named after dataset
+    |   |-- ...
+    |-- model/                                  # where CNN model go
+    |   |-- ...
+    |-- retrain/                                # where CNN retrain dataset go
+    |   |-- ...
     |-- mad.log                                 # log file for RPC
+
 """
 import collections
 import datetime as dt
