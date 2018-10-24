@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+dpkt = "*"
+requests = "*"
+scapy = "*"
+tensorflow = "*"
+user-agents = "*"
+
+[dev-packages]
+pycodestyle = "*"
+pylint = "<2.0.0"
+rope = "*"
+"autopep8" = "*"
+"pep8" = "*"
+
+[requires]
+python_version = "3.5"
+
+[pipenv]
+allow_prereleases = true

@@ -25,7 +25,8 @@ class virustotal:
 ]
         self.ip=[]
         path=os.getcwd()
-        f=open("/home/ubuntu/MaliciousApplicationDetector/DataLabeler/proxies3.txt","rb")
+        # f=open("/home/ubuntu/MaliciousApplicationDetector/DataLabeler/proxies3.txt","rb")
+        f=open(os.path.dirname(os.path.abspath(__file__))+"/proxies3.txt","rb")
         line=f.readline()
         count=0
         while line:
@@ -41,11 +42,11 @@ class virustotal:
     def label(self,url):
         data=self.PostAndScan(url)
         if not data:
-            print("扫描失败")
+            #print("扫描失败")
             return False
         result=self.GetReport(data)
         if not result:
-            print("扫描失败")
+            #print("扫描失败")
             return False
         return result
 
@@ -58,14 +59,14 @@ class virustotal:
             agent=self.GetAgent()
             ip=self.GetIP()
             proxies={"https":ip}
-            print("正在扫描：",u,"使用ip代理：",ip,"  使用UA：",agent)
+            #print("正在扫描：",u,"使用ip代理：",ip,"  使用UA：",agent)
             try:
                 response = requests.post(u, headers={
                     #"User-Agent": agent,
                     "Referer": "https://www.virustotal.com/"},proxies=proxies,timeout=5)
                 return {"id":response.json()["data"]["id"],"ip":ip}
             except:
-                print("扫描失败，重试中...")
+                #print("扫描失败，重试中...")
                 retry_time+=1
         print("重试100次均失败，请检查网络！")
         return False

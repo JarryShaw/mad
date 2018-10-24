@@ -1,28 +1,16 @@
-from scapy.all import *
+#from scapy.all import *
+import dpkt
 from webgraphic.group import *
 import math
 import time
 import os
+import socket
 
-class PacketWrapper:
-    def __init__(self,sniffedList):
-        self.PacketList=sniffedList
-        self.x=self.f()
-
-    def read_packet(self):
-        return self.x.__next__()
-
-    def f(self):
-        for i in range(len(self.PacketList)+1):
-            if i==len(self.PacketList):
-                yield None
-            else:
-                yield self.PacketList[i]
 class webgraphic:
     def __init__(self):
         self.tmp_mem=[]
         self.tmp_index=[]
-        self.path=os.getcwd()
+        self.path=os.path.dirname(os.path.abspath(__file__))#os.getcwd()
         self.groups = []
         self.twd_size=10.0    #the size of the time window
         self.filetered_ip=[]
@@ -60,7 +48,8 @@ class webgraphic:
         self.filter_recently=[]
         self.recent_three=[]
         self.recent_index = 0
-        file=open(self.path+"/webgraphic/top-10k.txt",'r')
+        #file=open(self.path+"/webgraphic/top-10k.txt",'r')
+        file=open(self.path+"/top-10k.txt",'r')
         line=file.readline()
         while line:
             self.filter.append(line.strip("\n"))
@@ -101,37 +90,45 @@ class webgraphic:
                 break
         return flag
 
-    def read_in(self,sniffedList):
+    def read_in(self,filename):
+        f = open(filename, "rb")
+        self.source = dpkt.pcap.Reader(f)
         start=time.time()
         no_referer=0
-        self.source = PacketWrapper(sniffedList)
-        packet = self.source.read_packet()
+        #self.source = PcapReader(filename)
+        packet = dpkt_next(self.source)
         total_num = 0
         filtered_num=0
         empty=0
         empty_pack=[]
         count_PC=0
         count_phone=0
-        sttt=packet.time
+        sttt=packet[0]
         e=0
         while packet:
-            e=packet.time
+            e = packet[0]
+            p = dpkt.ethernet.Ethernet(packet[1])
+            s = packet_to_str(packet)
+            '''
             try:
                 s = str(packet[Raw].load)
             except:
                 packet = self.source.read_packet()
                 continue
+           '''
             if re.match(self.ptr, s):
-                timestamp=packet.time
+                #print(s)
+                timestamp=packet[0]
                 #print("time:  ",timestamp)
-                ip=[packet[IP].src,packet[IP].dst]
+                #ip=[packet[IP].src,packet[IP].dst]
+                ip=[socket.inet_ntoa(p.data.src),socket.inet_ntoa(p.data.dst)]
                 ip.sort()
 
                 #get uri and host domain
                 try:
                     tmp_u = re.findall(self.urptr2, s)[0]
                 except:
-                    packet=self.source.read_packet()
+                    packet=dpkt_next(self.source)
                     continue
                 if not re.findall(self.urptr, tmp_u):
                     tmp_u = tmp_u.strip(" HTTP")
@@ -143,19 +140,19 @@ class webgraphic:
                     host=re.sub("/.*","",host)
                     # print(uri)
                 except:
-                    packet = self.source.read_packet()
+                    packet = dpkt_next(self.source)
                     print("无效包，跳过")
                     continue
 
-                
+
                 if(self.hit_filter(host)):
                     print("安全域名：",host,",filtered")
                     filtered_num+=1
                     if ip not in self.filetered_ip:
                         self.filetered_ip.append(ip)
-                    packet = self.source.read_packet()
+                    packet = dpkt_next(self.source)
                     continue
-               
+
 
 
                 total_num+=1   #count valid http requests
@@ -164,7 +161,7 @@ class webgraphic:
                 #remove outdated http request
                 self.tmp_mem.append(packet)
                 for k in range(len(self.tmp_mem)):
-                    if (self.tmp_mem[k].time+self.twd_size) < timestamp:
+                    if (self.tmp_mem[k][0]+self.twd_size) < timestamp:
                         continue
                     else:
                         self.tmp_mem=self.tmp_mem[k:]
@@ -219,7 +216,7 @@ class webgraphic:
                         if(len(self.tmp_mem) - 2 - k)<0:
                             break
                         packet_tmp = self.tmp_mem[len(self.tmp_mem) - 2 - k]
-                        s_tmp = str(packet_tmp[Raw].load)
+                        s_tmp = packet_to_str(packet_tmp)
                         try:
                             domain_tmp = re.findall(self.exptr, s_tmp)[0].strip("\\r").strip("Host: ")
                         except:
@@ -229,7 +226,7 @@ class webgraphic:
                             #print("使用规则4连接")
                             #print(domain_tmp)
                             #print(host)
-                            self.groups[self.tmp_index[index]].add(s, timestamp, packet_tmp.time,ip)
+                            self.groups[self.tmp_index[index]].add(s, timestamp, packet_tmp[0],ip)
                             self.tmp_index.append(self.tmp_index[index])
                             flag = True
                             break
@@ -249,12 +246,12 @@ class webgraphic:
                         self.groups.append(group(s, timestamp, ip, is_PC))
                         self.groups[-1].set_not_alone()
                         self.tmp_index.append(len(self.groups) - 1)
-                        packet = self.source.read_packet()
+                        packet = dpkt_next(self.source)
                         continue
                     if not flag:
                         self.groups.append(group(s,timestamp,ip,is_PC))
                         self.tmp_index.append(len(self.groups)-1)
-                    packet = self.source.read_packet()
+                    packet = dpkt_next(self.source)
                     continue
                 #if there is a referer,then add the new request to that group
                 else:
@@ -263,7 +260,7 @@ class webgraphic:
                     #print(len(self.tmp_mem))
                     for k in range(len(self.tmp_mem)-1):
                         packet_tmp=self.tmp_mem[len(self.tmp_mem)-2-k]
-                        s_tmp=str(packet_tmp[Raw].load)
+                        s_tmp=packet_to_str(packet_tmp)
                         ttt = re.findall(self.urptr2, s_tmp)[0]
                         if not re.findall(self.urptr, ttt):
                             ttt = ttt.strip(" HTTP")
@@ -279,7 +276,7 @@ class webgraphic:
                             #print("hit88888888")
                             fflag=True
                             index=len(self.tmp_mem)-2-k
-                            parent_id=packet_tmp.time
+                            parent_id=packet_tmp[0]
                             try:
                                 self.groups[self.tmp_index[index]].add(s,timestamp,parent_id,ip)
                             except:
@@ -301,7 +298,7 @@ class webgraphic:
                         #print("ref_domain为："+ref_domain)
                         for k in range(len(self.tmp_mem)-1):
                             packet_tmp = self.tmp_mem[len(self.tmp_mem) - 2 - k]
-                            s_tmp = str(packet_tmp[Raw].load)
+                            s_tmp = packet_to_str(packet_tmp)
                             try:
                                 domain_tmp = re.findall(self.exptr, s_tmp)[0].strip("\\r").strip("Host: ")
                             except:
@@ -314,7 +311,7 @@ class webgraphic:
                                 #print(s)
                                 #print("tmp_mem长度",len(self.tmp_mem))
                                 #print("tmp_index长度",len(self.tmp_index))
-                                self.groups[self.tmp_index[index]].add(s, timestamp, packet_tmp.time,ip)
+                                self.groups[self.tmp_index[index]].add(s, timestamp, packet_tmp[0],ip)
                                 self.tmp_index.append(self.tmp_index[index])
                                 ffflag = True
                                 break
@@ -335,7 +332,7 @@ class webgraphic:
                             self.groups[-1].set_ref_domain(ref_domain)
                             self.tmp_index.append(len(self.groups) - 1)
 
-            packet = self.source.read_packet()
+            packet = dpkt_next(self.source)
         '''
         for x in self.groups:
             if not x.is_alone():
@@ -358,7 +355,7 @@ class webgraphic:
         #for x in empty_pack:
         #    print(x)
         print("共耗时：",t,"s")
-        print("数据时段:",e-sttt)
+        print("数据时段:",e-sttt,"s")
         num_pc_bro=0
         for x in self.groups:
             if not x.is_alone() and x.is_PC()==1:
@@ -384,6 +381,7 @@ class webgraphic:
         print("Phone浏览器数量: ",num_phone_bro)
         print("Phone软件数量: ",num_phone_back)
         print("无ua的嫌疑软件数量为:",num_suspicious)
+        f.close()
 
 
     #get filtered ip list
@@ -625,6 +623,8 @@ class webgraphic:
         for m in words2:
             if m in stop_words:
                 words2.remove(m)
+        if len(words2)==0 or len(words1)==0:
+            return False
         if words1[-1]==words2[-1]:
                 return True
         return False
@@ -647,3 +647,20 @@ class webgraphic:
                 raw+='.'
             result+=raw
         return result
+
+
+
+def dpkt_next(reader):
+    try:
+        p=next(reader)
+        return p
+    except:
+        return None
+
+def packet_to_str(packet):
+    try:
+        p = dpkt.ethernet.Ethernet(packet[1])
+        s = str(p.data.data.pack()[p.data.data.__hdr_len__:])
+    except:
+        return "notvalid"
+    return s
