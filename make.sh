@@ -2,6 +2,17 @@
 
 set -x
 
+# install requirements
+sudo apt-get update && \
+sudo apt-get install -y \
+    python3 \
+    python3-pip
+sudo --set-home python3 -m pip install --upgrade \
+    pip \
+    wheel \
+    setuptools \
+    f2format
+
 # prepare source files
 cp -rf \
     run_mad.py \
