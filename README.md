@@ -23,7 +23,7 @@
 ### Bootstrap installation
 
 ```bash
-git clone https://github.opensdns.com/JarryShaw/mad.git
+git clone https://github.com/JarryShaw/mad.git
 cd apt
 # build pkt2flow
 ./bootstrap.sh
@@ -34,7 +34,7 @@ cd apt
 ### Docker distribution
 
 ```bash
-git clone https://github.opensdns.com/JarryShaw/mad.git
+git clone https://github.com/JarryShaw/mad.git
 cd apt
 # omit docker tags (default is <latest>)
 ./make.sh
