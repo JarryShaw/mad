@@ -6,23 +6,37 @@ set -x
 platform=$( uname )
 if [[ $platform == "Darwin" ]] ; then
     if [[ -z $( which brew ) ]] ; then
-        exit 1
+        sudo --set-home python3 -m pip install --upgrade \
+            pip \
+            wheel \
+            setuptools \
+            f2format
+        returncode=$?
+        if [[ $returncode -ne "0" ]] ; then
+            exit $returncode
+        fi
+    else
+        brew update && \
+        brew install \
+            python \
+            scons && \
+        sudo --set-home python3 -m pip install --upgrade \
+            pip \
+            wheel \
+            setuptools \
+            f2format
     fi
-    brew update && \
-    brew install python && \
-    sudo --set-home python3 -m pip install --upgrade \
-        pip \
-        wheel \
-        setuptools \
-        f2format
 elif [[ $platform == "Linux" ]] ; then
     read -r -a array <<< $( lsb_release -i )
     dist=${array[-1]}
     if [[ $dist -eq "Ubuntu" ]] ; then
         sudo apt-get update && \
         sudo apt-get install -y \
+            git \
+            libpcap-dev \
             python3 \
-            python3-pip && \
+            python3-pip \
+            scons && \
         sudo --set-home python3 -m pip install --upgrade \
             pip \
             wheel \
@@ -31,15 +45,36 @@ elif [[ $platform == "Linux" ]] ; then
     elif [[ $dist -eq "CentOS" ]] ; then
         sudo yum update && \
         sudo yum install -y \
-            python36
-            python36-pip & \
+            git \
+            libpcap-dev \
+            python3 \
+            python3-pip \
+            scons & \
         sudo --set-home python3 -m pip install --upgrade \
             pip \
             wheel \
             setuptools \
             f2format
     else
-        exit 1
+        sudo --set-home python3 -m pip install --upgrade \
+            pip \
+            wheel \
+            setuptools \
+            f2format
+        returncode=$?
+        if [[ $returncode -ne "0" ]] ; then
+            exit $returncode
+        fi
+    fi
+else
+    python3 -m pip install --user --upgrade \
+        pip \
+        wheel \
+        setuptools \
+        f2format
+    returncode=$?
+    if [[ $returncode -ne "0" ]] ; then
+        exit $returncode
     fi
 fi
 

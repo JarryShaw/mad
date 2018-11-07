@@ -21,7 +21,6 @@ mkdir -p apt && \
 cp -rf \
     .dockerignore \
     .gitignore \
-    bootstrap.sh \
     Dockerfile \
     Pipfile \
     Pipfile.lock \

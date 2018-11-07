@@ -1,20 +1,31 @@
 #!/usr/bin/env bash
 
+set -x
+
 # install requirements
 platform=$( uname )
 if [[ $platform == "Darwin" ]] ; then
     if [[ -z $( which brew ) ]] ; then
-        exit 1
+        sudo --set-home python3 -m pip install --upgrade \
+            pip \
+            wheel \
+            setuptools \
+            pipenv
+        returncode=$?
+        if [[ $returncode -ne "0" ]] ; then
+            exit $returncode
+        fi
+    else
+        brew update && \
+        brew install \
+            python \
+            scons && \
+        sudo --set-home python3 -m pip install --upgrade \
+            pip \
+            wheel \
+            setuptools \
+            pipenv
     fi
-    brew update && \
-    brew install \
-        python \
-        scons && \
-    sudo --set-home python3 -m pip install --upgrade \
-        pip \
-        wheel \
-        setuptools \
-        pipenv
 elif [[ $platform == "Linux" ]] ; then
     read -r -a array <<< $( lsb_release -i )
     dist=${array[-1]}
@@ -45,7 +56,25 @@ elif [[ $platform == "Linux" ]] ; then
             setuptools \
             pipenv
     else
-        exit 1
+        sudo --set-home python3 -m pip install --upgrade \
+            pip \
+            wheel \
+            setuptools \
+            pipenv
+        returncode=$?
+        if [[ $returncode -ne "0" ]] ; then
+            exit $returncode
+        fi
+    fi
+else
+    python3 -m pip install --user --upgrade \
+        pip \
+        wheel \
+        setuptools \
+        pipenv
+    returncode=$?
+    if [[ $returncode -ne "0" ]] ; then
+        exit $returncode
     fi
 fi
 
@@ -53,8 +82,12 @@ fi
 pipenv install --dev
 
 # build pkt2flow
-git clone https://github.com/caesar0301/pkt2flow.git && \
-cd ./pkt2flow && \
-sudo scons --prefix=/usr/local install && \
-cd .. && \
-rm -rf ./pkt2flow
+if [[ -z $1 ]] ; then
+    git clone https://github.com/caesar0301/pkt2flow.git && \
+    cd ./pkt2flow && \
+    sudo scons --prefix=/usr/local install && \
+    cd .. && \
+    rm -rf ./pkt2flow
+else
+    echo "not to make pkt2flow"
+fi
