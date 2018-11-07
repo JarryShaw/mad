@@ -10,9 +10,9 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 git add .
 if [[ -z $1 ]] ; then
-    git commit -a
+    git commit -a -S
 else
-    git commit -a -m "$1"
+    git commit -a -S -m "$1"
 fi
 git push
 
@@ -51,9 +51,9 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 git add .
 if [[ -z $1 ]] ; then
-    git commit -a
+    git commit -a -S
 else
-    git commit -a -m "$1"
+    git commit -a -S -m "$1"
 fi
 git push
 returncode=$?
