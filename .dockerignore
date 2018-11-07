@@ -1,0 +1,14 @@
+
+# macOS files
+.DS_Store
+
+# Python comfiled files
+*.pyc
+__pycache__/
+
+# test scripts
+test*
+
+# misc files
+fingerprints/log
+fingerprints/fingerprints

@@ -1,6 +1,6 @@
 # basic info
 FROM ubuntu:16.04
-LABEL version="2018.10.23"
+LABEL version="2018.11.07"
 
 # install Python 3 & all requirements
 RUN apt-get update && apt-get install -y \
