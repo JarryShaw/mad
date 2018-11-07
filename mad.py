@@ -49,7 +49,9 @@
 
 """
 import collections
+import contextlib
 import datetime as dt
+import functools
 import json
 import multiprocessing
 import os
@@ -120,6 +122,17 @@ def object_hook(obj):
             return bytes.fromhex(obj['val'])
         return obj
     return obj
+
+
+def beholder(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except BaseException:
+            with contextlib.suppress(OSError):
+                os.kill(PID, signal.SIGKILL)
+    return wrapper
 
 
 def main(iface=None, mode=None, path=None, file=None):
@@ -195,6 +208,7 @@ def make_worker(*args):
         return make_worker()
 
 
+@beholder
 def start_worker():
     """Start child process."""
     # above all, create directory for new dataset
