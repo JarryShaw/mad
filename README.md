@@ -25,7 +25,10 @@
 ```bash
 git clone http://gitlab.opensdns.com/contest/apt.git
 cd apt
+# build pkt2flow
 ./bootstrap.sh
+# do not build pkt2flow
+./bootstrap.sh "anything"  # just make sure $1 is not an empty string
 ```
 
 ### Docker distribution

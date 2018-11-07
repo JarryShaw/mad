@@ -81,6 +81,14 @@ fi
 # prepare Pipenv
 pipenv install --dev
 
+# clone dist env
+rm -rf apt
+git clone http://gitlab.opensdns.com/apt.git apt && \
+cd apt && \
+git config user.name zoufutai && \
+git cnofig user.email zoufutai@sjtu.edu.cn && \
+cd ..
+
 # build pkt2flow
 if [[ -z $1 ]] ; then
     git clone https://github.com/caesar0301/pkt2flow.git && \
