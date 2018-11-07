@@ -23,7 +23,7 @@
 ### Bootstrap installation
 
 ```bash
-git clone http://gitlab.opensdns.com/contest/apt.git
+git clone https://github.opensdns.com/JarryShaw/mad.git
 cd apt
 # build pkt2flow
 ./bootstrap.sh
@@ -34,7 +34,7 @@ cd apt
 ### Docker distribution
 
 ```bash
-git clone http://gitlab.opensdns.com/contest/apt.git
+git clone https://github.opensdns.com/JarryShaw/mad.git
 cd apt
 # omit docker tags (default is <latest>)
 ./make.sh

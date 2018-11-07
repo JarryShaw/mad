@@ -24,7 +24,6 @@ cp -rf \
     Dockerfile \
     Pipfile \
     Pipfile.lock \
-    README.md \
     retrain.tar.gz \
     run_mad.py \
     mad.py \
