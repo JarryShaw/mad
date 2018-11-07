@@ -1,4 +1,5 @@
 
+apt/
 test*
 check.sh
 release/
