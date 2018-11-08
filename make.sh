@@ -27,9 +27,9 @@ if [[ $platform == "Darwin" ]] ; then
             f2format
     fi
 elif [[ $platform == "Linux" ]] ; then
-    read -r -a array <<< $( lsb_release -i )
-    dist=${array[-1]}
-    if [[ $dist -eq "Ubuntu" ]] ; then
+    # read -r -a array <<< $( lsb_release -i )
+    # dist=${array[-1]}
+    if [[ ! -z $( which apt-get ) ]] ; then
         sudo apt-get update && \
         sudo apt-get install -y \
             git \
@@ -42,7 +42,7 @@ elif [[ $platform == "Linux" ]] ; then
             wheel \
             setuptools \
             f2format
-    elif [[ $dist -eq "CentOS" ]] ; then
+    elif [[ ! -z $( which yum ) ]] ; then
         sudo yum update && \
         sudo yum install -y \
             git \

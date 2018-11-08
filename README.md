@@ -24,7 +24,7 @@
 
 ```bash
 git clone https://github.com/JarryShaw/mad.git
-cd apt
+cd mad
 # build pkt2flow
 ./bootstrap.sh
 # do not build pkt2flow
@@ -35,7 +35,7 @@ cd apt
 
 ```bash
 git clone https://github.com/JarryShaw/mad.git
-cd apt
+cd mad
 # omit docker tags (default is <latest>)
 ./make.sh
 # with certain tags (e.g. v0.1b1)

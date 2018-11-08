@@ -27,9 +27,9 @@ if [[ $platform == "Darwin" ]] ; then
             pipenv
     fi
 elif [[ $platform == "Linux" ]] ; then
-    read -r -a array <<< $( lsb_release -i )
-    dist=${array[-1]}
-    if [[ $dist -eq "Ubuntu" ]] ; then
+    # read -r -a array <<< $( lsb_release -i )
+    # dist=${array[-1]}
+    if [[ ! -z $( which apt-get ) ]] ; then
         sudo apt-get update && \
         sudo apt-get install -y \
             git \
@@ -42,7 +42,7 @@ elif [[ $platform == "Linux" ]] ; then
             wheel \
             setuptools \
             pipenv
-    elif [[ $dist -eq "CentOS" ]] ; then
+    elif [[ ! -z $( which yum ) ]] ; then
         sudo yum update && \
         sudo yum install -y \
             git \
@@ -80,6 +80,10 @@ fi
 
 # prepare Pipenv
 pipenv install --dev
+returncode="$?"
+if [[ $returncode -ne "0" ]] ; then
+    exit $returncode
+fi
 
 # clone dist env
 rm -rf apt
@@ -97,5 +101,5 @@ if [[ -z $1 ]] ; then
     cd .. && \
     rm -rf ./pkt2flow
 else
-    echo "not to make pkt2flow"
+    echo "not to build pkt2flow"
 fi
