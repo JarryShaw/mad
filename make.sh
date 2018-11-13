@@ -89,7 +89,8 @@ cp -rf \
     DataLabeler \
     fingerprints \
     StreamManager \
-    webgraphic release/
+    webgraphic \
+    www release/
 
 # de-f-string
 f2format -n release

@@ -2,20 +2,6 @@
 
 set -x
 
-# upload to GitHub
-git pull
-returncode=$?
-if [[ $returncode -ne "0" ]] ; then
-    exit $returncode
-fi
-git add .
-if [[ -z $1 ]] ; then
-    git commit -a -S
-else
-    git commit -a -S -m "$1"
-fi
-git push
-
 # prepare source files
 mkdir -p apt && \
 cp -rf \
@@ -32,7 +18,8 @@ cp -rf \
     DataLabeler \
     fingerprints \
     StreamManager \
-    webgraphic apt/
+    webgraphic \
+    www apt/
 
 # de-f-string
 f2format -n apt
@@ -59,3 +46,18 @@ returncode=$?
 if [[ $returncode -ne "0" ]] ; then
     exit $returncode
 fi
+
+# upload to GitHub
+cd ..
+git pull
+returncode=$?
+if [[ $returncode -ne "0" ]] ; then
+    exit $returncode
+fi
+git add .
+if [[ -z $1 ]] ; then
+    git commit -a -S
+else
+    git commit -a -S -m "$1"
+fi
+git push
