@@ -86,11 +86,10 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # clone dist env
-rm -rf apt
-git clone http://gitlab.opensdns.com/apt.git apt && \
+git clone http://gitlab.opensdns.com/contest/apt.git apt && \
 cd apt && \
 git config user.name zoufutai && \
-git cnofig user.email zoufutai@sjtu.edu.cn && \
+git config user.email zoufutai@sjtu.edu.cn && \
 cd ..
 
 # build pkt2flow
