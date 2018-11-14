@@ -1,4 +1,6 @@
 
+*.icloud
+retrain.tar.gz
 test*
 check.sh
 release/

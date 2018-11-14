@@ -9,12 +9,16 @@
 - run as `root`
 - Ubuntu 16.04
 - CPython 3.5+
+- MySQL
 - `libpcap`
 - `pipenv`
 
 #### Python dependencies
 
+- `Django`
 - `dpkt`
+- `geocoder`
+- `PyMySQL`
 - `requests`
 - `scapy`
 - `tensorflow`

@@ -4,7 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+Django = "*"
 dpkt = "*"
+geocoder = "*"
+PyMySQL = "*"
 requests = "*"
 scapy = "*"
 tensorflow = "*"
@@ -12,12 +15,12 @@ user-agents = "*"
 
 [dev-packages]
 f2format = "*"
-pycodestyle = "*"
-pylint = "<2.0.0"
+ipython = "*"
 rope = "*"
 "autopep8" = "*"
-"pep8" = "*"
-geocoder = "*"
+pylint = "*"
+pycodestyle = "*"
+isort = {extras = ["pipfile", "requirements"], version = "*"}
 
 [requires]
 python_version = "3.6"
