@@ -1,6 +1,6 @@
 # basic info
 FROM ubuntu:16.04
-LABEL version="2018.11.07"
+LABEL version="2018.11.14"
 
 # install Python 3 & all requirements
 RUN apt-get update && apt-get install -y \
@@ -14,7 +14,10 @@ RUN python3 -m pip install --upgrade --cache-dir=/tmp/pip \
     pip \
     wheel \
     setuptools \
+    Django \
     dpkt \
+    geocoder \
+    PyMySQL \
     requests\
     scapy \
     tensorflow \
