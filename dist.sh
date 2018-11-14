@@ -8,8 +8,6 @@ cp -rf \
     .dockerignore \
     .gitignore \
     Dockerfile \
-    Pipfile \
-    Pipfile.lock \
     retrain.tar.gz \
     run_mad.py \
     mad.py \
