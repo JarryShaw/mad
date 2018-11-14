@@ -19,7 +19,7 @@ cp -rf \
     fingerprints \
     StreamManager \
     webgraphic \
-    www apt/
+    web apt/
 
 # de-f-string
 f2format -n apt
