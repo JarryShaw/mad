@@ -1,0 +1,3 @@
+[submodule "apt"]
+	path = apt
+	url = http://gitlab.opensdns.com/contest/mad
