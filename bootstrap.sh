@@ -3,79 +3,20 @@
 set -x
 
 # install requirements
-platform=$( uname )
-if [[ $platform == "Darwin" ]] ; then
-    if [[ -z $( which brew ) ]] ; then
-        sudo --set-home python3 -m pip install --upgrade \
-            pip \
-            wheel \
-            setuptools \
-            pipenv
-        returncode=$?
-        if [[ $returncode -ne "0" ]] ; then
-            exit $returncode
-        fi
-    else
-        brew update && \
-        brew install \
-            python \
-            scons && \
-        sudo --set-home python3 -m pip install --upgrade \
-            pip \
-            wheel \
-            setuptools \
-            pipenv
-    fi
-elif [[ $platform == "Linux" ]] ; then
-    # read -r -a array <<< $( lsb_release -i )
-    # dist=${array[-1]}
-    if [[ ! -z $( which apt-get ) ]] ; then
-        sudo apt-get update && \
-        sudo apt-get install -y \
-            git \
-            libpcap-dev \
-            python3 \
-            python3-pip \
-            scons && \
-        sudo --set-home python3 -m pip install --upgrade \
-            pip \
-            wheel \
-            setuptools \
-            pipenv
-    elif [[ ! -z $( which yum ) ]] ; then
-        sudo yum update && \
-        sudo yum install -y \
-            git \
-            libpcap-dev \
-            python3 \
-            python3-pip \
-            scons & \
-        sudo --set-home python3 -m pip install --upgrade \
-            pip \
-            wheel \
-            setuptools \
-            pipenv
-    else
-        sudo --set-home python3 -m pip install --upgrade \
-            pip \
-            wheel \
-            setuptools \
-            pipenv
-        returncode=$?
-        if [[ $returncode -ne "0" ]] ; then
-            exit $returncode
-        fi
-    fi
-else
-    python3 -m pip install --user --upgrade \
-        pip \
-        wheel \
-        setuptools \
-        pipenv
-    returncode=$?
-    if [[ $returncode -ne "0" ]] ; then
-        exit $returncode
-    fi
+sudo apt-get update && \
+sudo apt-get install -y \
+    git \
+    libpcap-dev \
+    python3 \
+    python3-pip \
+    scons && \
+sudo --set-home python3 -m pip install --upgrade \
+    pip \
+    wheel \
+    setuptools \
+    pipenv
+if [[ $returncode -ne "0" ]] ; then
+    exit $returncode
 fi
 
 # prepare Pipenv

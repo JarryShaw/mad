@@ -2,6 +2,11 @@
     "cSpell.words": [
         "DDTHH",
         "IFACE",
+        "Labeler",
+        "algo",
+        "dict",
         "nosyn"
-    ]
+    ],
+    "python.pythonPath": "/Users/jarryshaw/.local/share/virtualenvs/mad-tCBWswa7/bin/python",
+    "python.linting.pylintEnabled": true
 }

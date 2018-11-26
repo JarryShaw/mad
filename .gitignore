@@ -1,9 +1,9 @@
 
 *.icloud
-retrain.tar.gz
+src/
+release/
 test*
 check.sh
-release/
 nohop.out
 fingerprints/log
 fingerprints/fingerprints
