@@ -20,7 +20,8 @@ cp -rf .dockerignore \
        app/fingerprints \
        app/StreamManager \
        app/webgraphic \
-       www apt/
+       www apt/ && \
+sed 's/python_version = "3.6"/python_version = "3.5"/' Pipfile > apt/Pipfile
 returncode=$?
 if [[ $returncode -ne "0" ]] ; then
     exit $returncode
