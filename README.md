@@ -2,15 +2,19 @@
 
 ## Before you start
 
-### Requirements
+### Prerequisites
 
 #### System requirements
 
 - run as `root`
 - Ubuntu 16.04
+
+#### Software & Libraries
+
+- `libpcap`
 - CPython 3.5+
 - MySQL
-- `libpcap`
+- [`pkt2flow`](https://github.com/caesar0301/pkt2flow)
 
 #### Python dependencies
 
@@ -39,9 +43,9 @@ cd mad
 git clone https://github.com/JarryShaw/mad.git
 cd mad
 # omit docker tags (default is <latest>)
-./make.sh
+./build.sh
 # with certain tags (e.g. v0.1b1)
-./make.sh "v0.1b1"
+./build.sh "v0.1b1"
 ```
 
 ## Entry points
@@ -211,3 +215,11 @@ None
         |       |-- ...
         |-- stream.json                         # stream index for retrain
 ```
+
+## Contribution
+
+When commit, use `./make.sh 'commit message'`. The script will automatically
+retrieve useful files and copy them into `/apt` folder, which is the release
+repo hosting on [GitLab](http://gitlab.opensdns.com/contest/apt.git). Then run
+`f2format` command to make them Python 3.5 compatible. Afterwards, it shall
+upload both repositories to where it belongs.
