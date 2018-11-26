@@ -19,7 +19,7 @@ mkdir -p build/www && \
 cp -rf www build/www/
 
 # de-f-string
-f2format -n build
+pipenv run f2format -n build
 returncode="$?"
 if [[ $returncode -ne "0" ]] ; then
     exit $returncode
