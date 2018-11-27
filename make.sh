@@ -29,7 +29,7 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # de-f-string
-f2format -n apt
+pipenv run f2format -n apt
 returncode=$?
 if [[ $returncode -ne "0" ]] ; then
     exit $returncode
