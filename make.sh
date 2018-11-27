@@ -14,6 +14,7 @@ cp -rf .dockerignore \
        app/mad.py \
        app/make_stream.py \
        app/retrain.tar.gz \
+       app/Backgroud_PC_Model_20180515_httpheader.tar \
        app/run_mad.py \
        app/Training.py \
        app/DataLabeler \
