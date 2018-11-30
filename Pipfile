@@ -11,6 +11,7 @@ requests = "*"
 scapy = "*"
 tensorflow = "*"
 user-agents = "*"
+peewee = "*"
 
 [dev-packages]
 f2format = "*"
