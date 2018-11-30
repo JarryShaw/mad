@@ -50,7 +50,6 @@
 """
 import collections
 import contextlib
-import copy
 import datetime as dt
 import functools
 import json
@@ -75,6 +74,16 @@ from webgraphic.webgraphic import webgraphic
 # # import pcapkit.all
 # import scapy.all
 
+
+@functools.total_ordering
+class minstr:
+
+    def __lt__(self, value):
+        if isinstance(value, str):
+            return True
+        return NotImplemented
+
+
 # # testing macros
 # FILE = NotImplemented
 # COUNT = -1
@@ -86,9 +95,13 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 # 1-initialisation; 2-migration; 3-prediction; 4-adaptation; 5-regeneration
 MODE = 3
 # path of input data
-PATH = '.'
+PATH = NotImplemented
 # list of data files
 LIST = NotImplemented
+# list offset
+COUNT = -1
+# latest processing file name
+MAX_FILE = minstr
 # # sniff interface
 # IFACE = 'eth0'
 # file lock
@@ -122,6 +135,7 @@ def beholder(func):
                 raise
             with contextlib.suppress(OSError):
                 os.kill(PID, signal.SIGUSR1)
+            traceback.print_exc()
     return wrapper
 
 
@@ -158,16 +172,32 @@ def main(mode=None, path=None):
     global LIST
     LIST = sorted(f'{PATH}/{file}' for file in os.listdir(PATH))
 
+    # check log file
+    global MAX_FILE
+    if os.path.isfile('/mad/mad.log'):
+        with open('/mad/mad.log') as file:
+            for line in filter(lambda l: l.startswith('1'), file):
+                _, _, name, _ = line.split(' ')
+        MAX_FILE = name
+
     # start procedure
     make_worker()
     while True:
         # if FILE is not NotImplemented \ ###
         #     and COUNT >= len(FILE): break ###
-        time.sleep(12*60*60)
-        if len(list(copy.copy(LIST))) == 0:
-            LIST = sorted(f'{PATH}/{file}' for file in os.listdir(PATH))
-            with open('/mad/mad.log', 'w'):
-                pass
+        time.sleep(10*60)
+        global COUNT
+        if COUNT >= len(LIST):
+            NEW_LIST = sorted(f'{PATH}/{file}' for file in os.listdir(PATH))
+            if NEW_LIST == LIST:
+                continue
+            COUNT = len(NEW_LIST)
+            for index, name in enumerate(NEW_LIST, start=-1):
+                path = f"/mad/dataset/{os.path.splitext(os.path.split(name)[1])[0].replace(' ', '-')}"
+                if path > MAX_FILE:
+                    COUNT = index
+                    break
+            LIST = NEW_LIST
 
 
 def retrain_cnn(*args):
@@ -191,12 +221,16 @@ def retrain_cnn(*args):
 def make_worker(*args):
     """Create child process."""
     # start child in prediction
-    global MODE
+    global MODE, COUNT, MAX_FILE
     if MODE == 3:
         # if FILE is not NotImplemented:
         #     COUNT += 1
         #     if COUNT >= len(FILE):
         #         return
+        COUNT += 1
+        if COUNT >= len(LIST):
+            return
+        MAX_FILE = LIST[COUNT]
         return multiprocessing.Process(target=start_worker).start()
 
     # do initialisation or migration first
@@ -210,9 +244,15 @@ def make_worker(*args):
 @beholder
 def start_worker():
     """Start child process."""
+    if MODE == 3:
+        name = make_sniff(path=NotImplemented)
+        dsname = os.path.splitext(os.path.split(name)[1])[0].replace(' ', '-')
+    else:
+        dsname = dt.datetime.now().isoformat()
+
     # above all, create directory for new dataset
     # and initialise fingerprint manager
-    path = pathlib.Path(f'/dataset/{dt.datetime.now().isoformat()}')
+    path = pathlib.Path(f'/dataset/{dsname}')
     path.mkdir(parents=True, exist_ok=True)
     fp = fingerprintManager()
 
@@ -228,7 +268,8 @@ def start_worker():
 
     # first, we sniff packets using Scapy
     # or load data from an existing PCAP file
-    name = make_sniff(path=path)
+    if MODE != 3:
+        name = make_sniff(path=path)
 
     milestone_1 = time.time()
     print(f'Sniffed for {milestone_1-milestone_0} seconds')
@@ -277,7 +318,7 @@ def start_worker():
     print(f'Worked for {milestone_5-milestone_0} seconds')
 
 
-def make_sniff(*, path):
+def make_sniff(path):
     """Load data or sniff packets."""
     # just sniff when prediction
     if MODE == 3:
@@ -289,7 +330,8 @@ def make_sniff(*, path):
         #     return name
         # print(f"Now it's time for No.{COUNT} {FILE[COUNT]}")
         # return FILE[COUNT]
-        return LIST.pop(0)
+        print(f"Now it's time for No.{COUNT} {LIST[COUNT]}")
+        return LIST[COUNT]
 
     # # extract file, or ...
     # if pathlib.Path(PATH).is_file():
@@ -309,7 +351,7 @@ def make_sniff(*, path):
     raise NotImplementedError
 
 
-def make_group(name, fp, *, path):
+def make_group(name, fp, path):
     """Generate WebGraphic and fingerprints."""
     print(f'Now grouping packets @ {path}')
 
@@ -342,7 +384,7 @@ def make_group(name, fp, *, path):
     return record
 
 
-def make_dataset(labels, fp, *, path):
+def make_dataset(labels, fp, path):
     """Make dataset."""
     print(f'Making dataset @ {path}')
 
@@ -395,7 +437,7 @@ def make_dataset(labels, fp, *, path):
                         print(file.name)
 
 
-def run_cnn(*, path, retrain=False):
+def run_cnn(path, retrain=False):
     """Create subprocess to run CNN model."""
     print(f"CNN running @ {path}")
 
