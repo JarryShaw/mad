@@ -17,6 +17,7 @@ RUN python3 -m pip install --upgrade --cache-dir=/tmp/pip \
     Django \
     dpkt \
     geocoder \
+    peewee \
     requests\
     scapy \
     tensorflow \
@@ -33,7 +34,8 @@ RUN git clone https://github.com/caesar0301/pkt2flow.git /tmp/pkt2flow \
 # copy source files and archives
 COPY build/app /app
 COPY build/www /www
-ADD build/retrain.tar.gz /usr/local/mad
+ADD build/model.tar.gz /mad
+ADD build/retrain.tar.gz /mad
 
 # entry points
 ENTRYPOINT ["python3", "/app/run_mad.py"]

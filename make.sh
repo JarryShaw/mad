@@ -13,15 +13,14 @@ cp -rf .dockerignore \
        README.md \
        app/mad.py \
        app/make_stream.py \
+       app/model.tar.gz \
        app/retrain.tar.gz \
-       app/Backgroud_PC_Model_20180515_httpheader.tar.gz \
        app/run_mad.py \
        app/Training.py \
        app/DataLabeler \
        app/fingerprints \
        app/StreamManager \
-       app/webgraphic \
-       apt/app && \
+       app/webgraphic apt/app && \
 cp -rf www/* apt/www && \
 sed 's/python_version = "3.6"/python_version = "3.5"/' Pipfile > apt/Pipfile
 returncode=$?

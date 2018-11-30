@@ -21,6 +21,7 @@
 - `Django`
 - `dpkt`
 - `geocoder`
+- `peewee`
 - `requests`
 - `scapy`
 - `tensorflow`
