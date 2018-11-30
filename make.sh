@@ -3,7 +3,7 @@
 set -x
 
 # prepare source files
-mkdir -p apt && \
+mkdir -p apt apt/app apt/www && \
 cp -rf .dockerignore \
        .gitignore \
        bootstrap.sh \
@@ -14,14 +14,15 @@ cp -rf .dockerignore \
        app/mad.py \
        app/make_stream.py \
        app/retrain.tar.gz \
-       app/Backgroud_PC_Model_20180515_httpheader.tar \
+       app/Backgroud_PC_Model_20180515_httpheader.tar.gz \
        app/run_mad.py \
        app/Training.py \
        app/DataLabeler \
        app/fingerprints \
        app/StreamManager \
        app/webgraphic \
-       www apt/ && \
+       apt/app && \
+cp -rf www/* apt/www && \
 sed 's/python_version = "3.6"/python_version = "3.5"/' Pipfile > apt/Pipfile
 returncode=$?
 if [[ $returncode -ne "0" ]] ; then
@@ -36,7 +37,7 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # upload to GitLab
-cd apt && \
+cd apt
 git pull && \
 git add . && \
 if [[ -z $1 ]] ; then
@@ -45,13 +46,9 @@ else
     git commit -a -S -m "$1"
 fi && \
 git push
-returncode=$?
-if [[ $returncode -ne "0" ]] ; then
-    exit $returncode
-fi
 
 # upload to GitHub
-cd .. && \
+cd ..
 git pull && \
 git add . && \
 if [[ -z $1 ]] ; then

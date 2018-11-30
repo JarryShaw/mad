@@ -1,19 +1,23 @@
+# -*- coding: utf-8 -*-
+
 import re
+
+
 class group:
-    def __init__(self,http,timestamp,IP,is_PC):
-        #self.node_tree=[(uri,-1,0)]   #this is a normal tree of http nodes
-        self.node_tree=[-1]
-        self.http_info=[http]
-        self.id=[timestamp]     #id(timestamp)is used to identify one unique http request
-        self.alone=True
-        self.IP=[]
+    def __init__(self, http, timestamp, IP, is_PC):
+        # self.node_tree=[(uri,-1,0)]   #this is a normal tree of http nodes
+        self.node_tree = [-1]
+        self.http_info = [http]
+        self.id = [timestamp]  # id(timestamp)is used to identify one unique http request
+        self.alone = True
+        self.IP = []
         self.IP.append(list(IP))
-        self.PC=is_PC
-        self.ref_domain=""
+        self.PC = is_PC
+        self.ref_domain = ""
 
-        self.user_clicktion=False
+        self.user_clicktion = False
 
-    def add_merge(self,child,parent_id):    #
+    def add_merge(self, child, parent_id):    #
         '''
         total_level=len(self.level_location)-1
         index=self.http_info.index(parent)
@@ -35,8 +39,8 @@ class group:
         #otherwise insert the child and the children of the child to the tree
         '''
         index = self.id.index(parent_id)
-        start=len(self.node_tree)
-        count=0
+        start = len(self.node_tree)
+        count = 0
         for x in child.node_tree:
             if x[1] == -1:
                 self.node_tree.append(index)
@@ -48,73 +52,72 @@ class group:
             self.alone = False
             return True
 
-
-    def exist(self,id):
+    def exist(self, id):
         return id in self.id
 
     def set_user_click(self):
-        self.user_clicktion=True
+        self.user_clicktion = True
 
     def is_alone(self):
-        if len(self.id) >1:
-            self.alone=False
+        if len(self.id) > 1:
+            self.alone = False
         return self.alone
 
     def is_PC(self):
         return self.PC
 
     def set_not_alone(self):
-        self.alone=False
+        self.alone = False
 
-    def set_ref_domain(self,ref):
-        self.ref_domain=ref
+    def set_ref_domain(self, ref):
+        self.ref_domain = ref
 
-    #add according to referer
-    def add(self,http,timestamp,parent_id,IP):
-        self.alone=False
-        index=self.id.index(parent_id)
+    # add according to referer
+    def add(self, http, timestamp, parent_id, IP):
+        self.alone = False
+        index = self.id.index(parent_id)
         self.node_tree.append(index)
         self.http_info.append(http)
         self.id.append(timestamp)
         self.IP.append(list(IP))
         return True
 
-    def get_children_num(self,id):
-        count=0
-        tmp=[]
-        index=self.id.index(id)
+    def get_children_num(self, id):
+        count = 0
+        tmp = []
+        index = self.id.index(id)
         for x in range(len(self.node_tree)):
-            if self.node_tree[x] ==index:
-                count+=1
+            if self.node_tree[x] == index:
+                count += 1
                 tmp.append(x)
         while tmp:
             parent_size = len(tmp)
             for m in tmp:
                 for n in range(len(self.node_tree)):
-                    if self.node_tree[n]==m:
-                        count+=1
+                    if self.node_tree[n] == m:
+                        count += 1
                         tmp.append(n)
-            for i in range(parent_size):
+            for _ in range(parent_size):
                 tmp.pop(0)
         return count
 
-    #delay time between child and its parent
-    #return -1 if the node has no parent
-    def get_delay(self,id):
-        parent_index=self.node_tree[self.id.index(id)]
-        if parent_index==-1:
+    # delay time between child and its parent
+    # return -1 if the node has no parent
+    def get_delay(self, id):
+        parent_index = self.node_tree[self.id.index(id)]
+        if parent_index == -1:
             return -1
-        delay=id-self.id[parent_index]
+        delay = id-self.id[parent_index]
         return delay
 
-    def getUrlById(self,id):
-        index=self.id.index(id)
-        http=self.http_info[index]
+    def getUrlById(self, id):
+        index = self.id.index(id)
+        http = self.http_info[index]
         ptr_Url1 = "Host.*?\\\\r"
         ptr_Url2 = "/.*?HTTP"
         tmp = re.findall(ptr_Url2, http)[0]
-        tmp=tmp.strip(" HTTP")
-        url=re.findall(ptr_Url1, http)[0].strip("\\r").strip("Host: ")+tmp
+        tmp = tmp.strip(" HTTP")
+        url = re.findall(ptr_Url1, http)[0].strip("\\r").strip("Host: ")+tmp
         return url
 
     def getDomain(self):

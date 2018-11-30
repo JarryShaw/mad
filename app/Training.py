@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
-
 import collections
 import datetime as dt
 import ipaddress
 import json
 import os
 import pathlib
-import pprint ###
+import pprint  # ##
 import shutil
 import signal
 import sys
@@ -17,10 +16,9 @@ import numpy as np
 import tensorflow as tf
 from user_agents import parse as _parse
 
-from make_stream import *
-# from useragents.useragents import parse
-from StreamManager.StreamManager4 import *
-
+from make_stream import dump_stream, load_stream
+from StreamManager.StreamManager4 import StreamManager
+from utils import JSONEncoder, object_hook
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -76,23 +74,6 @@ OUTPUT_UNIT = 2
 LEARNING_RATE = 0.001
 
 
-class JSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, bytes):
-            return {'val': obj.hex(), '_spec_type': 'bytes'}
-        else:
-            return super().default(obj)
-
-
-def object_hook(obj):
-    _spec_type = obj.get('_spec_type')
-    if _spec_type:
-        if _spec_type == 'bytes':
-            return bytes.fromhex(obj['val'])
-        raise ParseError(f'unknown {_spec_type}')
-    return obj
-
-
 def parse(ua):
     info = _parse(ua)
 
@@ -116,7 +97,7 @@ def parse(ua):
         browser=_list[2],
         type=' / '.join(_type) or 'Other',
     )
-    pprint.pprint(_dict) ###
+    pprint.pprint(_dict)
     return _dict
 
 
@@ -124,8 +105,8 @@ def ReadDictionary(path, T):
     # file = open(path+"index.json")
     # files = json.load(file)[T]
     files = {
-        '0' : [os.path.join(path, T, '0', file) for file in os.listdir(os.path.join(path, T, '0'))],
-        '1' : [os.path.join(path, T, '1', file) for file in os.listdir(os.path.join(path, T, '1'))],
+        '0': [os.path.join(path, T, '0', file) for file in os.listdir(os.path.join(path, T, '0'))],
+        '1': [os.path.join(path, T, '1', file) for file in os.listdir(os.path.join(path, T, '1'))],
     }
     return files
 
@@ -353,7 +334,7 @@ def NeutralNetwork(features, labels, mode):
     predictions = {
         # argmax返回第axis的索引所对应的最大值的索引
         # logits形状为[批大小, 2]，则其返回每一批中
-        # 最大值的索引——0或1
+        # 最大值的索引--0或1
         "classes": tf.argmax(input=logits, axis=1),
         # 默认对最后一个维度计算softmax函数
         "probabilities": tf.nn.softmax(logits, name="softmax_tensor")}
@@ -443,7 +424,7 @@ def main(unused):
         isMalicious = data_index["is_malicious"]
         isClean = data_index["is_clean"]
         packets, names = ReadPredictData(data_index, T)
-        print('names:', names) ###
+        print('names:', names)
         if names:
             predict_input_fn = tf.estimator.inputs.numpy_input_fn(
                 x={"packet": packets},
@@ -465,7 +446,7 @@ def main(unused):
         # print("detected by fingerprint:")
         Malicious = []
         group_dict = {T: []}
-        print('is_malicious:', isMalicious) ###
+        print('is_malicious:', isMalicious)
         for ipua in isMalicious:
             # print('ipua:', ipua, group[T].get(ipua, list())) ###
             for filedict in group[T].get(ipua, list()):
@@ -496,24 +477,24 @@ def main(unused):
                     dstPort = listname[1]
                 tstamp = listname[4]
                 Malicious.append(dict(filedict,
-                    is_malicious=1,
-                    srcIP=srcIP,
-                    srcPort=srcPort,
-                    dstIP=dstIP,
-                    dstPort=dstPort,
-                    time=dt.datetime.fromtimestamp(float(tstamp)).isoformat(),
-                    name=name,
-                    ipua=filedict["ipua"],
-                    info=parse(filedict["UA"]),
-                    detected_by_cnn=False,
-                ))
+                                      is_malicious=1,
+                                      srcIP=srcIP,
+                                      srcPort=srcPort,
+                                      dstIP=dstIP,
+                                      dstPort=dstPort,
+                                      time=dt.datetime.fromtimestamp(float(tstamp)).isoformat(),
+                                      name=name,
+                                      ipua=filedict["ipua"],
+                                      info=parse(filedict["UA"]),
+                                      detected_by_cnn=False,
+                                      ))
                 group_dict[T].append(dict(
                     is_malicious=1,
                     type=filedict["type"],
                     filename=name + ".pcap",
                 ))
         Clean = []
-        print('is_clean:', isClean) ###
+        print('is_clean:', isClean)
         for ipua in isClean:
             # print('ipua:', ipua, group[T].get(ipua, list())) ###
             for filedict in group[T].get(ipua, list()):
@@ -544,17 +525,17 @@ def main(unused):
                     dstPort = listname[1]
                 tstamp = listname[4]
                 Clean.append(dict(filedict,
-                    is_malicious=0,
-                    srcIP=srcIP,
-                    srcPort=srcPort,
-                    dstIP=dstIP,
-                    dstPort=dstPort,
-                    time=dt.datetime.fromtimestamp(float(tstamp)).isoformat(),
-                    name=name,
-                    ipua=ipua,
-                    info=parse(filedict["UA"]),
-                    detected_by_cnn=False,
-                ))
+                                  is_malicious=0,
+                                  srcIP=srcIP,
+                                  srcPort=srcPort,
+                                  dstIP=dstIP,
+                                  dstPort=dstPort,
+                                  time=dt.datetime.fromtimestamp(float(tstamp)).isoformat(),
+                                  name=name,
+                                  ipua=ipua,
+                                  info=parse(filedict["UA"]),
+                                  detected_by_cnn=False,
+                                  ))
         val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
         for item in Malicious:
             flag = int(item["name"]+".pcap" in val)
@@ -585,17 +566,17 @@ def main(unused):
                 dstPort = listname[1]
             tstamp = listname[4]
             temp_dict = dict(temp_data,
-                is_malicious=int(kind),
-                srcIP=srcIP,
-                srcPort=srcPort,
-                dstIP=dstIP,
-                dstPort=dstPort,
-                time=dt.datetime.fromtimestamp(float(tstamp)).isoformat(),
-                name=name,
-                ipua=temp_data["ipua"],
-                info=parse(temp_data["UA"]),
-                detected_by_cnn=True,
-            )
+                             is_malicious=int(kind),
+                             srcIP=srcIP,
+                             srcPort=srcPort,
+                             dstIP=dstIP,
+                             dstPort=dstPort,
+                             time=dt.datetime.fromtimestamp(float(tstamp)).isoformat(),
+                             name=name,
+                             ipua=temp_data["ipua"],
+                             info=parse(temp_data["UA"]),
+                             detected_by_cnn=True,
+                             )
             if kind == 1:
                 CNNMalicious.append(temp_dict)
                 group_dict[T].append(dict(
@@ -665,15 +646,15 @@ def main(unused):
         loss = 1 - (len(val)/sum(predicted_classes) if sum(predicted_classes) else 1.0)
         # print('### Testing:', len(val), val, sum(predicted_classes), predicted_classes) ###
         loss_record = list()
-        if os.path.isfile("/usr/local/mad/loss.json"):
-            with open("/usr/local/mad/loss.json", "r") as file:
+        if os.path.isfile("/mad/loss.json"):
+            with open("/mad/loss.json", "r") as file:
                 loss_record = json.load(file, object_hook=object_hook)
         print("loss:", loss)
         loss_record.append(dict(
             time=stem,
             loss=loss,
         ))
-        with open("/usr/local/mad/loss.json", "w") as file:
+        with open("/mad/loss.json", "w") as file:
             json.dump(loss_record, file, cls=JSONEncoder)
         if loss > 0.5:
             print(f'{DataPath} needs retrain...')
@@ -685,15 +666,15 @@ def main(unused):
         print(end)
         print('Running time: %s Seconds' % (end - start))
         retrain_index = load_stream()
-        # if os.path.isfile("/usr/local/mad/retrain/stream.json"):
+        # if os.path.isfile("/mad/retrain/stream.json"):
         #     while True:
         #         try:
-        #             with open("/usr/local/mad/retrain/stream.json", 'r') as file:
+        #             with open("/mad/retrain/stream.json", 'r') as file:
         #                 retrain_index.update(json.load(file, object_hook=object_hook))
         #         except json.decoder.JSONDecodeError:
         #             continue
         #         break
-        for kind in {'Background_PC',}:
+        for kind in {'Background_PC', }:
             retrain_index[kind] = collections.defaultdict(list, retrain_index[kind])
         for item in CNNMalicious:
             flag = int(item["name"]+".pcap" in val)
@@ -706,31 +687,31 @@ def main(unused):
             name = stem+"_"+item["name"]
             retrain_index[T][item["ipua"]].append(item)
             shutil.copy(os.path.join(DataPath, T, "0", item["name"]+".dat"),
-                        os.path.join("/usr/local/mad/retrain", T, str(flag), name+".dat"))
+                        os.path.join("/mad/retrain", T, str(flag), name+".dat"))
             # print('src:', os.path.join(DataPath, T, "0", item["name"]+".dat"))
-            # print('dst:', os.path.join("/usr/local/mad/retrain/dataset", T, str(flag), name+".dat"))
+            # print('dst:', os.path.join("/mad/retrain/dataset", T, str(flag), name+".dat"))
             # print('src:', os.path.join(DataPath, "stream", item["name"]+".pcap"))
-            # print('dst:', os.path.join("/usr/local/mad/retrain/stream", T, str(flag), name+".pcap"))
+            # print('dst:', os.path.join("/mad/retrain/stream", T, str(flag), name+".pcap"))
             # shutil.copy(os.path.join(DataPath, "stream", item["name"]+".pcap"),
-            #             os.path.join("/usr/local/mad/retrain/stream", T, str(flag), name+".pcap"))
+            #             os.path.join("/mad/retrain/stream", T, str(flag), name+".pcap"))
         with open(os.path.join(DataPath, "stream.json"), 'w') as file:
             json.dump(retrain_index, file, cls=JSONEncoder)
-        shutil.copy(os.path.join(DataPath, "stream.json"), '/usr/local/mad/retrain/stream.json')
+        shutil.copy(os.path.join(DataPath, "stream.json"), '/mad/retrain/stream.json')
         report = list()
         report.extend(Clean)
         report.extend(Malicious)
         report.extend(CNNClean)
         report.extend(CNNMalicious)
-        pprint.pprint(report) ###
-        with open(f"/usr/local/mad/report/{T}/{stem}.json", 'w') as file:
+        pprint.pprint(report)
+        with open(f"/mad/report/{T}/{stem}.json", 'w') as file:
             json.dump(report, file, cls=JSONEncoder)
         report_index = list(map(lambda name: f"/report/{T}/{name}",
-                        filter(lambda name: name != "index.json",
-                            sorted(os.listdir(f"/usr/local/mad/report/{T}")))))
-        with open(f"/usr/local/mad/report/{T}/index.json", 'w') as file:
+                                filter(lambda name: name != "index.json",
+                                       sorted(os.listdir(f"/mad/report/{T}")))))
+        with open(f"/mad/report/{T}/index.json", 'w') as file:
             json.dump(report_index, file, cls=JSONEncoder)
             # files = [f"/report/{T}/{name}"
-            #             for name in os.listdir(f"/usr/local/mad/report/{T}")
+            #             for name in os.listdir(f"/mad/report/{T}")
             #             if name != "index.json"]
 
     # Used for evaluating our system

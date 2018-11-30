@@ -1,5 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import glob
-from fingerprints.fingerprint import FingerprintManager
+
+from fingerprints.fingerprint import FingerprintManager  # pylint: disable=E0401, E0602
+
 
 class DetectionModule():
     """
@@ -9,8 +13,6 @@ class DetectionModule():
     def __init__(self):
         self.background_threshold = 2.0
         self.browser_threshold = 1.5
-
-
 
     def similarity_check(self, new_f1, old_f2):
         """
@@ -51,7 +53,6 @@ class DetectionModule():
             else:
                 return False
 
-
     def _background_similarity(self, new_f1, old_f2):
         """
         This method computes the similarity between two Background-type fingerprints based on their core features.
@@ -73,7 +74,6 @@ class DetectionModule():
         score += self._ua_check(new_f1.user_agent, old_f2.user_agent)
         return score
 
-
     def _browser_similarity(self, new_f1, old_f2):
         """
         This method computes the similarity between two Browser-type fingerprints based on their core features.
@@ -94,10 +94,9 @@ class DetectionModule():
         score += self._ip_check(new_f1.ip_dsts, old_f2.ip_dsts)
         return score
 
-
     def _ip_check(self, new_ip, old_ip):
         """
-        This method checks if the set of hosts of the old fingerprint is a superset of the new fingerprint's list of hosts.
+        This method checks if the set of hosts of the old fingerprint is a superset of the new fingerprint's list of hosts.  # noqa
 
             Parameters
             --------------
@@ -116,7 +115,6 @@ class DetectionModule():
         else:
             return result
 
-
     def _avg_size_check(self, new_avg, old_avg):
         """
         This method checks if the average request size of the new fingerprint falls within a certain range
@@ -130,11 +128,11 @@ class DetectionModule():
             Returns
             --------------
             result : float
-                The result of this similaritfy function based on the average size of HTTP requests
+                The result of this similarity function based on the average size of HTTP requests
         """
         avg_percentage_error = 30
         result = 0.0
-        error_margin = (float(old_avg)/ 100) * avg_percentage_error
+        error_margin = (float(old_avg) / 100) * avg_percentage_error
 
         if (float(old_avg) + error_margin) >= float(new_avg) >= (float(old_avg) - error_margin):
             result = 1.0
@@ -144,7 +142,6 @@ class DetectionModule():
             return result
         else:
             return result
-
 
     def _header_check(self, new_const_headers, old_const_headers):
         """
@@ -175,7 +172,6 @@ class DetectionModule():
         else:
             return result
 
-
     def _ua_check(self, new_ua, old_ua):
         """
         This methods verifies that two User-Agents are matching.
@@ -191,14 +187,13 @@ class DetectionModule():
                 Returns 1.0 if there is a match, 0.0 otherwise.
         """
         result = 0.0
-        if new_ua=="UnknownUA":
+        if new_ua == "UnknownUA":
             return 0
         if new_ua == old_ua:
             result += 1.0
             return result
         else:
             return result
-
 
     def _language_check(self, new_lang, old_lang):
         """

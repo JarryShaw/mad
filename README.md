@@ -169,7 +169,7 @@ None
 ## Report directory
 
 ```text
-/usr/local/mad/
+/mad/
     |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready)
     |-- fingerprint.pickle                      # pickled fingerprint database
     |-- dataset/                                # where all dataset go
