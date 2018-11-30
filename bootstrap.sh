@@ -29,8 +29,8 @@ fi
 # clone dist env
 git clone http://gitlab.opensdns.com/contest/apt.git apt && \
 cd apt && \
-git config user.name zoufutai && \
-git config user.email zoufutai@sjtu.edu.cn && \
+git config user.name wanglin && \
+git config user.email woods_wang@sjtu.edu.cn && \
 cd ..
 
 # build pkt2flow
