@@ -11,6 +11,7 @@ requests = "*"
 tensorflow = "*"
 user-agents = "*"
 peewee = "*"
+pymysql = "*"
 
 [dev-packages]
 f2format = "*"
@@ -19,7 +20,7 @@ rope = "*"
 "autopep8" = "*"
 pylint = "*"
 pycodestyle = "*"
-isort = {extras = ["pipfile", "requirements"], version = "*"}
+isort = {extras = ["pipfile", "requirements"],version = "*"}
 
 [requires]
 python_version = "3.6"
