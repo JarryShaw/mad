@@ -19,7 +19,7 @@ class BaseModel(Model):
 class Mad_Report(BaseModel):
     name = CharField()
     is_malicious = BooleanField()
-    ua = CharField()
+    ua = TextField()
     url = TextField()
     srcip = CharField()
     srcport = IntegerField()
