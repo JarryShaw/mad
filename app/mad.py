@@ -177,7 +177,7 @@ def main(mode=None, path=None):
     if os.path.isfile('/mad/mad.log'):
         with open('/mad/mad.log') as file:
             for line in filter(lambda l: l.startswith('1'), file):
-                _, _, name, _ = line.split(' ')
+                _, _, name, _ = shlex.split(line)
         MAX_FILE = name
 
     # start procedure
@@ -193,7 +193,7 @@ def main(mode=None, path=None):
                 continue
             COUNT = len(NEW_LIST)
             for index, name in enumerate(NEW_LIST, start=-1):
-                path = f"/mad/dataset/{os.path.splitext(os.path.split(name)[1])[0].replace(' ', '-')}"
+                path = f"/mad/dataset/{shlex.quote(pathlib.Path(name).stem)}"
                 if path > MAX_FILE:
                     COUNT = index
                     break
@@ -246,7 +246,7 @@ def start_worker():
     """Start child process."""
     if MODE == 3:
         name = make_sniff(path=NotImplemented)
-        dsname = os.path.splitext(os.path.split(name)[1])[0].replace(' ', '-')
+        dsname = shlex.quote(pathlib.Path(name).stem)
     else:
         dsname = dt.datetime.now().isoformat()
 

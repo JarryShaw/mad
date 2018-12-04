@@ -10,8 +10,8 @@ cp -rf .dockerignore \
        build.sh \
        Dockerfile \
        LICENSE \
-       README.md \
-       app/mad.py \
+       README.md apt && \
+cp -rf app/mad.py \
        app/make_stream.py \
        app/model.tar.gz \
        app/retrain.tar.gz \

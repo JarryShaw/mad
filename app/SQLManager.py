@@ -36,7 +36,7 @@ class Mad_Report(BaseModel):
 def saveReport(reportList):
     for report in reportList:
         Mad_Report(
-            name=report['name'],
+            name=report['filename'],
             is_malicious=report['is_malicious'],
             ua=report['UA'],
             url=report['url'],
