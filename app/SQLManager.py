@@ -20,7 +20,7 @@ class Mad_Report(BaseModel):
     name = CharField()
     is_malicious = BooleanField()
     ua = CharField()
-    url = CharField()
+    url = TextField()
     srcip = CharField()
     srcport = IntegerField()
     dstip = CharField()
