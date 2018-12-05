@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import argparse
+################################################################################
 import os
+import sys
+sys.path.insert(0, os.path.realpath(os.path.dirname(__file__)))  # noqa
+################################################################################
+
+import argparse
 
 from mad import main
 
