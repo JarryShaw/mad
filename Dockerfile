@@ -40,7 +40,9 @@ COPY build/app /app
 COPY build/www /www
 RUN mkdir -p /mad
 ADD build/model.tar.gz /mad
+RUN tar -xzvf /mad/model.tar.gz
 ADD build/retrain.tar.gz /mad
+RUN tar -xzvf /mad/retrain.tar.gz
 
 # entry points
 ENTRYPOINT ["python3", "/app/run_mad.py"]
