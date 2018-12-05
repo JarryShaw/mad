@@ -10,6 +10,7 @@ geocoder = "*"
 peewee = "*"
 pymysql = "*"
 requests = "*"
+scapy = "*"
 tensorflow = "*"
 user-agents = "*"
 

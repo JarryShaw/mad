@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from peewee import *
+
+from peewee import (BooleanField, CharField, DateTimeField, IntegerField,
+                    Model, MySQLDatabase, TextField)
 
 db = MySQLDatabase(
     database='deepocean',
