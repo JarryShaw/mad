@@ -18,6 +18,7 @@ cp -rf app/mad.py \
        app/run_mad.py \
        app/SQLManager.py \
        app/Training.py \
+       app/utils.py \
        app/DataLabeler \
        app/fingerprints \
        app/StreamManager \

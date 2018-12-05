@@ -38,6 +38,7 @@ RUN git clone https://github.com/caesar0301/pkt2flow.git /tmp/pkt2flow \
 # copy source files and archives
 COPY build/app /app
 COPY build/www /www
+RUN mkdir -p /mad
 ADD build/model.tar.gz /mad
 ADD build/retrain.tar.gz /mad
 
