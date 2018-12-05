@@ -7,11 +7,11 @@ name = "pypi"
 Django = "*"
 dpkt = "*"
 geocoder = "*"
+peewee = "*"
+pymysql = "*"
 requests = "*"
 tensorflow = "*"
 user-agents = "*"
-peewee = "*"
-pymysql = "*"
 
 [dev-packages]
 f2format = "*"

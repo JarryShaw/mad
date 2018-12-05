@@ -5,7 +5,8 @@ set -x
 # prepare source files
 rm -rf build && \
 mkdir -p build && \
-cp app/retrain.tar.gz build && \
+cp app/model.tar.gz \
+   app/retrain.tar.gz build && \
 mkdir -p build/app && \
 cp -rf app/mad.py \
        app/make_stream.py \
@@ -17,7 +18,7 @@ cp -rf app/mad.py \
        app/StreamManager \
        app/webgraphic build/app/ && \
 mkdir -p build/www && \
-cp -rf www build/www/
+cp -rf www/* build/www/
 
 # de-f-string
 pipenv run f2format -n build

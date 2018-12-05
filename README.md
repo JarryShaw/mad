@@ -22,6 +22,7 @@
 - `dpkt`
 - `geocoder`
 - `peewee`
+- `pymysql`
 - `requests`
 - `scapy`
 - `tensorflow`

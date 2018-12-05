@@ -17,6 +17,7 @@ import tensorflow as tf
 from user_agents import parse as _parse
 
 from make_stream import dump_stream, load_stream
+from SQLManager import saveReports
 from StreamManager.StreamManager4 import StreamManager
 from utils import JSONEncoder, object_hook
 
@@ -703,8 +704,9 @@ def main(unused):
         report.extend(CNNClean)
         report.extend(CNNMalicious)
         pprint.pprint(report)
-        with open(f"/mad/report/{T}/{stem}.json", 'w') as file:
-            json.dump(report, file, cls=JSONEncoder)
+        # with open(f"/mad/report/{T}/{stem}.json", 'w') as file:
+        #     json.dump(report, file, cls=JSONEncoder)
+        saveReports(report)
         report_index = list(map(lambda name: f"/report/{T}/{name}",
                                 filter(lambda name: name != "index.json",
                                        sorted(os.listdir(f"/mad/report/{T}")))))
