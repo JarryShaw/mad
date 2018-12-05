@@ -16,6 +16,7 @@ cp -rf app/mad.py \
        app/model.tar.gz \
        app/retrain.tar.gz \
        app/run_mad.py \
+       app/SQLManager.py \
        app/Training.py \
        app/DataLabeler \
        app/fingerprints \

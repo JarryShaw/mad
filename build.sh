@@ -10,6 +10,7 @@ mkdir -p build/app && \
 cp -rf app/mad.py \
        app/make_stream.py \
        app/run_mad.py \
+       app/SQLManager.py \
        app/Training.py \
        app/DataLabeler \
        app/fingerprints \
