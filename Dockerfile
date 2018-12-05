@@ -4,8 +4,11 @@ LABEL version="2018.12.05"
 
 # install Python 3 & all requirements
 RUN apt-get update && apt-get install -y \
+    build-essential \
     git \
     libpcap-dev \
+    libffi-dev \
+    libssl-dev \
     python3 \
     python3-pip \
     scons \
