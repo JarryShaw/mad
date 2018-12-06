@@ -51,6 +51,7 @@ import contextlib
 import datetime as dt
 import functools
 import json
+import multiprocessing
 import os
 import pathlib
 import shlex
@@ -69,21 +70,13 @@ from StreamManager.StreamManager4 import StreamManager
 from utils import JSONEncoder, object_hook
 from webgraphic.webgraphic import webgraphic
 
-# multiprocessing may not be supported
-try:        # try first
-    import multiprocessing
-except ImportError:
-    multiprocessing = None
-else:       # CPU number if multiprocessing supported
-    if os.name == 'posix' and 'SC_NPROCESSORS_CONF' in os.sysconf_names:
-        CPU_CNT = os.sysconf('SC_NPROCESSORS_CONF')
-    elif 'sched_getaffinity' in os.__all__:
-        CPU_CNT = len(os.sched_getaffinity(0))  # pylint: disable=E1101
-    else:
-        CPU_CNT = os.cpu_count() or 1
-finally:    # alias and aftermath
-    mp = multiprocessing
-    del multiprocessing
+# CPU number
+if os.name == 'posix' and 'SC_NPROCESSORS_CONF' in os.sysconf_names:
+    CPU_CNT = os.sysconf('SC_NPROCESSORS_CONF')
+elif 'sched_getaffinity' in os.__all__:
+    CPU_CNT = len(os.sched_getaffinity(0))  # pylint: disable=E1101
+else:
+    CPU_CNT = os.cpu_count() or 1
 
 
 @functools.total_ordering
@@ -222,7 +215,7 @@ def make_worker(filelist, sample=None):
     # start child in prediction
     # using worker Pool or sequential solution
     if MODE == 3:
-        if mp is None:
+        if CPU_CNT <= 1:
             return [start_worker(file) for file in sorted(filelist)]
         else:
             return multiprocessing.Pool(processes=CPU_CNT).map(start_worker, sorted(filelist))
