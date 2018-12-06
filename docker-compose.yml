@@ -3,7 +3,7 @@ version: '3'
 services:
   mad:
     build: .
-    network_mode: host
+    network_mode: "bridge"
     links:
       - db
     volumes:
@@ -11,7 +11,7 @@ services:
     command: python3 /app/run_mad.py
     restart: "always"
   db:
-    image: 'mysql:5.7'
+    image: "mysql:5.7"
     expose:
       - "3306"
     container_name: deepocean

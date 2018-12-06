@@ -5,8 +5,11 @@ set -x
 # prepare source files
 rm -rf build && \
 mkdir -p build && \
-cp app/model.tar.gz \
-   app/retrain.tar.gz build && \
+cp -rf .dockerignore \
+       docker-compose.yml \
+       Dockerfile \
+       model.tar.gz \
+       retrain.tar.gz build && \
 mkdir -p build/app && \
 cp -rf app/mad.py \
        app/make_stream.py \
@@ -30,7 +33,7 @@ fi
 
 # build docker
 if [[ -z $1 ]] ; then
-    sudo docker build -t mad .
+    sudo docker build -t mad build
 else
-    sudo docker build -t mad:$1 .
+    sudo docker build -t mad:$1 build
 fi
