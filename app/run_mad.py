@@ -16,7 +16,7 @@ from mad import main
 def get_parser():
     parser = argparse.ArgumentParser(prog='mad',
                                      description='Malicious Application Detector')
-    parser.add_argument('-v', '--version', version=time.strftime(r'%Y.%m.%d:%s'))
+    parser.add_argument('-v', '--version', action='version', version=time.strftime(r'%Y.%m.%d:%s'))
 
     parser.add_argument('-m', '--mode', action='store', default=3, type=int, choices=[1, 2, 3, 4, 5],
                         help='runtime mode')
