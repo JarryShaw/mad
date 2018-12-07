@@ -33,7 +33,7 @@ fi
 
 # build docker
 if [[ -z $1 ]] ; then
-    sudo docker build -t mad build
+    docker build -t mad build
 else
-    sudo docker build -t mad:$1 build
+    docker build -t mad:$1 build
 fi
