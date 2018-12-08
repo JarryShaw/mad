@@ -48,8 +48,17 @@ else
 fi && \
 git push
 
-# upload to GitHub
+# update maintenance information
 cd ..
+maintainer changelog && \
+maintainer contributor && \
+maintainer contributing
+ret="$?"
+if [[ $ret -ne "0" ]] ; then
+    exit $ret
+fi
+
+# upload to GitHub
 git pull && \
 git add . && \
 if [[ -z $1 ]] ; then
