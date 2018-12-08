@@ -3,12 +3,11 @@ version: '3'
 services:
   mad:
     build: .
-    network_mode: "bridge"
     links:
       - db
     volumes:
-      - /home/traffic/pcapfile:/mad/pcap
-    command: python3 /app/run_mad.py
+      - /data/httpdump:/mad/pcap
+    command: --path /mad/pcap
     restart: "always"
   db:
     image: "mysql:5.7"

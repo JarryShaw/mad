@@ -3,7 +3,7 @@
 set -x
 
 # prepare source files
-rm -rf build && \
+sudo rm -rf build && \
 mkdir -p build && \
 cp -rf .dockerignore \
        docker-compose.yml \
