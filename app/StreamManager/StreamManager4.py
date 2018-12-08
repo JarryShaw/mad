@@ -48,7 +48,7 @@ class StreamManager:
         cmd = shlex.split(f"pkt2flow -xv -o {self.datapath}/tmp {self.filename}")
         try:
             print("执行命令")
-            subp = subprocess.check_call(cmd)
+            subprocess.check_call(cmd)
         except subprocess.CalledProcessError:
             # if subp.returncode != 0:
             print("流转化失败！")

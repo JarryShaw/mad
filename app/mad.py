@@ -54,6 +54,7 @@ import json
 import multiprocessing
 import os
 import pathlib
+import pprint  # ##
 import shlex
 import shutil
 import signal
@@ -84,7 +85,7 @@ class minstr(str):
 
     def __lt__(self, value):
         if isinstance(value, str):
-            return True
+            return False
         return NotImplemented
 
 
@@ -154,15 +155,18 @@ def main(mode=3, path='/mad/pcap', sample=None):
     # check log file
     global MAX_FILE
     if os.path.isfile('/mad/mad.log'):
+        name = MAX_FILE
         with open('/mad/mad.log') as file:
             for line in filter(lambda l: l.startswith('1'), file):
                 _, _, name, _ = shlex.split(line)
         MAX_FILE = name
+    print(MAX_FILE)
 
     # update file list
     filelist = list()
     for item in os.scandir(PATH):
         filename = item.path
+        print(filename, (filename <= MAX_FILE))
         if filename <= MAX_FILE:
             continue
         filelist.append(filename)
@@ -215,6 +219,8 @@ def make_worker(filelist, sample=None):
     # start child in prediction
     # using worker Pool or sequential solution
     if MODE == 3:
+        print('Current worker pool:')
+        pprint.pprint(sorted(filelist))
         if CPU_CNT <= 1:
             return [start_worker(file) for file in sorted(filelist)]
         else:
