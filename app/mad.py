@@ -158,9 +158,9 @@ def main(mode=3, path='/mad/pcap', sample=None):
         name = MAX_FILE
         with open('/mad/mad.log') as file:
             for line in filter(lambda l: l.startswith('1'), file):
-                _, _, name, _ = shlex.split(line)
+                _, _, _, name, _ = shlex.split(line)
         MAX_FILE = name
-    print(MAX_FILE)
+    print(f'Current MAX_FILE: {MAX_FILE!r}')
 
     # update file list
     filelist = list()
@@ -175,6 +175,7 @@ def main(mode=3, path='/mad/pcap', sample=None):
     make_worker(filelist, sample=sample)
     with contextlib.suppress(ValueError):
         MAX_FILE = max(filelist)
+    print(f'Current MAX_FILE: {MAX_FILE!r}')
 
     # enter main loop
     if MODE != 3:
@@ -189,7 +190,7 @@ def main(mode=3, path='/mad/pcap', sample=None):
         make_worker(filelist)
         with contextlib.suppress(ValueError):
             MAX_FILE = max(filelist)
-
+        print(f'Current MAX_FILE: {MAX_FILE!r}')
 
 def retrain_cnn(*args):
     """Retrain the CNN model."""
@@ -246,7 +247,14 @@ def start_worker(path):
     # first, we sniff packets using Scapy
     # or load data from an existing PCAP file
     name = make_sniff(path)
-    dsname = shlex.quote(pathlib.Path(name).stem)
+    pobj = pathlib.Path(name)
+    stem = pathlib.Path(name).stem
+    if pobj.suffix != '.pcap':
+        pext = pobj.suffix.strip('.pcap')
+        dsname = shlex.quote(f'{stem}_{pext}')
+    else:
+        dsname = shlex.quote(pathlib.Path(name).stem)
+    osname = shlex.quote(name)
 
     # create directory for new dataset
     # and initialise fingerprint manager
@@ -260,7 +268,7 @@ def start_worker(path):
     # the back-end of webpage shall check this file
     with LOCK:
         with open('/mad/mad.log', 'at', 1) as file:
-            file.write(f'0 {dt.datetime.now().isoformat()} {path} {MODE}\n')
+            file.write(f'0 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
 
     milestone_1 = time.time()
     print(f'Bootstrapped for {milestone_1-milestone_0} seconds')
@@ -292,7 +300,7 @@ def start_worker(path):
     # the back-end of webpage shall check this file periodically
     with LOCK:
         with open('/mad/mad.log', 'at', 1) as file:
-            file.write(f'1 {dt.datetime.now().isoformat()} {path} {MODE}\n')
+            file.write(f'1 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
 
     # finally, remove used temporary dataset files
     # but record files should be reserved for further usage

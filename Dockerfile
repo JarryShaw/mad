@@ -36,11 +36,12 @@ RUN git clone https://github.com/caesar0301/pkt2flow.git /tmp/pkt2flow \
  && rm -rf /tmp/pkt2flow
 
 # copy source files and archives
-COPY app /app
-COPY www /www
 ADD model.tar.gz /mad
-ADD retrain.tar.gz /mad
+ADD model.tar.gz /mad
+COPY www /www
+COPY app /app
 
 # entry points
+ENV PYTHONIOENCODING "UTF-8"
 ENTRYPOINT ["python3", "/app/run_mad.py"]
 CMD ["--help"]
