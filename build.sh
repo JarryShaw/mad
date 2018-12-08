@@ -37,3 +37,7 @@ if [[ -z $1 ]] ; then
 else
     sudo docker build -t mad:$1 build
 fi
+
+# run docker-compose
+cd build
+sudo docker-compose up

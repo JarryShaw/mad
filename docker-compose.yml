@@ -14,7 +14,6 @@ services:
     image: "mysql:5.7"
     expose:
       - "3306"
-    container_name: deepocean
     environment:
       - MYSQL_ROOT_PASSWORD=zft13917331612
       - MYSQL_DATABASE=mad
