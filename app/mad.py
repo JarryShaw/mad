@@ -96,10 +96,8 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 MODE = 3
 # path of input data
 PATH = '/mad/pcap'
-# file counter
-COUNT = 0
 # latest processing file name
-MAX_FILE = minstr
+MAX_FILE = minstr()
 # file lock
 LOCK = multiprocessing.Lock()
 # retrain flag
@@ -171,7 +169,8 @@ def main(mode=3, path='/mad/pcap', sample=None):
 
     # start procedure
     make_worker(filelist, sample=sample)
-    MAX_FILE = max(filelist)
+    with contextlib.suppress(ValueError):
+        MAX_FILE = max(filelist)
 
     # enter main loop
     if MODE != 3:
@@ -184,7 +183,8 @@ def main(mode=3, path='/mad/pcap', sample=None):
                 continue
             filelist.append(filename)
         make_worker(filelist)
-        MAX_FILE = max(filelist)
+        with contextlib.suppress(ValueError):
+            MAX_FILE = max(filelist)
 
 
 def retrain_cnn(*args):
@@ -244,7 +244,7 @@ def start_worker(path):
 
     # create directory for new dataset
     # and initialise fingerprint manager
-    path = pathlib.Path(f'/dataset/{dsname}')
+    path = pathlib.Path(f'/mad/dataset/{dsname}')
     path.mkdir(parents=True, exist_ok=True)
     fp = fingerprintManager()
 
@@ -302,7 +302,7 @@ def make_sniff(path):
     """Load data or sniff packets."""
     # just sniff when prediction
     if MODE == 3:
-        print(f"Now it's time for No.{COUNT} {path}")
+        print(f"Now it's time for {path}")
         return path
 
     # extract file, or ...
