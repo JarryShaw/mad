@@ -6,8 +6,11 @@ set -x
 mkdir -p apt apt/app apt/www && \
 cp -rf .dockerignore \
        .gitignore \
+       AUTHORS.md \
        bootstrap.sh \
        build.sh \
+       CHANGELOG.md \
+       CONTRIBUTING.md \
        Dockerfile \
        LICENSE \
        model.tar.gz \
