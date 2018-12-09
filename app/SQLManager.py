@@ -33,6 +33,30 @@ class Mad_Report(BaseModel):
     type = CharField()
 
 
+class Mad_Loss(BaseModel):
+    time = DateTimeField()
+    loss = FloatField()
+
+
+class Mad_ProcessedFile(BaseModel):
+    name = CharField()
+
+
+def saveLoss(loss, time):
+    tmp = Mad_Loss(
+        loss=loss,
+        time=time
+    )
+    tmp.save()
+
+
+def saveProcessedFile(file):
+    tmp = Mad_ProcessedFile(
+        name=file
+    )
+    tmp.save()
+
+
 def saveReport(report):
     tmp = Mad_Report(
         name=report['filename'],
