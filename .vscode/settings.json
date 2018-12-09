@@ -47,6 +47,7 @@
         "numpy",
         "outg",
         "ppid",
+        "pymysql",
         "qsize",
         "referer",
         "relu",

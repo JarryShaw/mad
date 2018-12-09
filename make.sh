@@ -12,10 +12,8 @@ cp -rf .dockerignore \
        CHANGELOG.md \
        CONTRIBUTING.md \
        Dockerfile \
-       LICENSE \
        model.tar.gz \
-       retrain.tar.gz \
-       README.md apt && \
+       retrain.tar.gz apt && \
 cp -rf app/mad.py \
        app/make_stream.py \
        app/run_mad.py \
@@ -27,7 +25,10 @@ cp -rf app/mad.py \
        app/StreamManager \
        app/webgraphic apt/app && \
 cp -rf www/* apt/www && \
-sed 's/python_version = "3.6"/python_version = "3.5"/' Pipfile > apt/Pipfile
+sed 's/python_version = "3.6"/python_version = "3.5"/' Pipfile > apt/Pipfile && \
+echo '<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.' > apt/README.md && \
+echo >> apt/README.md && \
+cat README.md >> apt/README.md
 returncode=$?
 if [[ $returncode -ne "0" ]] ; then
     exit $returncode
