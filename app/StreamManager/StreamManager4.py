@@ -23,11 +23,11 @@ class StreamManager:
         # root, file = os.path.split(filename)
         self.filename = filename
         self.datapath = datapath
-        self.backgroud_groups_PC = {}
-        self.backgroud_groups_Phone = {}
+        self.background_groups_PC = {}
+        self.background_groups_Phone = {}
         self.suspicious_group = {}
-        self.backgroud_PC = []
-        self.backgroud_Phone = []
+        self.background_PC = []
+        self.background_Phone = []
         self.suspicious = []
 
     def generate(self):
@@ -48,7 +48,7 @@ class StreamManager:
         cmd = shlex.split(f"pkt2flow -xv -o {self.datapath}/tmp {self.filename}")
         try:
             print("执行命令")
-            subp = subprocess.check_call(cmd)
+            subprocess.check_call(cmd)
         except subprocess.CalledProcessError:
             # if subp.returncode != 0:
             print("流转化失败！")
@@ -71,9 +71,9 @@ class StreamManager:
                 count_f += 1
                 continue
             if ip in ips[1]:
-                self.backgroud_PC.append({"filename": x, "type": 2, "is_malicious": 0, "http": [], "UA": 0, "url": 0})
+                self.background_PC.append({"filename": x, "type": 2, "is_malicious": 0, "http": [], "UA": 0, "url": 0})
             elif ip in ips[3]:
-                self.backgroud_Phone.append(
+                self.background_Phone.append(
                     {"filename": x, "type": 4, "is_malicious": 0, "http": [], "UA": 0, "url": 0})
             elif ip in ips[4]:
                 self.suspicious.append({"filename": x, "type": 5, "is_malicious": 0, "http": [], "UA": 0, "url": 0})
@@ -86,9 +86,9 @@ class StreamManager:
         print("找不到", count_no, "个文件")
 
         print("-----------------------------")
-        print("PC软件：", self.backgroud_PC)
+        print("PC软件：", self.background_PC)
         print("-----------------------------")
-        print("Phone软件：", self.backgroud_Phone)
+        print("Phone软件：", self.background_Phone)
         print("-----------------------------")
         print("无ua嫌疑软件：", self.suspicious)
 
@@ -99,55 +99,55 @@ class StreamManager:
         print("正在标记数据类型1...")
         self.lable(self.browser_PC)
         print("正在标记数据类型2...")
-        self.lable(self.backgroud_PC)
+        self.lable(self.background_PC)
         print("正在标记数据类型3...")
         self.lable(self.browser_Phone)
         print("正在标记数据类型4...")
-        self.lable(self.backgroud_Phone)
+        self.lable(self.background_Phone)
         print("正在标记数据类型5...")
         self.lable(self.suspicious)
         print("数据标记完毕，开始聚类...")
         '''
 
         print("正在成组数据类型2...")
-        # backgroudtype PC
-        for i in range(len(self.backgroud_PC)):
-            UA, url, http_load = self.getUA(self.backgroud_PC[i]["filename"])
-            ip = self.getIP(self.backgroud_PC[i]["filename"])
+        # backgroundtype PC
+        for i in range(len(self.background_PC)):
+            UA, url, http_load = self.getUA(self.background_PC[i]["filename"])
+            ip = self.getIP(self.background_PC[i]["filename"])
             tag = ip[0]
             if self.isLocalIP(ip[0]):
                 tag = ip[1]
             key = tag + " " + UA
-            self.backgroud_PC[i]["http"] = http_load
-            self.backgroud_PC[i]["url"] = url
-            self.backgroud_PC[i]["UA"] = UA
-            if key in self.backgroud_groups_PC:
-                self.backgroud_groups_PC[key].append(self.backgroud_PC[i])
+            self.background_PC[i]["http"] = http_load
+            self.background_PC[i]["url"] = url
+            self.background_PC[i]["UA"] = UA
+            if key in self.background_groups_PC:
+                self.background_groups_PC[key].append(self.background_PC[i])
             else:
                 tmp = []
-                tmp.append(self.backgroud_PC[i])
-                self.backgroud_groups_PC[key] = list(tmp)
+                tmp.append(self.background_PC[i])
+                self.background_groups_PC[key] = list(tmp)
 
                 # browsertype
 
         print("正在成组数据类型4...")
-        # backgroudtype PC
-        for i in range(len(self.backgroud_Phone)):
-            UA, url, http_load = self.getUA(self.backgroud_Phone[i]["filename"])
-            ip = self.getIP(self.backgroud_Phone[i]["filename"])
+        # backgroundtype PC
+        for i in range(len(self.background_Phone)):
+            UA, url, http_load = self.getUA(self.background_Phone[i]["filename"])
+            ip = self.getIP(self.background_Phone[i]["filename"])
             tag = ip[0]
             if self.isLocalIP(ip[0]):
                 tag = ip[1]
             key = tag + " " + UA
-            self.backgroud_Phone[i]["http"] = http_load
-            self.backgroud_Phone[i]["url"] = url
-            self.backgroud_Phone[i]["UA"] = UA
-            if key in self.backgroud_groups_Phone:
-                self.backgroud_groups_Phone[key].append(self.backgroud_Phone[i])
+            self.background_Phone[i]["http"] = http_load
+            self.background_Phone[i]["url"] = url
+            self.background_Phone[i]["UA"] = UA
+            if key in self.background_groups_Phone:
+                self.background_groups_Phone[key].append(self.background_Phone[i])
             else:
                 tmp = []
-                tmp.append(self.backgroud_Phone[i])
-                self.backgroud_groups_Phone[key] = list(tmp)
+                tmp.append(self.background_Phone[i])
+                self.background_groups_Phone[key] = list(tmp)
 
         print("正在成组数据类型5...")
         # empty_ua
@@ -169,8 +169,8 @@ class StreamManager:
                 self.suspicious_group[key] = list(tmp)
 
         print("聚类处理完毕")
-        print("种类2group数量：", len(self.backgroud_groups_PC))
-        print("种类4group数量：", len(self.backgroud_groups_Phone))
+        print("种类2group数量：", len(self.background_groups_PC))
+        print("种类4group数量：", len(self.background_groups_Phone))
         print("种类5group数量：", len(self.suspicious_group))
         # labling
         '''
@@ -178,11 +178,11 @@ class StreamManager:
         print("正在标记数据类型1...")
         self.lable(self.browser_groups_PC)
         print("正在标记数据类型2...")
-        self.lable(self.backgroud_groups_PC)
+        self.lable(self.background_groups_PC)
         print("正在标记数据类型3...")
         self.lable(self.browser_groups_Phone)
         print("正在标记数据类型4...")
-        self.lable(self.backgroud_groups_Phone)
+        self.lable(self.background_groups_Phone)
         print("正在标记数据类型5...")
         self.lable(self.suspicious_group)
        '''
@@ -191,9 +191,9 @@ class StreamManager:
     def labelGroups(self):
         print("开始标记数据")
         print("正在标记数据类型2...")
-        self.lable(self.backgroud_groups_PC)
+        self.lable(self.background_groups_PC)
         print("正在标记数据类型4...")
-        self.lable(self.backgroud_groups_Phone)
+        self.lable(self.background_groups_Phone)
         print("正在标记数据类型5...")
         self.lable(self.suspicious_group)
 
@@ -297,12 +297,12 @@ class StreamManager:
     def GetDataForCNN(self):
         tmp = []
 
-        for key in self.backgroud_groups_PC:
-            for x in self.backgroud_groups_PC[key]:
+        for key in self.background_groups_PC:
+            for x in self.background_groups_PC[key]:
                 tmp.append(x)
 
-        for key in self.backgroud_groups_Phone:
-            for x in self.backgroud_groups_Phone[key]:
+        for key in self.background_groups_Phone:
+            for x in self.background_groups_Phone[key]:
                 tmp.append(x)
 
         for key in self.suspicious_group:
@@ -311,13 +311,13 @@ class StreamManager:
 
         return tmp
 
-    def GetBackgroudGroup_PC(self):
-        # print(self.backgroud_groups_PC)
-        return self.backgroud_groups_PC
+    def GetBackgroundGroup_PC(self):
+        # print(self.background_groups_PC)
+        return self.background_groups_PC
 
-    def GetBackgroudGroup_Phone(self):
-        # print(self.backgroud_groups_Phone)
-        return self.backgroud_groups_Phone
+    def GetBackgroundGroup_Phone(self):
+        # print(self.background_groups_Phone)
+        return self.background_groups_Phone
 
     def GetSuspicious(self):
         # print(self.suspicious_group)

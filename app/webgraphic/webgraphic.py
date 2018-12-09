@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import contextlib
 import math
 import os
 import re
@@ -343,7 +344,8 @@ class webgraphic:
         print("共读入", total_num, "个包")
         print("过滤掉的安全域名的包有:", filtered_num, "个")
         print("ua为空的有", empty, "个")
-        print(float(empty)/total_num)
+        with contextlib.suppress(ZeroDivisionError):
+            print(float(empty)/total_num)
         print("没referer的包共有"+str(no_referer)+"个")
         print("tmp_mem:", len(self.tmp_mem))
         print("tmp_index:", len(self.tmp_index))

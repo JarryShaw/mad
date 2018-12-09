@@ -4,6 +4,9 @@
 /mad/
     |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready)
     |-- fingerprint.pickle                      # pickled fingerprint database
+    |-- pcap/
+    |   |-- YYYY_MMDD_HHMM_SS.pcap              # PCAP files
+    |   |-- ...
     |-- dataset/                                # where all dataset go
     |   |-- YYYY-MM-DDTHH:MM:SS.US/             # dataset named after ISO timestamp
     |   |   |-- groups.json                     # WebGraphic group record
@@ -28,11 +31,6 @@
     |   |           |-- IP_PORT_IP_PORT_TS.dat  # dataset file
     |   |           |-- ...
     |   |-- ...
-    |-- report/                                 # where CNN prediction report go
-    |   |-- Background_PC/                      # Background_PC reports
-    |   |   |-- index.json                      # report index file
-    |   |   |-- YYYY-MM-DDTHH:MM:SS.US.json     # report named after dataset
-    |   |-- ...
     |-- model/                                  # where CNN model go
     |   |-- Background_PC/                      # Background_PC models
     |   |   |-- ...
@@ -56,6 +54,7 @@ import json
 import multiprocessing
 import os
 import pathlib
+import pprint  # ##
 import shlex
 import shutil
 import signal
@@ -64,29 +63,31 @@ import sys
 import time
 import traceback
 
+import scapy.all
+
 from fingerprints.fingerprintsManager import fingerprintManager
 from make_stream import JSONEncoder, dump_stream, load_stream, object_hook
 from StreamManager.StreamManager4 import StreamManager
 from utils import JSONEncoder, object_hook
 from webgraphic.webgraphic import webgraphic
 
-# # import chardet
-# # import pcapkit.all
-# import scapy.all
+# CPU number
+if os.name == 'posix' and 'SC_NPROCESSORS_CONF' in os.sysconf_names:
+    CPU_CNT = os.sysconf('SC_NPROCESSORS_CONF')
+elif 'sched_getaffinity' in os.__all__:
+    CPU_CNT = len(os.sched_getaffinity(0))  # pylint: disable=E1101
+else:
+    CPU_CNT = os.cpu_count() or 1
 
 
 @functools.total_ordering
-class minstr:
+class minstr(str):
 
     def __lt__(self, value):
         if isinstance(value, str):
-            return True
+            return False
         return NotImplemented
 
-
-# # testing macros
-# FILE = NotImplemented
-# COUNT = -1
 
 # PID
 PID = os.getpid()
@@ -95,15 +96,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 # 1-initialisation; 2-migration; 3-prediction; 4-adaptation; 5-regeneration
 MODE = 3
 # path of input data
-PATH = NotImplemented
-# list of data files
-LIST = NotImplemented
-# list offset
-COUNT = -1
+PATH = '/mad/pcap'
 # latest processing file name
-MAX_FILE = minstr
-# # sniff interface
-# IFACE = 'eth0'
+MAX_FILE = minstr()
 # file lock
 LOCK = multiprocessing.Lock()
 # retrain flag
@@ -133,72 +128,69 @@ def beholder(func):
         except BaseException:
             if MODE != 3:
                 raise
-            with contextlib.suppress(OSError):
-                os.kill(PID, signal.SIGUSR1)
             traceback.print_exc()
     return wrapper
 
 
-def main(mode=None, path=None):
+def main(mode=3, path='/mad/pcap', sample=None):
     """Main interface for MAD."""
     print(f'Manager process: {PID}')
 
     # bind signals
-    signal.signal(signal.SIGUSR1, make_worker)
+    # signal.signal(signal.SIGUSR1, make_worker)
     signal.signal(signal.SIGUSR2, retrain_cnn)
 
     # make paths
     for name in {'dataset', 'model', 'retrain'}:
         pathlib.Path(f'/mad/{name}').mkdir(parents=True, exist_ok=True)
 
-    # if iface is not None:
-    #     global IFACE
-    #     IFACE = iface
+    # set PATH
+    global PATH
+    PATH = path
 
-    if mode is not None:
-        global MODE
-        MODE = mode
-
-    if path is not None:
-        global PATH
-        PATH = path
-
-    # if file is not None:
-    #     global FILE
-    #     with open(file, 'r') as file:
-    #         FILE = json.load(file, object_hook=object_hook)
-
-    # update file list
-    global LIST
-    LIST = sorted(f'{PATH}/{file}' for file in os.listdir(PATH))
+    # set MODE
+    global MODE
+    MODE = mode
 
     # check log file
     global MAX_FILE
     if os.path.isfile('/mad/mad.log'):
+        name = MAX_FILE
         with open('/mad/mad.log') as file:
             for line in filter(lambda l: l.startswith('1'), file):
-                _, _, name, _ = shlex.split(line)
+                _, _, _, name, _ = shlex.split(line)
         MAX_FILE = name
+    print(f'Current MAX_FILE: {MAX_FILE!r}')
+
+    # update file list
+    filelist = list()
+    for item in os.scandir(PATH):
+        filename = item.path
+        print(filename, (filename <= MAX_FILE))
+        if filename <= MAX_FILE:
+            continue
+        filelist.append(filename)
 
     # start procedure
-    make_worker()
-    while True:
-        # if FILE is not NotImplemented \ ###
-        #     and COUNT >= len(FILE): break ###
-        time.sleep(10*60)
-        global COUNT
-        if COUNT >= len(LIST):
-            NEW_LIST = sorted(f'{PATH}/{file}' for file in os.listdir(PATH))
-            if NEW_LIST == LIST:
-                continue
-            COUNT = len(NEW_LIST)
-            for index, name in enumerate(NEW_LIST, start=-1):
-                path = f"/mad/dataset/{shlex.quote(pathlib.Path(name).stem)}"
-                if path > MAX_FILE:
-                    COUNT = index
-                    break
-            LIST = NEW_LIST
+    make_worker(filelist, sample=sample)
+    with contextlib.suppress(ValueError):
+        MAX_FILE = max(filelist)
+    print(f'Current MAX_FILE: {MAX_FILE!r}')
 
+    # enter main loop
+    if MODE != 3:
+        return
+    while True:
+        filelist = list()
+        for item in os.scandir(PATH):
+            filename = item.path
+            if filename <= MAX_FILE:
+                continue
+            filelist.append(filename)
+        make_worker(filelist)
+        with contextlib.suppress(ValueError):
+            MAX_FILE = max(filelist)
+        print(f'Current MAX_FILE: {MAX_FILE!r}')
 
 def retrain_cnn(*args):
     """Retrain the CNN model."""
@@ -218,41 +210,55 @@ def retrain_cnn(*args):
     ).start()
 
 
-def make_worker(*args):
+def make_worker(filelist, sample=None):
     """Create child process."""
+    # not implemented
+    global MODE
+    if not (1 <= MODE <= 5):
+        raise NotImplementedError
+
     # start child in prediction
-    global MODE, COUNT, MAX_FILE
+    # using worker Pool or sequential solution
     if MODE == 3:
-        # if FILE is not NotImplemented:
-        #     COUNT += 1
-        #     if COUNT >= len(FILE):
-        #         return
-        COUNT += 1
-        if COUNT >= len(LIST):
-            return
-        MAX_FILE = LIST[COUNT]
-        return multiprocessing.Process(target=start_worker).start()
+        print('Current worker pool:')
+        pprint.pprint(sorted(filelist))
+        if CPU_CNT <= 1:
+            return [start_worker(file) for file in sorted(filelist)]
+        else:
+            return multiprocessing.Pool(processes=CPU_CNT).map(start_worker, sorted(filelist))
+
+    # or force to run retrain process
+    if MODE == 4:
+        return retrain_cnn()
 
     # do initialisation or migration first
     # then, keep on with prediction (if need)
-    start_worker()
+    start_worker(sample)
     if MODE in (2, 5):
         MODE = 3
-        return make_worker()
+        return make_worker(filelist)
 
 
 @beholder
-def start_worker():
+def start_worker(path):
     """Start child process."""
-    if MODE == 3:
-        name = make_sniff(path=NotImplemented)
-        dsname = shlex.quote(pathlib.Path(name).stem)
-    else:
-        dsname = dt.datetime.now().isoformat()
+    milestone_0 = time.time()
 
-    # above all, create directory for new dataset
+    # first, we sniff packets using Scapy
+    # or load data from an existing PCAP file
+    name = make_sniff(path)
+    pobj = pathlib.Path(name)
+    stem = pathlib.Path(name).stem
+    if pobj.suffix != '.pcap':
+        pext = pobj.suffix.strip('.pcap')
+        dsname = shlex.quote(f'{stem}_{pext}')
+    else:
+        dsname = shlex.quote(pathlib.Path(name).stem)
+    osname = shlex.quote(name)
+
+    # create directory for new dataset
     # and initialise fingerprint manager
-    path = pathlib.Path(f'/dataset/{dsname}')
+    path = pathlib.Path(f'/mad/dataset/{dsname}')
     path.mkdir(parents=True, exist_ok=True)
     fp = fingerprintManager()
 
@@ -262,22 +268,10 @@ def start_worker():
     # the back-end of webpage shall check this file
     with LOCK:
         with open('/mad/mad.log', 'at', 1) as file:
-            file.write(f'0 {dt.datetime.now().isoformat()} {path} {MODE}\n')
-
-    milestone_0 = time.time()
-
-    # first, we sniff packets using Scapy
-    # or load data from an existing PCAP file
-    if MODE != 3:
-        name = make_sniff(path=path)
+            file.write(f'0 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
 
     milestone_1 = time.time()
-    print(f'Sniffed for {milestone_1-milestone_0} seconds')
-
-    # # now, we send a signal to the parent process
-    # # to create a new process and continue
-    # if MODE == 3 and FILE is NotImplemented:
-    #     os.kill(PID, signal.SIGUSR1)
+    print(f'Bootstrapped for {milestone_1-milestone_0} seconds')
 
     # then, generate WebGraphic & fingerprints for each flow
     # through reconstructed functions and methods
@@ -306,7 +300,7 @@ def start_worker():
     # the back-end of webpage shall check this file periodically
     with LOCK:
         with open('/mad/mad.log', 'at', 1) as file:
-            file.write(f'1 {dt.datetime.now().isoformat()} {path} {MODE}\n')
+            file.write(f'1 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
 
     # finally, remove used temporary dataset files
     # but record files should be reserved for further usage
@@ -322,33 +316,23 @@ def make_sniff(path):
     """Load data or sniff packets."""
     # just sniff when prediction
     if MODE == 3:
-        # return '/data/wanyong-httpdump/20180408/20180309/wanyong.pcap000' ###
-        # if FILE is NotImplemented:
-        #     name = f'/usr/local/mad/pcap/{pathlib.Path(path).name}.pcap'
-        #     sniffed = scapy.all.sniff(timeout=TIMEOUT, iface=IFACE)
-        #     scapy.all.wrpcap(name, sniffed)
-        #     return name
-        # print(f"Now it's time for No.{COUNT} {FILE[COUNT]}")
-        # return FILE[COUNT]
-        print(f"Now it's time for No.{COUNT} {LIST[COUNT]}")
-        return LIST[COUNT]
+        print(f"Now it's time for {path}")
+        return path
 
-    # # extract file, or ...
-    # if pathlib.Path(PATH).is_file():
-    #     return PATH
+    # extract file, or ...
+    if os.path.isfile(path):
+        return path
 
-    # # files in a directory
-    # sniffed = list()
-    # for file in os.listdir(PATH):
-    #     try:
-    #         sniffed.extend(scapy.all.sniff(offline=f'{PATH}/{file}'))
-    #     except scapy.error.Scapy_Exception as error:
-    #         print('Error:', error)
-    # name = f'/usr/local/mad/pcap/{pathlib.Path(path).name}.pcap'
-    # scapy.all.wrpcap(name, sniffed)
-    # return name
-
-    raise NotImplementedError
+    # files in a directory
+    sniffed = list()
+    for item in os.scandir(path):
+        try:
+            sniffed.extend(scapy.all.sniff(offline=item.path))
+        except scapy.error.Scapy_Exception:
+            traceback.print_exc()
+    name = f'/mad/pcap/{os.path.split(path)[0]}.pcap'
+    scapy.all.wrpcap(name, sniffed)
+    return name
 
 
 def make_group(name, fp, path):
@@ -379,7 +363,7 @@ def make_group(name, fp, path):
     # dump record
     dump_stream(record, path=path)
     with open(f'{path}/groups.json', 'w') as file:
-        json.dump(record, file, cls=JSONEncoder)
+        json.dump(record, file, cls=JSONEncoder, indent=2)
 
     return record
 
@@ -396,9 +380,6 @@ def make_dataset(labels, fp, path):
         # make directory
         pathlib.Path(f'{path}/{kind}/0').mkdir(parents=True, exist_ok=True)  # safe
         pathlib.Path(f'{path}/{kind}/1').mkdir(parents=True, exist_ok=True)  # malicious
-        # pathlib.Path(f'/mad/report/{kind}').mkdir(parents=True, exist_ok=True)
-        # pathlib.Path(f'/usr/local/mad/retrain/stream/{kind}/0').mkdir(parents=True, exist_ok=True)
-        # pathlib.Path(f'/usr/local/mad/retrain/stream/{kind}/1').mkdir(parents=True, exist_ok=True)
         pathlib.Path(f'/mad/retrain/{kind}/0').mkdir(parents=True, exist_ok=True)
         pathlib.Path(f'/mad/retrain/{kind}/1').mkdir(parents=True, exist_ok=True)
 
@@ -412,7 +393,7 @@ def make_dataset(labels, fp, path):
 
             # fingerprint report
             with open(f'{path}/filter.json', 'w') as file:
-                json.dump(fpreport, file, cls=JSONEncoder)
+                json.dump(fpreport, file, cls=JSONEncoder, indent=2)
 
         # enumerate files
         for ipua in group_keys:
@@ -450,19 +431,14 @@ def run_cnn(path, retrain=False):
             with open('/mad/mad.log', 'at', 1) as file:
                 file.write(f'2 {dt.datetime.now().isoformat()} {path} {mode}\n')
 
-    # send signals
-    if MODE == 3:
-        try:
-            os.kill(PID, signal.SIGUSR1)
-        except ProcessLookupError:
-            traceback.print_exc()
-
     # run CNN subprocess
     for kind in {'Background_PC', }:
         cmd = [sys.executable, shlex.quote(os.path.join(ROOT, 'Training.py')),
                str(path), f'/mad/model/{kind}/', MODE_DICT[mode], kind, str(PID)]
-        # print(cmd) ###
-        subprocess.run(cmd)
+        try:
+            subprocess.check_call(cmd)
+        except subprocess.CalledProcessError:
+            traceback.print_exc()
 
     # things to do when retrain
     if retrain:

@@ -22,6 +22,7 @@
 - `dpkt`
 - `geocoder`
 - `peewee`
+- `pymysql`
 - `requests`
 - `scapy`
 - `tensorflow`
@@ -55,32 +56,31 @@ cd mad
 
 ```bash
 $ python run_mad.py -h
-usage: mad [-h] [-m {1,2,3,4,5}] [-i IFACE] [-p PATH] [-f FILE]
+usage: mad [-h] [-v] [-m {1,2,3,4,5}] [-p PATH] [-s SAMPLE]
 
 Malicious Application Detector
 
 optional arguments:
   -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
   -m {1,2,3,4,5}, --mode {1,2,3,4,5}
                         runtime mode
-  -i IFACE, --iface IFACE
-                        network interface for sniffing (mode=1) c.f.
-                        scapy.all.sniff
   -p PATH, --path PATH  input file name or directory (mode=1/2)
-  -f FILE, --file FILE  JSON file name w/ list of input file names (mode=3)
+  -s SAMPLE, --sample SAMPLE
+                        sample (mode=2, 5)
 ```
 
 ### API
 
 ```python
 from mad import main
-main(iface=None, mode=None, path=None, file=None)
+main(mode=3, path='/mad/pcap', sample=None)
 ```
 
 #### Args
 
 ```text
-iface - str, network interface for sniffing (mode=1) c.f. scapy.all.sniff
+iface - str, network interface for sniffing (mode=1) c.f. scapy.all.sniff (deprecated)
 mode - int, runtime mode
     |-- 1 -> initialisation
     |-- 2 -> migration
@@ -88,7 +88,8 @@ mode - int, runtime mode
     |-- 4 -> adaptation -- retain the models
     |-- 5 -> regeneration -- dev only
 path - str, input file name or directory (mode=1/2)
-file - str, JSON file name w/ list of input file names (mode=3)
+file - str, JSON file name w/ list of input file names (mode=3) (deprecated)
+sample - str, path of training sample(s) (mode=2, 5)
 ```
 
 #### Returns
@@ -197,11 +198,6 @@ None
     |   |           |-- IP_PORT_IP_PORT_TS.dat  # dataset file
     |   |           |-- ...
     |   |-- ...
-    |-- report/                                 # where CNN prediction report go\
-    |   |-- Background_PC/                      # Background_PC reports
-    |   |   |-- index.json                      # report index file
-    |   |   |-- YYYY-MM-DDTHH:MM:SS.US.json     # report named after dataset
-    |   |-- ...
     |-- model/                                  # where CNN model go
     |   |-- Background_PC/                      # Background_PC models
     |   |   |-- ...
@@ -221,6 +217,16 @@ None
 
 When commit, use `./make.sh 'commit message'`. The script will automatically
 retrieve useful files and copy them into `/apt` folder, which is the release
-repo hosting on [GitLab](http://gitlab.opensdns.com/contest/apt.git). Then run
+repo hosting on [GitLab](http://gitlab.opensdns.com/contest/apt). Then run
 `f2format` command to make them Python 3.5 compatible. Afterwards, it shall
 upload both repositories to where it belongs.
+
+## License
+
+This work (original development branch of the MAD project as hosted on
+[GitHub](https://github.com/JarryShaw/mad)) is licensed under
+[GNU GPLv3](LICENSE). The `f2format` transformed distribution branch, as hosted
+on [GitLab](http://gitlab.opensdns.com/contest/apt), is licensed under a
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License
+</a>.

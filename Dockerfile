@@ -1,11 +1,14 @@
 # basic info
 FROM ubuntu:16.04
-LABEL version="2018.11.14"
+LABEL version="2018.12.08"
 
 # install Python 3 & all requirements
 RUN apt-get update && apt-get install -y \
+    build-essential \
     git \
     libpcap-dev \
+    libffi-dev \
+    libssl-dev \
     python3 \
     python3-pip \
     scons \
@@ -18,6 +21,7 @@ RUN python3 -m pip install --upgrade --cache-dir=/tmp/pip \
     dpkt \
     geocoder \
     peewee \
+    pymysql \
     requests\
     scapy \
     tensorflow \
@@ -32,11 +36,12 @@ RUN git clone https://github.com/caesar0301/pkt2flow.git /tmp/pkt2flow \
  && rm -rf /tmp/pkt2flow
 
 # copy source files and archives
-COPY build/app /app
-COPY build/www /www
-ADD build/model.tar.gz /mad
-ADD build/retrain.tar.gz /mad
+ADD model.tar.gz /mad
+ADD model.tar.gz /mad
+COPY www /www
+COPY app /app
 
 # entry points
+ENV PYTHONIOENCODING "UTF-8"
 ENTRYPOINT ["python3", "/app/run_mad.py"]
 CMD ["--help"]

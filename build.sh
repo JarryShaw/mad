@@ -3,20 +3,26 @@
 set -x
 
 # prepare source files
-rm -rf build && \
+sudo rm -rf build && \
 mkdir -p build && \
-cp app/retrain.tar.gz build && \
+cp -rf .dockerignore \
+       docker-compose.yml \
+       Dockerfile \
+       model.tar.gz \
+       retrain.tar.gz build && \
 mkdir -p build/app && \
 cp -rf app/mad.py \
        app/make_stream.py \
        app/run_mad.py \
+       app/SQLManager.py \
        app/Training.py \
+       app/utils.py \
        app/DataLabeler \
        app/fingerprints \
        app/StreamManager \
        app/webgraphic build/app/ && \
 mkdir -p build/www && \
-cp -rf www build/www/
+cp -rf www/* build/www/
 
 # de-f-string
 pipenv run f2format -n build
@@ -27,7 +33,11 @@ fi
 
 # build docker
 if [[ -z $1 ]] ; then
-    sudo docker build -t mad .
+    sudo docker build -t mad build
 else
-    sudo docker build -t mad:$1 .
+    sudo docker build -t mad:$1 build
 fi
+
+# run docker-compose
+cd build
+sudo docker-compose up

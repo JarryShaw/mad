@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  mad:
+    build: .
+    links:
+      - db
+    volumes:
+      - /data/httpdump:/mad/pcap
+    command: --path /mad/pcap
+    restart: "always"
+  db:
+    image: "mysql:5.7"
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=zft13917331612
+      - MYSQL_DATABASE=mad
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - default
