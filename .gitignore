@@ -1,5 +1,4 @@
 
-*.icloud
 src/
 release/
 test*
@@ -8,6 +7,12 @@ nohop.out
 Pipfile.lock
 fingerprints/log
 fingerprints/fingerprints
+
+# uploaded to iCloud
+*.icloud
+model.tar.gz
+retrain.tar.gz
+latest.json
 
 # Created by https://www.gitignore.io/api/python,macos,windows,linux,vim,pycharm,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=python,macos,windows,linux,vim,pycharm,visualstudiocode
@@ -309,3 +314,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/python,macos,windows,linux,vim,pycharm,visualstudiocode
+model.tar.gz
