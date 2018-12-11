@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from peewee import (BooleanField, CharField, DateTimeField, IntegerField,
-                    Model, MySQLDatabase, TextField, FloatField)
+                    Model, MySQLDatabase, TextField, FloatField, fn)
 
 db = MySQLDatabase(
     database='deepocean',
@@ -53,6 +53,10 @@ def saveLoss(loss, time):
 
 
 def saveProcessedFile(file):
+    count = Mad_Report.select().count()
+    while count >= 600:
+        Mad_Report.delete().where(Mad_Report.id == fn.MIN(Mad_Report.id)).execute()
+        count = Mad_Report.select().count()
     tmp = Mad_ProcessedFile(
         name=file
     )
