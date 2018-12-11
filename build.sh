@@ -33,9 +33,9 @@ fi
 
 # build docker
 if [[ -z $1 ]] ; then
-    sudo docker build -t mad build
+    sudo docker build --force-rm --tag mad build
 else
-    sudo docker build -t mad:$1 build
+    sudo docker build --force-rm --tag mad:$1 build
 fi
 
 # run docker-compose
