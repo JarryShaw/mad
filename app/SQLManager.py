@@ -53,12 +53,12 @@ def saveLoss(loss, time):
 
 
 def saveProcessedFile(file):
-    count = Mad_ProcessedFile.select().count()
-    minimum = Mad_ProcessedFile.select(fn.MIN(Mad_ProcessedFile.id)).scalar()
+    count = Mad_ProcessedFile.select().count()  # pylint: disable=E1120
+    minimum = Mad_ProcessedFile.select(fn.MIN(Mad_ProcessedFile.id)).scalar()  # pylint: disable=E1120
     while count >= 600:
         Mad_ProcessedFile.delete().where(Mad_ProcessedFile.id == minimum).execute()
         minimum += 1
-        count = Mad_ProcessedFile.select().count()
+        count = Mad_ProcessedFile.select().count()  # pylint: disable=E1120
     tmp = Mad_ProcessedFile(
         name=file
     )
@@ -66,7 +66,7 @@ def saveProcessedFile(file):
 
 
 def getProcessedFile():
-    file = Mad_ProcessedFile.select(Mad_ProcessedFile.name).where(Mad_ProcessedFile.id == Mad_ProcessedFile.select(fn.MAX(Mad_ProcessedFile.id)).scalar()).dicts()
+    file = Mad_ProcessedFile.select(Mad_ProcessedFile.name).where(Mad_ProcessedFile.id == Mad_ProcessedFile.select(fn.MAX(Mad_ProcessedFile.id)).scalar()).dicts()  # pylint: disable=E1120 # noqa
     return file[0]['name']
 
 

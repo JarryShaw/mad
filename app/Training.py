@@ -18,7 +18,7 @@ import tensorflow as tf
 from user_agents import parse as _parse
 
 from make_stream import dump_stream, load_stream
-from SQLManager import saveReports
+from SQLManager import saveLoss, saveReports
 from StreamManager.StreamManager4 import StreamManager
 from utils import JSONEncoder, object_hook
 
@@ -569,17 +569,18 @@ def main(unused):
         val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
         loss = 1 - (len(val)/sum(predicted_classes) if sum(predicted_classes) else 1.0)
         # print('### Testing:', len(val), val, sum(predicted_classes), predicted_classes) ###
-        loss_record = list()
-        if os.path.isfile("/mad/loss.json"):
-            with open("/mad/loss.json", "r") as file:
-                loss_record = json.load(file, object_hook=object_hook)
-        print("loss:", loss)
-        loss_record.append(dict(
-            time=stem,
-            loss=loss,
-        ))
-        with open("/mad/loss.json", "w") as file:
-            json.dump(loss_record, file, cls=JSONEncoder, indent=2)
+        saveLoss(loss, stem)
+        # loss_record = list()
+        # if os.path.isfile("/mad/loss.json"):
+        #     with open("/mad/loss.json", "r") as file:
+        #         loss_record = json.load(file, object_hook=object_hook)
+        # print("loss:", loss)
+        # loss_record.append(dict(
+        #     time=stem,
+        #     loss=loss,
+        # ))
+        # with open("/mad/loss.json", "w") as file:
+        #     json.dump(loss_record, file, cls=JSONEncoder, indent=2)
         if loss > 0.5:
             print(f'{DataPath} needs retrain...')
             try:

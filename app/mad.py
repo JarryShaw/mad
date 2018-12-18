@@ -67,6 +67,7 @@ import scapy.all
 
 from fingerprints.fingerprintsManager import fingerprintManager
 from make_stream import JSONEncoder, dump_stream, load_stream, object_hook
+from SQLManager import getProcessedFile, saveProcessedFile
 from StreamManager.StreamManager4 import StreamManager
 from utils import JSONEncoder, object_hook
 from webgraphic.webgraphic import webgraphic
@@ -80,15 +81,6 @@ else:
     CPU_CNT = os.cpu_count() or 1
 
 
-@functools.total_ordering
-class minstr(str):
-
-    def __lt__(self, value):
-        if isinstance(value, str):
-            return False
-        return NotImplemented
-
-
 # PID
 PID = os.getpid()
 # file root path
@@ -98,7 +90,7 @@ MODE = 3
 # path of input data
 PATH = '/mad/pcap'
 # latest processing file name
-MAX_FILE = minstr()
+MAX_FILE = getProcessedFile()
 # file lock
 LOCK = multiprocessing.Lock()
 # retrain flag
@@ -154,12 +146,12 @@ def main(mode=3, path='/mad/pcap', sample=None):
 
     # check log file
     global MAX_FILE
-    if os.path.isfile('/mad/mad.log'):
-        name = MAX_FILE
-        with open('/mad/mad.log') as file:
-            for line in filter(lambda l: l.startswith('1'), file):
-                _, _, _, name, _ = shlex.split(line)
-        MAX_FILE = name
+    # if os.path.isfile('/mad/mad.log'):
+    #     name = MAX_FILE
+    #     with open('/mad/mad.log') as file:
+    #         for line in filter(lambda l: l.startswith('1'), file):
+    #             _, _, _, name, _ = shlex.split(line)
+    #     MAX_FILE = name
     print(f'Current MAX_FILE: {MAX_FILE!r}')
 
     # update file list
@@ -191,6 +183,7 @@ def main(mode=3, path='/mad/pcap', sample=None):
         with contextlib.suppress(ValueError):
             MAX_FILE = max(filelist)
         print(f'Current MAX_FILE: {MAX_FILE!r}')
+
 
 def retrain_cnn(*args):
     """Retrain the CNN model."""
@@ -301,6 +294,7 @@ def start_worker(path):
     with LOCK:
         with open('/mad/mad.log', 'at', 1) as file:
             file.write(f'1 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
+        saveProcessedFile(name)
 
     # finally, remove used temporary dataset files
     # but record files should be reserved for further usage

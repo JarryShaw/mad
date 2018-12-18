@@ -2,6 +2,11 @@
 FROM ubuntu:16.04
 LABEL version="2018.12.08"
 
+# set up environment variables
+ENV LANG "C.UTF-8"
+ENV LC_ALL "C.UTF-8"
+ENV PYTHONIOENCODING "UTF-8"
+
 # install Python 3 & all requirements
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -42,6 +47,5 @@ COPY www /www
 COPY app /app
 
 # entry points
-ENV PYTHONIOENCODING "UTF-8"
 ENTRYPOINT ["python3", "/app/run_mad.py"]
 CMD ["--help"]
