@@ -11,6 +11,7 @@ cp -rf .dockerignore \
        build.sh \
        CHANGELOG.md \
        CONTRIBUTING.md \
+       docker-compose.yml \
        Dockerfile \
        model.tar.gz \
        retrain.tar.gz apt && \
