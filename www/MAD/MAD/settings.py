@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'index.apps.IndexConfig',
+    'inner_detail.apps.InnerDetailConfig',
+    'more.apps.MoreConfig',
+    'outer_detail.apps.OuterDetailConfig',
+    'ua_detail.apps.UaDetailConfig',
 ]
 
 MIDDLEWARE = [
@@ -75,11 +80,12 @@ WSGI_APPLICATION = 'MAD.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'deepocean',
         'USER': 'root',
         'PASSWORD': 'zft13917331612',
-        'HOST': 'localhost',
+        # 'HOST': 'localhost',
+        'HOST': '202.120.1.154',
         'PORT': '3306',
     }
 }
