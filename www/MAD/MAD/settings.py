@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'MAD.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'deepocean',
         'USER': 'root',
         'PASSWORD': 'zft13917331612',
