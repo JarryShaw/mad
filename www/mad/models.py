@@ -18,7 +18,13 @@ class Mad_Report(models.Model):
     browser = models.CharField(max_length=255)
     type = models.CharField(max_length=255)
 
+    class Meta:
+        db_table = 'mad_report'
+
 
 class Mad_Loss(models.Model):
     time = models.DateTimeField()
     loss = models.FloatField()
+
+    class Meta:
+        db_table = 'mad_loss'
