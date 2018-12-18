@@ -8,29 +8,31 @@ ENV LC_ALL "C.UTF-8"
 ENV PYTHONIOENCODING "UTF-8"
 
 # install Python 3 & all requirements
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    git \
-    libpcap-dev \
-    libffi-dev \
-    libssl-dev \
-    python3 \
-    python3-pip \
-    scons \
+RUN apt-get update \
+ && apt-get install -y \
+        build-essential \
+        git \
+        libpcap-dev \
+        libffi-dev \
+        libssl-dev \
+        python3 \
+        python3-pip \
+        scons \
  && rm -rf /var/lib/apt/lists/*
 RUN python3 -m pip install --upgrade --cache-dir=/tmp/pip \
-    pip \
-    wheel \
-    setuptools \
-    Django \
-    dpkt \
-    geocoder \
-    peewee \
-    pymysql \
-    requests\
-    scapy \
-    tensorflow \
-    user-agents \
+        pip \
+        wheel \
+        setuptools \
+ && python3 -m pip install --upgrade --cache-dir=/tmp/pip \
+        Django \
+        dpkt \
+        geocoder \
+        peewee \
+        pymysql \
+        requests\
+        scapy \
+        tensorflow \
+        user-agents \
  && rm -rf /tmp/pip
 
 # build dependency
