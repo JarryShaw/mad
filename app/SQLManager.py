@@ -53,14 +53,21 @@ def saveLoss(loss, time):
 
 
 def saveProcessedFile(file):
-    count = Mad_Report.select().count()
+    count = Mad_ProcessedFile.select().count()
+    minimum = Mad_ProcessedFile.select(fn.MIN(Mad_ProcessedFile.id)).scalar()
     while count >= 600:
-        Mad_Report.delete().where(Mad_Report.id == fn.MIN(Mad_Report.id)).execute()
-        count = Mad_Report.select().count()
+        Mad_ProcessedFile.delete().where(Mad_ProcessedFile.id == minimum).execute()
+        minimum += 1
+        count = Mad_ProcessedFile.select().count()
     tmp = Mad_ProcessedFile(
         name=file
     )
     tmp.save()
+
+
+def getProcessedFile():
+    file = Mad_ProcessedFile.select(Mad_ProcessedFile.name).where(Mad_ProcessedFile.id == Mad_ProcessedFile.select(fn.MAX(Mad_ProcessedFile.id)).scalar()).dicts()
+    return file[0]['name']
 
 
 def saveReport(report):
