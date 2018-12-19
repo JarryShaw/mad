@@ -216,9 +216,10 @@ def make_worker(filelist, sample=None):
         print('Current worker pool:')
         pprint.pprint(sorted(filelist))
         if CPU_CNT <= 1:
-            return [start_worker(file) for file in sorted(filelist)]
+            [start_worker(file) for file in sorted(filelist)]
         else:
-            return multiprocessing.Pool(processes=CPU_CNT).map(start_worker, sorted(filelist))
+            multiprocessing.Pool(processes=CPU_CNT).map(start_worker, sorted(filelist))
+        return
 
     # or force to run retrain process
     if MODE == 4:
