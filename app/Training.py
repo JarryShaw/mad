@@ -614,7 +614,7 @@ def main(unused):
             # shutil.copy(os.path.join(DataPath, "stream", item["name"]+".pcap"),
             #             os.path.join("/mad/retrain/stream", T, str(flag), name+".pcap"))
         with open(os.path.join(DataPath, "stream.json"), 'w') as file:
-            json.dump(retrain_index, file, cls=JSONEncoder, index=2)
+            json.dump(retrain_index, file, cls=JSONEncoder, indent=2)
         shutil.copy(os.path.join(DataPath, "stream.json"), '/mad/retrain/stream.json')
         # save reports to database
         report = list()
