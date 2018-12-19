@@ -96,8 +96,6 @@ MAX_FILE = getProcessedFile()
 LOCK = multiprocessing.Lock()
 # retrain flag
 RETRAIN = multiprocessing.Value('B', False)
-# devel mode
-DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
 
 FLOW_DICT = {
     # 'Browser_PC': lambda stream: stream.GetBrowserGroup_PC(),
@@ -173,6 +171,7 @@ def main(mode=3, path='/mad/pcap', sample=None):
     print(f'Current MAX_FILE: {MAX_FILE!r}')
 
     # break in devel mode or others
+    DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
     if DEVEL or MODE != 3:
         return
 
