@@ -46,6 +46,7 @@
         |-- stream.json                         # stream index for retrain
 
 """
+import ast
 import collections
 import contextlib
 import datetime as dt
@@ -95,6 +96,8 @@ MAX_FILE = getProcessedFile()
 LOCK = multiprocessing.Lock()
 # retrain flag
 RETRAIN = multiprocessing.Value('B', False)
+# devel mode
+DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
 
 FLOW_DICT = {
     # 'Browser_PC': lambda stream: stream.GetBrowserGroup_PC(),
@@ -169,9 +172,11 @@ def main(mode=3, path='/mad/pcap', sample=None):
         MAX_FILE = max(filelist)
     print(f'Current MAX_FILE: {MAX_FILE!r}')
 
-    # enter main loop
-    if MODE != 3:
+    # break in devel mode or others
+    if DEVEL or MODE != 3:
         return
+
+    # enter main loop
     while True:
         filelist = list()
         for item in os.scandir(PATH):
