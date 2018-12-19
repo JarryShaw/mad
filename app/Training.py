@@ -569,7 +569,8 @@ def main(unused):
         val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
         loss = 1 - (len(val)/sum(predicted_classes) if sum(predicted_classes) else 1.0)
         # print('### Testing:', len(val), val, sum(predicted_classes), predicted_classes) ###
-        saveLoss(loss, stem)
+        dobj = dt.datetime.strptime(stem, r'%Y_%M%d_%H%m_%S').isoformat()
+        saveLoss(loss, dobj)
         # loss_record = list()
         # if os.path.isfile("/mad/loss.json"):
         #     with open("/mad/loss.json", "r") as file:
