@@ -1,6 +1,6 @@
 # basic info
 FROM ubuntu:16.04
-LABEL version="2018.12.08"
+LABEL version="2018.12.20"
 
 # set up environment variables
 ENV LANG "C.UTF-8"
