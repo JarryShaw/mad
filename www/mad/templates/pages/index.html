@@ -6,14 +6,14 @@
 	<title>MAD|主页</title>
 
 	<!-- Favicon -->
-	<link rel="shortcut icon" href="../img/favicon.png">
-	<link rel="icon" href="../img/favicon.png" type="image/x-icon">
+	<link rel="shortcut icon" href="/static/img/favicon.png">
+	<link rel="icon" href="/static/img/favicon.png" type="image/x-icon">
 	<!-- Morris Charts CSS -->
-    <link href="../vendors/bower_components/morris.js/morris.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/vendors/bower_components/morris.js/morris.css" rel="stylesheet" type="text/css"/>
     <!-- vector map CSS -->
-	<link href="../vendors/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" type="text/css"/>
+	<link href="/static/vendors/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" type="text/css"/>
 	<!-- Custom CSS -->
-	<link href="dist/css/style.css" rel="stylesheet" type="text/css">
+	<link href="/static/dist/css/style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -29,7 +29,7 @@
 				<div class="nav-header pull-left">
 					<div class="logo-wrap">
 						<a target="_blank" href="index.html">
-							<img class="brand-img" src="../img/logo.png" alt="brand"/>
+							<img class="brand-img" src="/static/img/logo.png" alt="brand"/>
                             <span class="brand-text">MAD</span>
 						</a>
 					</div>
@@ -54,28 +54,36 @@
 									</button>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-									<button class="btn btn-success btn-rounded btn-block btn-anim" onclick="window.location='inner_detail.html'">
-										<i class="icon-screen-desktop"></i>
-										<span class="btn-text">主机检测</span>
-									</button>
+                                    <a  href="/inner_detail/">
+                                        <button class="btn btn-success btn-rounded btn-block btn-anim">
+                                            <i class="icon-screen-desktop"></i>
+                                            <span class="btn-text">主机检测</span>
+                                        </button>
+                                    </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-									<button class="btn btn-success btn-rounded btn-block btn-anim" onclick="window.location='ua_detail.html'">
-										<i class="icon-grid"></i>
-										<span class="btn-text">恶意软件</span>
-									</button>
+                                    <a  href="/ua_detail/">
+                                        <button class="btn btn-success btn-rounded btn-block btn-anim">
+                                            <i class="icon-grid"></i>
+                                            <span class="btn-text">恶意软件</span>
+                                        </button>
+                                    </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-									<button class="btn btn-success btn-rounded btn-block btn-anim" onclick="window.location='outer_detail.html'">
-										<i class="glyphicon glyphicon-cloud"></i>
-										<span class="btn-text">恶意服务器</span>
-									</button>
+                                    <a  href="/outer_detail/">
+                                        <button class="btn btn-success btn-rounded btn-block btn-anim">
+                                            <i class="glyphicon glyphicon-cloud"></i>
+                                            <span class="btn-text">恶意服务器</span>
+                                        </button>
+                                    </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-									<button class="btn btn-warning btn-rounded btn-block btn-anim" onclick="window.location='more.html'">
-										<i class="ti-more-alt"></i>
-										<span class="btn-text">更多</span>
-									</button>
+                                    <a  href="/more/">
+                                        <button class="btn btn-warning btn-rounded btn-block btn-anim" onclick="window.location='more.html'">
+                                            <i class="ti-more-alt"></i>
+                                            <span class="btn-text">更多</span>
+                                        </button>
+                                    </a>
 								</div>
 								<div class="col-sm-1 col-xs-0 mt-15"></div>
 							</div>
@@ -185,42 +193,42 @@
 	<!-- JavaScript -->
 
     <!-- jQuery -->
-    <script src="../vendors/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="../vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 	<!-- Vector Maps JavaScript -->
-    <script src="../vendors/vectormap/jquery-jvectormap-2.0.2.min.js"></script>
-    <script src="../vendors/vectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="../vendors/vectormap/jquery-jvectormap-in-mill.js"></script>
-    <script src="../vendors/vectormap/jquery-jvectormap-uk-mill-en.js"></script>
-    <script src="../vendors/vectormap/jquery-jvectormap-us-aea-en.js"></script>
-    <script src="../vendors/vectormap/jquery-jvectormap-au-mill.js"></script>
-    <script src="dist/js/index_map.js"></script>
+    <script src="/static/vendors/vectormap/jquery-jvectormap-2.0.2.min.js"></script>
+    <script src="/static/vendors/vectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="/static/vendors/vectormap/jquery-jvectormap-in-mill.js"></script>
+    <script src="/static/vendors/vectormap/jquery-jvectormap-uk-mill-en.js"></script>
+    <script src="/static/vendors/vectormap/jquery-jvectormap-us-aea-en.js"></script>
+    <script src="/static/vendors/vectormap/jquery-jvectormap-au-mill.js"></script>
+    <script src="/static/dist/js/index_map.js"></script>
 
     <!-- Morris Charts JavaScript -->
-    <script src="../vendors/bower_components/raphael/raphael.min.js"></script>
-    <script src="../vendors/bower_components/morris.js/morris.min.js"></script>
+    <script src="/static/vendors/bower_components/raphael/raphael.min.js"></script>
+    <script src="/static/vendors/bower_components/morris.js/morris.min.js"></script>
 
 	<!-- Slimscroll JavaScript -->
-	<script src="dist/js/jquery.slimscroll.js"></script>
+	<script src="/static/dist/js/jquery.slimscroll.js"></script>
 
 	<!-- Fancy Dropdown JS -->
-	<script src="dist/js/dropdown-bootstrap-extended.js"></script>
+	<script src="/static/dist/js/dropdown-bootstrap-extended.js"></script>
 
 	<!-- Owl JavaScript -->
-	<script src="../vendors/bower_components/owl.carousel/dist/owl.carousel.min.js"></script>
+	<script src="/static/vendors/bower_components/owl.carousel/dist/owl.carousel.min.js"></script>
 
 	<!-- Switchery JavaScript -->
-	<script src="../vendors/bower_components/switchery/dist/switchery.min.js"></script>
+	<script src="/static/vendors/bower_components/switchery/dist/switchery.min.js"></script>
 
-	<script src="dist/js/echarts.min.js"></script>
-	<script src="dist/js/dataTool.min.js"></script>
+	<script src="/static/dist/js/echarts.min.js"></script>
+	<script src="/static/dist/js/dataTool.min.js"></script>
 
 	<!-- Init JavaScript -->
-	<script src="dist/js/index_init.js"></script>
-	<script src="dist/js/index_data.js"></script>
+	<script src="/static/dist/js/index_init.js"></script>
+	<script src="/static/dist/js/index_data.js"></script>
 </body>
 
 </html>

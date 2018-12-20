@@ -55,7 +55,7 @@ ROOT_URLCONF = 'www.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'mad/templates/pages')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,13 +76,13 @@ WSGI_APPLICATION = 'www.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'deepocean',
-        'USER': 'root',
-        'PASSWORD': 'zft13917331612',
-        'HOST': 'localhost',
-        # 'HOST': '202.120.1.154',
-        'PORT': '3306',
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'deepocean',
+        # 'USER': 'root',
+        # 'PASSWORD': 'zft13917331612',
+        # 'HOST': 'localhost',
+        # # 'HOST': '202.120.1.154',
+        # 'PORT': '3306',
     }
 }
 
@@ -124,3 +124,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'mad/templates/static'),
+    os.path.join(BASE_DIR, 'mad/templates/static/vendors'),
+    os.path.join(BASE_DIR, 'mad/templates/static/img'),
+    os.path.join(BASE_DIR, 'mad/templates/static/dist')
+]

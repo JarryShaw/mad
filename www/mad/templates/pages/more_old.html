@@ -152,16 +152,6 @@
 												</thead>
 
 												<tbody id="results-display">
-                                                {% for report in reports %}
-                                                    <tr>
-                                                        <td>report.srcIP</td>
-                                                        <td>report.srcPort</td>
-                                                        <td>report.dstIP</td>
-                                                        <td>report.dstPort</td>
-                                                        <td>report.UA</td>
-                                                        <td>report.time</td>
-                                                    </tr>
-                                                {% endfor %}
 												</tbody>
 											</table>
 										</div>
@@ -281,14 +271,7 @@
 	<script src="/static/vendors/bower_components/datatables.net-buttons/js/buttons.html5.min.js"></script>
 	<script src="/static/vendors/bower_components/datatables.net-buttons/js/buttons.print.min.js"></script>
 	<!--<script src="dist/js/export-table-data.js"></script>-->
-	<script type="text/javascript">
-        $('#example').DataTable( {
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'csv', 'excel', 'pdf', 'print'
-            ]
-        } );
-    </script>
+	<script src="/static/dist/js/download.js"></script>
 
 	<!-- Slimscroll JavaScript -->
 	<script src="/static/dist/js/jquery.slimscroll.js"></script>
