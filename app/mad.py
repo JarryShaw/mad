@@ -46,6 +46,7 @@
         |-- stream.json                         # stream index for retrain
 
 """
+import ast
 import collections
 import contextlib
 import datetime as dt
@@ -169,9 +170,12 @@ def main(mode=3, path='/mad/pcap', sample=None):
         MAX_FILE = max(filelist)
     print(f'Current MAX_FILE: {MAX_FILE!r}')
 
-    # enter main loop
-    if MODE != 3:
+    # break in devel mode or others
+    DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
+    if DEVEL or MODE != 3:
         return
+
+    # enter main loop
     while True:
         filelist = list()
         for item in os.scandir(PATH):
@@ -216,9 +220,10 @@ def make_worker(filelist, sample=None):
         print('Current worker pool:')
         pprint.pprint(sorted(filelist))
         if CPU_CNT <= 1:
-            return [start_worker(file) for file in sorted(filelist)]
+            [start_worker(file) for file in sorted(filelist)]
         else:
-            return multiprocessing.Pool(processes=CPU_CNT).map(start_worker, sorted(filelist))
+            multiprocessing.Pool(processes=CPU_CNT).map(start_worker, sorted(filelist))
+        return
 
     # or force to run retrain process
     if MODE == 4:

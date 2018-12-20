@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from peewee import (BooleanField, CharField, DateTimeField, IntegerField,
-                    Model, MySQLDatabase, TextField, FloatField, fn)
+import functools
+
+from peewee import (BooleanField, CharField, DateTimeField, FloatField,
+                    IntegerField, Model, MySQLDatabase, TextField, fn)
 
 db = MySQLDatabase(
     database='deepocean',
@@ -11,6 +13,12 @@ db = MySQLDatabase(
     passwd='zft13917331612',
     charset='utf8'
 )
+
+
+@functools.total_ordering
+class minstr:
+    def __gt__(self, other):
+        return False
 
 
 class BaseModel(Model):
@@ -67,7 +75,10 @@ def saveProcessedFile(file):
 
 def getProcessedFile():
     file = Mad_ProcessedFile.select(Mad_ProcessedFile.name).where(Mad_ProcessedFile.id == Mad_ProcessedFile.select(fn.MAX(Mad_ProcessedFile.id)).scalar()).dicts()  # pylint: disable=E1120 # noqa
-    return file[0]['name']
+    try:
+        return file[0]['name']
+    except IndexError:
+        return minstr()
 
 
 def saveReport(report):

@@ -25,6 +25,7 @@ def get_parser():
     parser.add_argument('-s', '--sample', action='store', type=str,
                         help='sample (mode=2, 5)')
     parser.add_argument('-t', '--tty', action='store_true', help=argparse.SUPPRESS)
+    parser.add_argument('-d', '--devel', action='store_true', help=argparse.SUPPRESS)
 
     return parser
 
@@ -35,4 +36,5 @@ if __name__ == '__main__':
     if args.tty:
         shell = os.environ.get('SHELL', 'sh')
         os.execlp(shell, shell)
+    os.environ['MAD_DEVEL'] = str(args.devel)
     sys.exit(main(mode=args.mode, path=args.path, sample=args.sample))
