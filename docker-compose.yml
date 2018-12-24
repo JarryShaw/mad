@@ -1,29 +1,36 @@
-version: '3'
+version: "3"
 
 services:
-  mad:
-    image: mad
+  mad_app:
     build: .
+    command: ["--path", "/mad/pcap"]
+    image: mad
     links:
-      - db
+      - mad_db
+    restart: on-failure
     volumes:
       - /data/httpdump:/mad/pcap
-    command: python3 /app/run_mad.py --path /mad/pcap
-    restart: always
-  www:
-    image: mad
-    ports:
-      - "8080:80"
-    links:
-      - db
+  mad_www:
     depends_on:
-      - db
-    command: python3 /www/manage.py migrate; python3 /www/manage.py runserver 0.0.0.0:80
-  db:
-    image: "mysql:5.7"
-    expose: 3306
+      - mad_db
+    entrypoint: /www/init.sh
+    image: mad
+    links:
+      - mad_db
+    ports:
+      - 8080:80
+    restart: on-failure
+  mad_db:
+    container_name: mad_db
     environment:
       - MYSQL_ROOT_PASSWORD=zft13917331612
       - MYSQL_DATABASE=deepocean
+    expose:
+      - 3306
+    image: mysql:5.7
     networks:
       - default
+
+networks:
+  default:
+    driver: bridge

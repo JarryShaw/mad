@@ -1,6 +1,9 @@
 [submodule "apt"]
 	path = apt
 	url = http://gitlab.opensdns.com/contest/mad
-[submodule "archive"]
-	path = archive
-	url = https://github.com/JarryShaw/mad/tree/archive
+[submodule "mad"]
+	path = archive/mad
+	url = https://github.com/JarryShaw/mad/tree/archive/mad
+[submodule "web"]
+	path = archve/web
+	url = https://github.com/JarryShaw/mad/tree/archive/web
