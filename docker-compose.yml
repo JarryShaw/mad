@@ -4,6 +4,7 @@ services:
   mad_app:
     build: .
     command: ["--path", "/mad/pcap"]
+    container_name: mad_app
     image: mad
     links:
       - mad_db
@@ -11,6 +12,7 @@ services:
     volumes:
       - /data/httpdump:/mad/pcap
   mad_www:
+    container_name: mad_www
     depends_on:
       - mad_db
     entrypoint: /www/init.sh
@@ -18,7 +20,7 @@ services:
     links:
       - mad_db
     ports:
-      - 8080:80
+      - 8888:80
     restart: on-failure
   mad_db:
     container_name: mad_db
