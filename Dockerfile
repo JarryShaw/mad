@@ -48,6 +48,6 @@ ADD model.tar.gz /mad
 COPY www /www
 COPY app /app
 
-# entry points
-ENTRYPOINT ["python3", "/app/run_mad.py"]
-CMD ["--help"]
+# # entry points
+# ENTRYPOINT ["python3", "/app/run_mad.py"]
+# CMD ["--help"]

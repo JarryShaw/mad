@@ -2,21 +2,28 @@ version: '3'
 
 services:
   mad:
+    image: mad
     build: .
     links:
       - db
     volumes:
       - /data/httpdump:/mad/pcap
-    command: --path /mad/pcap
-    restart: "always"
+    command: python3 /app/run_mad.py --path /mad/pcap
+    restart: always
+  www:
+    image: mad
+    ports:
+      - "8080:80"
+    links:
+      - db
+    depends_on:
+      - db
+    command: python3 /www/manage.py migrate; python3 /www/manage.py runserver 0.0.0.0:80
   db:
     image: "mysql:5.7"
-    expose:
-      - "3306"
+    expose: 3306
     environment:
       - MYSQL_ROOT_PASSWORD=zft13917331612
-      - MYSQL_DATABASE=mad
-    volumes:
-      - ./mysql/init:/docker-entrypoint-initdb.d
+      - MYSQL_DATABASE=deepocean
     networks:
       - default
