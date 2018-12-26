@@ -5,6 +5,7 @@ version: "3"
 services:
   mad_app:
     build: .
+    container_name: mad_app
     depends_on:
       - mad_www
     entrypoint: ["wait-for-it", "mad_www:8888", "--", "python3", "/app/run_mad.py"]
