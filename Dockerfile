@@ -11,7 +11,6 @@ ENV PYTHONIOENCODING "UTF-8"
 RUN apt-get update \
  && apt-get install -y \
         build-essential \
-        curl \
         git \
         libpcap-dev \
         libffi-dev \
@@ -44,8 +43,11 @@ RUN git clone https://github.com/caesar0301/pkt2flow.git /tmp/pkt2flow \
  && rm -rf /tmp/pkt2flow
 
 # get wait-for-it
-RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /usr/local/bin/wait-for-it \
- && chmod +x /usr/local/bin/wait-for-it.sh
+RUN git clone https://github.com/vishnubob/wait-for-it.git /tmp/wait-for-it \
+ && cd /tmp/wait-for-it \
+ && cp wait-for-it.sh /usr/local/bin/wait-for-it \
+ && chmod +x /usr/local/bin/wait-for-it \
+ && rm -rf /tmp/wait-for-it
 
 # copy source files and archives
 ADD model.tar.gz /mad
