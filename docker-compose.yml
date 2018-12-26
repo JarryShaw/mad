@@ -3,11 +3,14 @@ version: "3"
 
 # MAD sercives
 services:
-  mad_app:
+  mad_base:
     build: .
-    command: ["--path", "/mad/pcap"]
-    container_name: mad_app
+    container_name: mad_base
     image: mad
+  mad_app:
+    command: ["--path", "/mad/pcap"]
+    depends_on:
+      - mad_www
     links:
       - mad_db
     restart: on-failure
@@ -16,6 +19,7 @@ services:
   mad_www:
     container_name: mad_www
     depends_on:
+      - mad_base
       - mad_db
     entrypoint: bash /www/init.sh
     image: mad
