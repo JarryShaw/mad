@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<title>MAD|恶意软件</title>
+	<title>MAD|主机检测</title>
 
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="/static/img/favicon.png">
@@ -58,17 +58,17 @@
                                     </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-                                    <a  href="/inner_detail/">
-                                        <button class="btn btn-success btn-rounded btn-block btn-anim">
-                                            <i class="icon-screen-desktop"></i>
-                                            <span class="btn-text">主机检测</span>
-                                        </button>
-                                    </a>
+									<button class="btn btn-default btn-rounded btn-block disabled">
+										<span class="btn-text">主机检测</span>
+									</button>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-									<button class="btn btn-default btn-rounded btn-block disabled">
-										<span class="btn-text">恶意软件</span>
-									</button>
+                                    <a  href="/ua_detail/">
+                                        <button class="btn btn-success btn-rounded btn-block btn-anim">
+                                            <i class="icon-grid"></i>
+                                            <span class="btn-text">恶意软件</span>
+                                        </button>
+                                    </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
                                     <a  href="/outer_detail/">
@@ -103,20 +103,12 @@
 											<table id="datable_1" class="table table-hover display  pb-30">
 												<thead>
 													<tr>
-														<th>名称</th>
-														<!--<th>类别</th>-->
-														<th>首次活动时间</th>
-														<th>最后活动时间</th>
+														<th>主机IP地址</th>
+														<th>恶意UA数量</th>
+														<th>查看所有UA</th>
 													</tr>
 												</thead>
 												<tbody id="results-display">
-                                                {% for report in reports %}
-                                                    <tr>
-                                                        <td>report.name</td>
-                                                        <td>report.stime</td>
-                                                        <td>report.etime</td>
-                                                    </tr>
-                                                {% endfor %}
 												</tbody>
 											</table>
 										</div>
@@ -127,6 +119,25 @@
 					</div>
 				</div>
 				<!-- /Row -->
+
+				<!--<div class="row">-->
+					<!--<div class="col-lg-12">-->
+						<!--<div class="panel panel-default card-view panel-refresh">-->
+							<!--<div class="panel-heading">-->
+								<!--<div class="pull-left">-->
+									<!--<h6 class="panel-title txt-dark">主机-服务器连接图</h6>-->
+								<!--</div>-->
+								<!--<div class="clearfix"></div>-->
+							<!--</div>-->
+							<!--<div class="panel-wrapper collapse in">-->
+								<!--<div class="panel-body">-->
+									<!--<div id="e_chart_1" class="" style="height:800px;"></div>-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
+
+				<!--</div>-->
 
 			</div>
 
@@ -156,9 +167,14 @@
 
 	<!-- Data table JavaScript -->
 	<script src="/static/vendors/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+	<script src="/static/dist/js/inner_detail.js"></script>
 
 	<!-- Slimscroll JavaScript -->
 	<script src="/static/dist/js/jquery.slimscroll.js"></script>
+
+	<!-- Progressbar Animation JavaScript -->
+	<script src="/static/vendors/bower_components/waypoints/lib/jquery.waypoints.min.js"></script>
+	<script src="/static/vendors/bower_components/jquery.counterup/jquery.counterup.min.js"></script>
 
 	<!-- Fancy Dropdown JS -->
 	<script src="/static/dist/js/dropdown-bootstrap-extended.js"></script>
@@ -176,10 +192,11 @@
 	<script src="/static/vendors/bower_components/switchery/dist/switchery.min.js"></script>
 
 	<!-- Init JavaScript -->
-	<script type="text/javascript">
-        $('#datable_1').DataTable();
-    </script>
 	<script src="/static/dist/js/index/init.js"></script>
+
+	<!--<script src="dist/js/echarts.min.js"></script>-->
+	<!--<script src="dist/js/dataTool.min.js"></script>-->
+	<!--<script src="dist/js/inner_data.js"></script>-->
 </body>
 
 </html>

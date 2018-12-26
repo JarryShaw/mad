@@ -15,25 +15,28 @@ def index(request):
 def more(request):
     template = loader.get_template('pages/more.html')
     context = {
-        "reports": [
-            {
-                "time": "123",
-                "srcIP": "123",
-                "dstIP": "123",
-                "srcPort": "123",
-                "dstPort": "123",
-                "UA": "123"
-            },
-            {
-                "time": "456",
-                "srcIP": "456",
-                "dstIP": "456",
-                "srcPort": "456",
-                "dstPort": "456",
-                "UA": "456"
-            }
-        ]
+        "reports": Mad_Report.objects.filter(is_malicious=True).order_by('id')
     }
+    # context = {
+    #     "reports": [
+    #         {
+    #             "time": "123",
+    #             "srcIP": "123",
+    #             "dstIP": "123",
+    #             "srcPort": "123",
+    #             "dstPort": "123",
+    #             "UA": "123"
+    #         },
+    #         {
+    #             "time": "456",
+    #             "srcIP": "456",
+    #             "dstIP": "456",
+    #             "srcPort": "456",
+    #             "dstPort": "456",
+    #             "UA": "456"
+    #         }
+    #     ]
+    # }
     return HttpResponse(template.render(context, request))
     # return HttpResponse("Hello, world. You're at the more.")
 
@@ -54,6 +57,8 @@ def outer_detail(request):
 
 def ua_detail(request):
     template = loader.get_template('pages/ua_detail.html')
-    context = {}
+    context = {
+        "reports": []
+    }
     return HttpResponse(template.render(context, request))
     # return HttpResponse("Hello, world. You're at the ua details.")

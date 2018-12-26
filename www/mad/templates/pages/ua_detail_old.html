@@ -107,16 +107,10 @@
 														<!--<th>类别</th>-->
 														<th>首次活动时间</th>
 														<th>最后活动时间</th>
+														<th>详细信息</th>
 													</tr>
 												</thead>
 												<tbody id="results-display">
-                                                {% for report in reports %}
-                                                    <tr>
-                                                        <td>report.name</td>
-                                                        <td>report.stime</td>
-                                                        <td>report.etime</td>
-                                                    </tr>
-                                                {% endfor %}
 												</tbody>
 											</table>
 										</div>
@@ -176,9 +170,7 @@
 	<script src="/static/vendors/bower_components/switchery/dist/switchery.min.js"></script>
 
 	<!-- Init JavaScript -->
-	<script type="text/javascript">
-        $('#datable_1').DataTable();
-    </script>
+	<script src="/static/dist/js/ua_detail.js"></script>
 	<script src="/static/dist/js/index/init.js"></script>
 </body>
 
