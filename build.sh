@@ -2,6 +2,9 @@
 
 set -x
 
+# allow ** in glob
+shopt -s globstar
+
 # prepare source files
 sudo rm -rf build && \
 mkdir -p build && \
@@ -22,7 +25,12 @@ cp -rf app/mad.py \
        app/StreamManager \
        app/webgraphic build/app/ && \
 mkdir -p build/www && \
-cp -rf www/* build/www/
+cp -rf www/* build/www/ && \
+chmod +x build/**/*.sh
+returncode="$?"
+if [[ $returncode -ne "0" ]] ; then
+    exit $returncode
+fi
 
 # de-f-string
 pipenv run f2format -n build

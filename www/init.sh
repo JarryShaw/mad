@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
 
-python3 /www/manage.py migrate
-python3 /www/manage.py runserver 0.0.0.0:80
+set -x
+
+# change cwd
+cd www
+
+# setup db
+python3 manage.py migrate
+
+# startup server
+python3 manage.py runserver 0.0.0.0:80
