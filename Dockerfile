@@ -45,8 +45,8 @@ RUN git clone https://github.com/caesar0301/pkt2flow.git /tmp/pkt2flow \
 # copy source files and archives
 ADD model.tar.gz /mad
 ADD model.tar.gz /mad
-COPY www /www
 COPY app /app
+COPY www /www
 
 # entry points
 ENTRYPOINT ["python3", "/app/run_mad.py"]

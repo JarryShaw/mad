@@ -1,22 +1,41 @@
-version: '3'
+# docker-compose version
+version: "3"
 
+# MAD sercives
 services:
-  mad:
+  mad_app:
     build: .
+    command: ["--path", "/mad/pcap"]
+    container_name: mad_app
+    image: mad
     links:
-      - db
+      - mad_db
+    restart: on-failure
     volumes:
       - /data/httpdump:/mad/pcap
-    command: --path /mad/pcap
-    restart: "always"
-  db:
-    image: "mysql:5.7"
-    expose:
-      - "3306"
+  mad_www:
+    container_name: mad_www
+    depends_on:
+      - mad_db
+    entrypoint: bash /www/init.sh
+    image: mad
+    links:
+      - mad_db
+    ports:
+      - 8888:80
+    restart: on-failure
+  mad_db:
+    container_name: mad_db
     environment:
       - MYSQL_ROOT_PASSWORD=zft13917331612
-      - MYSQL_DATABASE=mad
-    volumes:
-      - ./mysql/init:/docker-entrypoint-initdb.d
+      - MYSQL_DATABASE=deepocean
+    expose:
+      - 3306
+    image: mysql:5.7
     networks:
       - default
+
+# network settings
+networks:
+  default:
+    driver: bridge

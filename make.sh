@@ -2,6 +2,9 @@
 
 set -x
 
+# allow ** in glob
+shopt -s globstar
+
 # prepare source files
 mkdir -p apt apt/app apt/www && \
 cp -rf .dockerignore \
@@ -27,6 +30,7 @@ cp -rf app/mad.py \
        app/StreamManager \
        app/webgraphic apt/app && \
 cp -rf www/* apt/www && \
+chmod +x apt/**/*.sh && \
 sed 's/python_version = "3.6"/python_version = "3.5"/' Pipfile > apt/Pipfile && \
 head -2 README.md > apt/README.md && \
 echo '<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.' >> apt/README.md && \
