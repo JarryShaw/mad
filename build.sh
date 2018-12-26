@@ -25,7 +25,10 @@ cp -rf app/mad.py \
        app/StreamManager \
        app/webgraphic build/app/ && \
 mkdir -p build/www && \
-cp -rf www/* build/www/ && \
+cp -rf www/init.sh \
+       www/manage.py \
+       www/mad \
+       www/www build/www/ && \
 chmod +x build/**/*.sh
 returncode="$?"
 if [[ $returncode -ne "0" ]] ; then

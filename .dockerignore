@@ -10,5 +10,6 @@ __pycache__/
 test*
 
 # misc files
+*~orig*
 fingerprints/log
 fingerprints/fingerprints

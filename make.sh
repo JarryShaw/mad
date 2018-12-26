@@ -29,7 +29,10 @@ cp -rf app/mad.py \
        app/fingerprints \
        app/StreamManager \
        app/webgraphic apt/app && \
-cp -rf www/* apt/www && \
+cp -rf www/init.sh \
+       www/manage.py \
+       www/mad \
+       www/www apt/www && \
 chmod +x apt/**/*.sh && \
 sed 's/python_version = "3.6"/python_version = "3.5"/' Pipfile > apt/Pipfile && \
 head -2 README.md > apt/README.md && \
