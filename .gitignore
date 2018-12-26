@@ -1,8 +1,10 @@
 
 deepocean
+*~orig*
 
 src/
 release/
+archive/
 test*
 check.sh
 nohop.out
