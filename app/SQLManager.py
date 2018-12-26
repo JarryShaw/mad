@@ -7,7 +7,7 @@ from peewee import (BooleanField, CharField, DateTimeField, FloatField,
 
 db = MySQLDatabase(
     database='deepocean',
-    host='localhost',
+    host='mad_db',
     port=3306,
     user='root',
     passwd='zft13917331612',

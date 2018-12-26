@@ -1,5 +1,7 @@
+# docker-compose version
 version: "3"
 
+# MAD sercives
 services:
   mad_app:
     build: .
@@ -15,7 +17,7 @@ services:
     container_name: mad_www
     depends_on:
       - mad_db
-    entrypoint: /www/init.sh
+    entrypoint: bash /www/init.sh
     image: mad
     links:
       - mad_db
@@ -33,6 +35,7 @@ services:
     networks:
       - default
 
+# network settings
 networks:
   default:
     driver: bridge

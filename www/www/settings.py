@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mad.apps.MadConfig',
+    'www.mad.apps.MadConfig',
 ]
 
 MIDDLEWARE = [
@@ -76,13 +76,13 @@ WSGI_APPLICATION = 'www.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'deepocean',
-        # 'USER': 'root',
-        # 'PASSWORD': 'zft13917331612',
-        # 'HOST': 'localhost',
-        # # 'HOST': '202.120.1.154',
-        # 'PORT': '3306',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'deepocean',
+        'USER': 'root',
+        'PASSWORD': 'zft13917331612',
+        'HOST': 'mad_db',
+        # 'HOST': '202.120.1.154',
+        'PORT': '3306',
     }
 }
 
