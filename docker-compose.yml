@@ -11,6 +11,7 @@ services:
     command: ["--path", "/mad/pcap"]
     depends_on:
       - mad_www
+    image: mad
     links:
       - mad_db
     restart: on-failure
