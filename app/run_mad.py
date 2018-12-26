@@ -10,8 +10,6 @@ sys.path.insert(0, os.path.realpath(os.path.dirname(__file__)))  # noqa
 import argparse
 import time
 
-from mad import main
-
 
 def get_parser():
     parser = argparse.ArgumentParser(prog='mad',
@@ -33,8 +31,11 @@ def get_parser():
 if __name__ == '__main__':
     parser = get_parser()
     args = parser.parse_args()
+
     if args.tty:
         shell = os.environ.get('SHELL', 'sh')
         os.execlp(shell, shell)
     os.environ['MAD_DEVEL'] = str(args.devel)
+
+    from mad import main
     sys.exit(main(mode=args.mode, path=args.path, sample=args.sample))

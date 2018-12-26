@@ -42,6 +42,10 @@ RUN git clone https://github.com/caesar0301/pkt2flow.git /tmp/pkt2flow \
  && cd .. \
  && rm -rf /tmp/pkt2flow
 
+# get wait-for-it
+RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /usr/local/bin/wait-for-it \
+ && chmod +x /usr/local/bin/wait-for-it.sh
+
 # copy source files and archives
 ADD model.tar.gz /mad
 ADD model.tar.gz /mad

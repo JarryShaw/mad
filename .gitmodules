@@ -7,3 +7,6 @@
 [submodule "archive/web"]
 	path = archive/web
 	url = https://github.com/JarryShaw/mad/tree/archive/web
+[submodule "vendor/wait-for-it"]
+	path = vendor/wait-for-it
+	url = https://github.com/vishnubob/wait-for-it

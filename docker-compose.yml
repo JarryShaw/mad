@@ -3,14 +3,11 @@ version: "3"
 
 # MAD sercives
 services:
-  mad_base:
-    build: .
-    container_name: mad_base
-    image: mad
   mad_app:
-    command: ["--path", "/mad/pcap"]
+    build: .
     depends_on:
       - mad_www
+    entrypoint: ["wait-for-it", "mad_www:8888", "--", "python3", "/app/run_mad.py"]
     image: mad
     links:
       - mad_db
@@ -18,11 +15,11 @@ services:
     volumes:
       - /data/httpdump:/mad/pcap
   mad_www:
+    build: .
     container_name: mad_www
     depends_on:
-      - mad_base
       - mad_db
-    entrypoint: bash /www/init.sh
+    entrypoint: ["wait-for-it", "mad_db:3306", "--", "bash", "/www/init.sh"]
     image: mad
     links:
       - mad_db

@@ -5,6 +5,13 @@ set -x
 # allow ** in glob
 shopt -s globstar
 
+# download wait-for-it
+curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > wait-for-it.sh
+returncode=$?
+if [[ $returncode -ne "0" ]] ; then
+    exit $returncode
+fi
+
 # prepare source files
 mkdir -p apt apt/app apt/www && \
 cp -rf .dockerignore \
@@ -18,7 +25,8 @@ cp -rf .dockerignore \
        docker.sh \
        Dockerfile \
        model.tar.gz \
-       retrain.tar.gz apt && \
+       retrain.tar.gz \
+       wait-for-it.sh apt && \
 cp -rf app/mad.py \
        app/make_stream.py \
        app/run_mad.py \
