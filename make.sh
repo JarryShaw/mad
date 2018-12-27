@@ -27,7 +27,8 @@ cp -rf .dockerignore \
        Dockerfile \
        model.tar.gz \
        retrain.tar.gz apt && \
-cp -rf app/mad.py \
+cp -rf app/init.sh \
+       app/mad.py \
        app/make_stream.py \
        app/run_mad.py \
        app/SQLManager.py \
@@ -58,6 +59,11 @@ if [[ $returncode -ne "0" ]] ; then
     exit $returncode
 fi
 
+# test commit
+if [[ $1 -eq "test" ]] ; then
+    exit 0
+fi
+
 # upload to GitLab
 cd apt
 git pull && \
@@ -68,6 +74,10 @@ else
     git commit -a -S -m "$1"
 fi && \
 git push
+returncode=$?
+if [[ $returncode -ne "0" ]] ; then
+    exit $returncode
+fi
 
 # update maintenance information
 cd ..

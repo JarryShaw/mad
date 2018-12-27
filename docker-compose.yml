@@ -8,7 +8,7 @@ services:
     container_name: mad_app
     depends_on:
       - mad_www
-    entrypoint: ["wait-for-it", "mad_www:8888", "--", "python3", "/app/run_mad.py"]
+    entrypoint: ["wait-for-it", "--timeout=0", "mad_www:80", "--", "bash", "/app/init.sh"]
     image: mad
     links:
       - mad_db
@@ -20,7 +20,7 @@ services:
     container_name: mad_www
     depends_on:
       - mad_db
-    entrypoint: ["wait-for-it", "mad_db:3306", "--", "bash", "/www/init.sh"]
+    entrypoint: ["wait-for-it", "--timeout=0", "mad_db:3306", "--", "bash", "/www/init.sh"]
     image: mad
     links:
       - mad_db
