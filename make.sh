@@ -5,16 +5,11 @@ set -x
 # allow ** in glob
 shopt -s globstar
 
-# update submodules
-git submodule sync && \
-git submodule update && \
-returncode=$?
-if [[ $returncode -ne "0" ]] ; then
-    exit $returncode
-fi
-
 # prepare source files
-mkdir -p apt apt/app apt/www && \
+mkdir -p apt \
+         apt/app \
+         apt/sql \
+         apt/www && \
 cp -rf .dockerignore \
        .gitignore \
        AUTHORS.md \
@@ -38,6 +33,7 @@ cp -rf app/init.sh \
        app/fingerprints \
        app/StreamManager \
        app/webgraphic apt/app && \
+cp -rf sql/MySQL.sql apt/sql && \
 cp -rf www/init.sh \
        www/manage.py \
        www/mad \
@@ -60,7 +56,7 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # test commit
-if [[ $1 -eq "test" ]] ; then
+if [[ $1 =~ "test" ]] ; then
     exit 0
 fi
 
@@ -87,6 +83,14 @@ maintainer contributing
 ret="$?"
 if [[ $ret -ne "0" ]] ; then
     exit $ret
+fi
+
+# update submodules
+git submodule sync && \
+git submodule update && \
+returncode=$?
+if [[ $returncode -ne "0" ]] ; then
+    exit $returncode
 fi
 
 # upload to GitHub

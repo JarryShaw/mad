@@ -139,33 +139,118 @@ None
 
 ## Repo directory
 
- > NB: `/retrain.tar.gz` contains files for retrain process, and should be extracted as `/usr/local/mad/retrain`
-
 ```text
 /
+├── Dockerfile
+├── Pipfile
+├── README.md
 ├── app                             # core app implementation
 │   ├── DataLabeler                 # labeller using VT
 │   │   ├── DataLabeler.py
 │   │   ├── VirusTotal3.py
 │   │   ├── VirusTotalThread.py
 │   │   └── proxies3.txt
-│   ├── README.md
+│   ├── SQLManager.py
 │   ├── StreamManager               # generate stream PCAP files
-│   │   ├── StreamManager4.py
+│   │   └── StreamManager4.py
 │   ├── Training.py                 # CNN
 │   ├── fingerprints                # fingerprint generator & manager
 │   │   ├── LevenshteinDistance.py
 │   │   ├── detection.py
 │   │   ├── fingerprint.py
-│   │   ├── fingerprintsManager.py
+│   │   └── fingerprintsManager.py
+│   ├── init.sh                     # entry point
 │   ├── mad.py                      # main entry point
-│   ├── run_mad.py                  # CLI entry point
 │   ├── make_stream.py              # generate stream info dict
+│   ├── run_mad.py                  # CLI entry point
+│   ├── utils.py
 │   └── webgraphic                  # WebGraphic filtering algo.
 │       ├── group.py
 │       ├── top-10k.txt
 │       └── webgraphic.py
+├── bootstrap.sh
+├── build.sh
+├── docker-compose.yml
+├── docker.sh
+├── make.sh
+├── model.tar.gz
+├── retrain.tar.gz
+├── sql                             # database utility
+│   └── MySQL.sql                   # MySQL initialisation script
 └── www                             # web dashboard implementation
+    ├── init.sh                     # entry point
+    ├── mad
+    │   ├── __init__.py
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── migrations
+    │   │   ├── 0001_initial.py
+    │   │   └── __init__.py
+    │   ├── models.py
+    │   ├── templates
+    │   │   ├── pages
+    │   │   │   ├── index.html
+    │   │   │   ├── index_old.html
+    │   │   │   ├── inner_detail.html
+    │   │   │   ├── inner_detail_old.html
+    │   │   │   ├── more.html
+    │   │   │   ├── more_old.html
+    │   │   │   ├── outer_detail.html
+    │   │   │   ├── outer_detail_old.html
+    │   │   │   ├── ua_detail.html
+    │   │   │   └── ua_detail_old.html
+    │   │   └── static
+    │   │       ├── files
+    │   │       │   └── 基于流量的自反馈恶意软件监测系统.pdf
+    │   │       ├── img
+    │   │       │   ├── System.png
+    │   │       │   ├── favicon.ico
+    │   │       │   ├── favicon.png
+    │   │       │   ├── logo.png
+    │   │       │   ├── sidebar1.jpg
+    │   │       │   ├── sliderImg1.jpg
+    │   │       │   ├── sliderImg2.jpg
+    │   │       │   ├── sliderImg3.jpg
+    │   │       │   └── sliderImg4.jpg
+    │   │       └── vendors
+    │   │           ├── bower_components
+    │   │           │   ├── awesome-bootstrap-checkbox
+    │   │           │   │   └── awesome-bootstrap-checkbox.css
+    │   │           │   ├── datatables
+    │   │           │   │   └── media
+    │   │           │   │       ├── css
+    │   │           │   │       │   └── jquery.dataTables.min.css
+    │   │           │   │       └── js
+    │   │           │   │           └── jquery.dataTables.min.js
+    │   │           │   ├── datatables.net-buttons
+    │   │           │   │   └── js
+    │   │           │   │       ├── buttons.flash.min.js
+    │   │           │   │       ├── buttons.html5.min.js
+    │   │           │   │       ├── buttons.print.min.js
+    │   │           │   │       └── dataTables.buttons.min.js
+    │   │           │   ├── jquery.counterup
+    │   │           │   │   └── jquery.counterup.min.js
+    │   │           │   ├── morris.js
+    │   │           │   │   ├── morris.css
+    │   │           │   │   └── morris.min.js
+    │   │           │   └── raphael
+    │   │           │       └── raphael.min.js
+    │   │           └── vectormap
+    │   │               ├── jquery-jvectormap-2.0.2.css
+    │   │               ├── jquery-jvectormap-2.0.2.min.js
+    │   │               ├── jquery-jvectormap-au-mill.js
+    │   │               ├── jquery-jvectormap-in-mill.js
+    │   │               ├── jquery-jvectormap-uk-mill-en.js
+    │   │               ├── jquery-jvectormap-us-aea-en.js
+    │   │               └── jquery-jvectormap-world-mill-en.js
+    │   ├── urls.py
+    │   └── views.py
+    ├── manage.py
+    └── www
+        ├── __init__.py
+        ├── settings.py
+        ├── urls.py
+        └── wsgi.py
 ```
 
 ## Report directory
