@@ -85,13 +85,13 @@ if [[ $ret -ne "0" ]] ; then
     exit $ret
 fi
 
-# update submodules
-git submodule sync && \
-git submodule update && \
-returncode=$?
-if [[ $returncode -ne "0" ]] ; then
-    exit $returncode
-fi
+# # update submodules
+# git submodule sync && \
+# git submodule update && \
+# returncode=$?
+# if [[ $returncode -ne "0" ]] ; then
+#     exit $returncode
+# fi
 
 # upload to GitHub
 git pull && \

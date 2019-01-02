@@ -7,6 +7,7 @@ cd www
 
 # setup db
 # python3 manage.py migrate | ts "%Y-%m-%dT%H:%M:%.SZ"
+python3 manage.py makemigrations
 python3 manage.py migrate
 returncode=$?
 if [[ $returncode -ne "0" ]] ; then
