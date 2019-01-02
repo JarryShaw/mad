@@ -28,3 +28,10 @@ class Mad_Loss(models.Model):
 
     class Meta:
         db_table = 'mad_loss'
+
+
+class Mad_ProcessedFile(models.Model):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'mad_processedfile'
