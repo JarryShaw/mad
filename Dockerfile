@@ -1,5 +1,5 @@
 # basic info
-FROM ubuntu:16.04
+FROM library/ubuntu:16.04
 LABEL version="2018.12.20"
 
 # set up environment variables
