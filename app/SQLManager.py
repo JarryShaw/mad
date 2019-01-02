@@ -27,20 +27,20 @@ class BaseModel(Model):
 
 
 class Mad_Report(BaseModel):
-    name = CharField()
+    name = CharField(max_length=255)
     is_malicious = BooleanField()
     ua = TextField()
     url = TextField()
-    srcip = CharField()
+    srcip = CharField(max_length=255)
     srcport = IntegerField()
-    dstip = CharField()
+    dstip = CharField(max_length=255)
     dstport = IntegerField()
     time = DateTimeField()
     detected_by_cnn = BooleanField()
-    device = CharField()
-    os = CharField()
-    browser = CharField()
-    type = CharField()
+    device = CharField(max_length=255)
+    os = CharField(max_length=255)
+    browser = CharField(max_length=255)
+    type = CharField(max_length=255)
 
 
 class Mad_Loss(BaseModel):
@@ -49,7 +49,7 @@ class Mad_Loss(BaseModel):
 
 
 class Mad_ProcessedFile(BaseModel):
-    name = CharField()
+    name = CharField(max_length=255)
 
 
 def saveLoss(loss, time):
