@@ -8,6 +8,18 @@ services:
     container_name: mad_app
     depends_on:
       - mad_www
+    deploy:
+      resources:
+        limits:
+          cpus: 0.50
+          memory: 4G
+        reservations:
+          cpus: 0.25
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
     entrypoint: ["wait-for-it", "--timeout=0", "mad_www:80", "--", "bash", "/app/init.sh"]
     image: mad
     links:

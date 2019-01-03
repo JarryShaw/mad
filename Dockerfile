@@ -11,6 +11,7 @@ ENV PYTHONIOENCODING "UTF-8"
 RUN apt-get update \
  && apt-get install -y \
         build-essential \
+        cpulimit \
         git \
         libpcap-dev \
         libffi-dev \
@@ -18,6 +19,8 @@ RUN apt-get update \
         python3 \
         python3-pip \
         scons \
+        tzdata \
+ && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 RUN python3 -m pip install --upgrade --cache-dir=/tmp/pip \
         pip \
@@ -51,9 +54,16 @@ RUN git clone https://github.com/vishnubob/wait-for-it.git /tmp/wait-for-it \
 
 # copy source files and archives
 ADD model.tar.gz /mad
-ADD model.tar.gz /mad
+ADD retrain.tar.gz /mad
 COPY app /app
 COPY www /www
+
+# set up timezone
+ENV TZ 'Asia/Shanghai'
+RUN echo $TZ > /etc/timezone \
+ && rm -f /etc/localtime \
+ && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+ && dpkg-reconfigure -f noninteractive tzdata
 
 # entry points
 ENTRYPOINT ["python3", "/app/run_mad.py"]
