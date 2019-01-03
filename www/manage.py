@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+################################################################################
 import os
 import sys
+sys.path.insert(0, os.path.realpath(os.path.dirname(__file__)))  # noqa
+################################################################################
 
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'www.settings')

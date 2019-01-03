@@ -53,20 +53,34 @@ cd mad
 
 ### CLI
 
-```bash
+```
 $ python run_mad.py -h
-usage: mad [-h] [-v] [-m {1,2,3,4,5}] [-p PATH] [-s SAMPLE]
+usage: mad [-h] [-v] [-m {1,2,3,4,5}] [-p PATH] [-s SAMPLE] [-c CPU]
+           [-l MEMORY] [-i] [-e SHELL] [-d]
 
 Malicious Application Detector
 
 optional arguments:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
+
+general arguments:
   -m {1,2,3,4,5}, --mode {1,2,3,4,5}
                         runtime mode
-  -p PATH, --path PATH  input file name or directory (mode=1/2)
+  -p PATH, --path PATH  input file name or directory (mode=1/2/3)
   -s SAMPLE, --sample SAMPLE
-                        sample (mode=2, 5)
+                        sample (mode=2/5)
+
+runtime arguments:
+  -c CPU, --cpu CPU     override the detection of CPUs on the machine (mode=3)
+  -l MEMORY, --memory MEMORY
+                        number of bytes of memory that may be locked into RAM
+
+development arguments:
+  -i, --interactive     enter interactive mode (running SHELL)
+  -e SHELL, --shell SHELL
+                        shell for interactive mode
+  -d, --devel           run in develop mode (quit after first round)
 ```
 
 ### API

@@ -53,7 +53,7 @@ import contextlib
 import datetime as dt
 import functools
 import json
-import multiprocessing
+import math
 import os
 import pathlib
 import pprint  # ##
@@ -75,13 +75,17 @@ from utils import JSONEncoder, object_hook
 from webgraphic.webgraphic import webgraphic
 
 # CPU number
-if os.name == 'posix' and 'SC_NPROCESSORS_CONF' in os.sysconf_names:
-    CPU_CNT = os.sysconf('SC_NPROCESSORS_CONF')
-elif 'sched_getaffinity' in os.__all__:
-    CPU_CNT = len(os.sched_getaffinity(0))  # pylint: disable=E1101
-else:
-    CPU_CNT = os.cpu_count() or 1
-
+try:        # try first
+    import multiprocessing
+except ImportError:
+    multiprocessing = None
+else:       # CPU number if multiprocessing supported
+    tmp_cnt = ast.literal_eval(os.environ['CPU_CNT'])
+finally:    # limit on CPUs
+    if multiprocessing is None:
+        CPU_CNT = 0
+    else:
+        CPU_CNT = int(math.log2(tmp_cnt))
 
 # PID
 PID = os.getpid()

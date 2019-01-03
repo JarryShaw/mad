@@ -1,6 +1,6 @@
 # basic info
 FROM library/ubuntu:16.04
-LABEL version="2018.12.20"
+LABEL version="2019.01.03"
 
 # set up environment variables
 ENV LANG "C.UTF-8"
@@ -11,7 +11,6 @@ ENV PYTHONIOENCODING "UTF-8"
 RUN apt-get update \
  && apt-get install -y \
         build-essential \
-        cpulimit \
         git \
         libpcap-dev \
         libffi-dev \
