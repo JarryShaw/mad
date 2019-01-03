@@ -36,11 +36,11 @@ services:
       - 3306
     image: mysql:5.7
     networks:
-      - default
+      - mad_br
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
 
 # network settings
 networks:
-  default:
+  mad_br:
     driver: bridge

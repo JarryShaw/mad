@@ -7,11 +7,14 @@ cd www
 
 # setup db
 # python3 manage.py migrate | ts "%Y-%m-%dT%H:%M:%.SZ"
-python3 manage.py makemigrations
+python3 manage.py makemigrations && \
 python3 manage.py migrate
-returncode=$?
-if [[ $returncode -ne "0" ]] ; then
-    exit $returncode
+if [[ $? -ne "0" ]] ; then
+    python3 manage.py migrate --fake mad
+    returncode=$?
+    if [[ $returncode -ne "0" ]] ; then
+        exit $returncode
+    fi
 fi
 
 # startup server
