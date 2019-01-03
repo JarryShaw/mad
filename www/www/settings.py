@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for www project.
 
@@ -9,7 +10,6 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -81,7 +81,6 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'zft13917331612',
         'HOST': 'mad_db',
-        # 'HOST': '202.120.1.154',
         'PORT': '3306',
     }
 }

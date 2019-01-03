@@ -20,7 +20,6 @@
 
 - `Django`
 - `dpkt`
-- `geocoder`
 - `peewee`
 - `pymysql`
 - `requests`
@@ -259,6 +258,10 @@ None
 /mad/
     |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready)
     |-- fingerprint.pickle                      # pickled fingerprint database
+    |-- pcap/
+    |   |-- apt_log.txt                         # log file
+    |   |-- YYYY_MMDD_HHMM_SS.pcap              # PCAP files
+    |   |-- ...
     |-- dataset/                                # where all dataset go
     |   |-- YYYY-MM-DDTHH:MM:SS.US/             # dataset named after ISO timestamp
     |   |   |-- groups.json                     # WebGraphic group record

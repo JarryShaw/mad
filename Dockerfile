@@ -29,7 +29,6 @@ RUN python3 -m pip install --upgrade --cache-dir=/tmp/pip \
  && python3 -m pip install --upgrade --cache-dir=/tmp/pip \
         Django \
         dpkt \
-        geocoder \
         peewee \
         pymysql \
         requests\
@@ -59,10 +58,9 @@ COPY app /app
 COPY www /www
 
 # set up timezone
-ENV TZ 'Asia/Shanghai'
-RUN echo $TZ > /etc/timezone \
+RUN echo 'Asia/Shanghai' > /etc/timezone \
  && rm -f /etc/localtime \
- && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+ && ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
  && dpkg-reconfigure -f noninteractive tzdata
 
 # entry points

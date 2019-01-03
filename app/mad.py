@@ -5,6 +5,7 @@
     |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready)
     |-- fingerprint.pickle                      # pickled fingerprint database
     |-- pcap/
+    |   |-- apt_log.txt                         # log file
     |   |-- YYYY_MMDD_HHMM_SS.pcap              # PCAP files
     |   |-- ...
     |-- dataset/                                # where all dataset go
@@ -157,7 +158,7 @@ def main(mode=3, path='/mad/pcap', sample=None):
 
     # update file list
     filelist = list()
-    for item in os.scandir(PATH):
+    for item in filter(lambda e: e.is_file(), os.scandir(PATH)):
         filename = item.path
         print(filename, (filename <= MAX_FILE))
         if filename <= MAX_FILE:
@@ -178,7 +179,7 @@ def main(mode=3, path='/mad/pcap', sample=None):
     # enter main loop
     while True:
         filelist = list()
-        for item in os.scandir(PATH):
+        for item in filter(lambda e: e.is_file(), os.scandir(PATH)):
             filename = item.path
             if filename <= MAX_FILE:
                 continue
@@ -267,6 +268,8 @@ def start_worker(path):
     with LOCK:
         with open('/mad/mad.log', 'at', 1) as file:
             file.write(f'0 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
+        with open('/mad/pcap/apt_log.txt', 'at', 1) as file:
+            file.write(f'0 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
 
     milestone_1 = time.time()
     print(f'Bootstrapped for {milestone_1-milestone_0} seconds')
@@ -300,6 +303,8 @@ def start_worker(path):
         with open('/mad/mad.log', 'at', 1) as file:
             file.write(f'1 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
         saveProcessedFile(name)
+        with open('/mad/pcap/apt_log.txt', 'at', 1) as file:
+            file.write(f'1 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
 
     # finally, remove used temporary dataset files
     # but record files should be reserved for further usage
@@ -429,6 +434,8 @@ def run_cnn(path, retrain=False):
         with LOCK:
             with open('/mad/mad.log', 'at', 1) as file:
                 file.write(f'2 {dt.datetime.now().isoformat()} {path} {mode}\n')
+            with open('/mad/pcap/apt_log.txt', 'at', 1) as file:
+                file.write(f'2 {dt.datetime.now().isoformat()} {path} {mode}\n')
 
     # run CNN subprocess
     for kind in {'Background_PC', }:
@@ -451,6 +458,8 @@ def run_cnn(path, retrain=False):
 
         # write log for stop retrain
         with LOCK:
+            with open('/mad/mad.log', 'at', 1) as file:
+                file.write(f'3 {dt.datetime.now().isoformat()} {path} {mode}\n')
             with open('/mad/mad.log', 'at', 1) as file:
                 file.write(f'3 {dt.datetime.now().isoformat()} {path} {mode}\n')
 

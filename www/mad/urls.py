@@ -1,9 +1,10 @@
-from django.urls import path
-from django.contrib.staticfiles.urls import static
+# -*- coding: utf-8 -*-
+
 from django.conf import settings
+from django.contrib.staticfiles.urls import static
+from django.urls import path
+
 from . import views
-
-
 
 urlpatterns = [
     path('', views.index, name='index'),

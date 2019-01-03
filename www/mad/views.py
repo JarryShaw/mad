@@ -1,7 +1,10 @@
-from django.shortcuts import render
+# -*- coding: utf-8 -*-
+
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.template import loader
-from .models import *
+
+from .models import Mad_Report
 
 
 # Create your views here.
@@ -15,28 +18,8 @@ def index(request):
 def more(request):
     template = loader.get_template('pages/more.html')
     context = {
-        "reports": Mad_Report.objects.filter(is_malicious=True).order_by('id')
+        "reports": Mad_Report.objects.filter(is_malicious=True).order_by('id')  # pylint: disable=E1101
     }
-    # context = {
-    #     "reports": [
-    #         {
-    #             "time": "123",
-    #             "srcIP": "123",
-    #             "dstIP": "123",
-    #             "srcPort": "123",
-    #             "dstPort": "123",
-    #             "UA": "123"
-    #         },
-    #         {
-    #             "time": "456",
-    #             "srcIP": "456",
-    #             "dstIP": "456",
-    #             "srcPort": "456",
-    #             "dstPort": "456",
-    #             "UA": "456"
-    #         }
-    #     ]
-    # }
     return HttpResponse(template.render(context, request))
     # return HttpResponse("Hello, world. You're at the more.")
 
