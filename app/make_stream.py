@@ -55,7 +55,10 @@ def load_stream():
         dat_files = os.listdir(f'/mad/retrain/{kind}/1')
         for file in dat_files:
             stem = pathlib.Path(file).stem
-            path, name = stem.split('_', 1)
+            try:
+                path, name = stem.split('_', 1)
+            except ValueError:
+                continue
             file = file_dict[path].get(name)
             if file:
                 file['is_malicious'] = 1
@@ -64,7 +67,10 @@ def load_stream():
         dat_files = os.listdir(f'/mad/retrain/{kind}/0')
         for file in dat_files:
             stem = pathlib.Path(file).stem
-            path, name = stem.split('_', 1)
+            try:
+                path, name = stem.split('_', 1)
+            except ValueError:
+                continue
             file = file_dict[path].get(name)
             if file:
                 file['is_malicious'] = 0

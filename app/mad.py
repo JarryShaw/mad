@@ -316,9 +316,12 @@ def start_worker(path):
 
     # finally, remove used temporary dataset files
     # but record files should be reserved for further usage
-    for name in {'Background_PC', 'stream', 'tmp'}:
-        with contextlib.suppress(FileNotFoundError):
-            shutil.rmtree(os.path.join(str(path), name))
+    if DEVEL:
+        print('Not to remove temporary files @ {path!r}.')
+    else:
+        for name in {'Background_PC', 'stream', 'tmp'}:
+            with contextlib.suppress(FileNotFoundError):
+                shutil.rmtree(os.path.join(str(path), name))
 
     milestone_5 = time.time()
     print(f'Worked for {milestone_5-milestone_0} seconds')
