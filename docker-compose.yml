@@ -24,9 +24,9 @@ services:
     image: mad
     links:
       - mad_db
-    restart: on-failure
+    restart: always
     volumes:
-      - /data/httpdump:/mad/pcap
+      - /home/traffic/pcapfile:/mad/pcap
   mad_www:
     build: .
     container_name: mad_www
@@ -38,7 +38,7 @@ services:
       - mad_db
     ports:
       - 8888:80
-    restart: on-failure
+    restart: always
   mad_db:
     container_name: mad_db
     environment:
@@ -51,6 +51,7 @@ services:
       - default
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
+      - /home/traffic/log/mysql:/var/lib/mysql
 
 # network settings
 networks:
