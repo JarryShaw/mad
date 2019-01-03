@@ -58,14 +58,14 @@ if __name__ == '__main__':
         shell = args.shell
         os.execlp(shell, shell)
 
-    with contextlib.suppress(AttributeError):
+    with contextlib.suppress(AttributeError, ValueError):
         soft = args.memory
         hard = resource.getrlimit(resource.RLIMIT_MEMLOCK)[1]
         if hard == sys.maxsize:
             hard = resource.RLIM_INFINITY
         resource.setrlimit(resource.RLIMIT_MEMLOCK, (soft, hard))
 
-    with contextlib.suppress(AttributeError):
+    with contextlib.suppress(AttributeError, ValueError):
         soft = args.memory
         hard = resource.getrlimit(resource.RLIMIT_VMEM)[1]  # pylint: disable=E1101
         if hard == sys.maxsize:
