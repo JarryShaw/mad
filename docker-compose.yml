@@ -44,4 +44,3 @@ services:
 networks:
   mad_br:
     driver: bridge
-    name: mad_br
