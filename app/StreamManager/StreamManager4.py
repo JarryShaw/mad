@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import glob
 import os
 import pathlib
 import random
@@ -49,16 +50,16 @@ class StreamManager:
         try:
             print(f"执行命令：{cmd!r}")
             subprocess.check_call(cmd)
-            cmd = shlex.split(f"mv {self.datapath}/tmp/tcp_nosyn/* {self.datapath}/stream/")
-            subprocess.check_call(cmd)
-            cmd = shlex.split(f"mv {self.datapath}/tmp/tcp_syn/* {self.datapath}/stream/")
-            subprocess.check_call(cmd)
         except subprocess.CalledProcessError:
             # if subp.returncode != 0:
             print("流转化失败！")
             # return
             raise
-        print("流转化完成！")
+        for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_nosyn')):
+            os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
+        for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_syn')):
+            os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
+    print("流转化完成！")
 
     def classify(self, ips):
         files = os.listdir(self.datapath+"/stream")
