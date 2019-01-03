@@ -47,16 +47,18 @@ class StreamManager:
         pathlib.Path(f"{self.datapath}/stream").mkdir(parents=True, exist_ok=True)
         cmd = shlex.split(f"pkt2flow -xv -o {self.datapath}/tmp {self.filename}")
         try:
-            print("执行命令")
+            print(f"执行命令：{cmd!r}")
+            subprocess.check_call(cmd)
+            cmd = shlex.split(f"mv {self.datapath}/tmp/tcp_nosyn/* {self.datapath}/stream/")
+            subprocess.check_call(cmd)
+            cmd = shlex.split(f"mv {self.datapath}/tmp/tcp_syn/* {self.datapath}/stream/")
             subprocess.check_call(cmd)
         except subprocess.CalledProcessError:
             # if subp.returncode != 0:
             print("流转化失败！")
             # return
             raise
-        os.system(f"mv {self.datapath}/tmp/tcp_nosyn/* {self.datapath}/stream/")
-        os.system(f"mv {self.datapath}/tmp/tcp_syn/* {self.datapath}/stream/")
-        shutil.rmtree(f"{self.datapath}/tmp")
+        print("流转化完成！")
 
     def classify(self, ips):
         files = os.listdir(self.datapath+"/stream")
