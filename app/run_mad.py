@@ -58,10 +58,19 @@ if __name__ == '__main__':
         shell = args.shell
         os.execlp(shell, shell)
 
-    limit = (args.memory, resource.RLIM_INFINITY)
     with contextlib.suppress(AttributeError):
-        resource.setrlimit(resource.RLIMIT_MEMLOCK, limit)
-        resource.setrlimit(resource.RLIMIT_VMEM, limit)  # pylint: disable=E1101
+        soft = args.memory
+        hard = resource.getrlimit(resource.RLIMIT_MEMLOCK)[1]
+        if hard == sys.maxsize:
+            hard = resource.RLIM_INFINITY
+        resource.setrlimit(resource.RLIMIT_MEMLOCK, (soft, hard))
+
+    with contextlib.suppress(AttributeError):
+        soft = args.memory
+        hard = resource.getrlimit(resource.RLIMIT_VMEM)[1]  # pylint: disable=E1101
+        if hard == sys.maxsize:
+            hard = resource.RLIM_INFINITY
+        resource.setrlimit(resource.RLIMIT_VMEM, (soft, hard))  # pylint: disable=E1101
 
     os.environ['CPU_CNT'] = str(args.cpu)
     os.environ['MAD_DEVEL'] = str(args.devel)
