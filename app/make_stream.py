@@ -33,7 +33,7 @@ def dump_stream(labels, *, path):
                 name = pathlib.Path(file['filename']).stem
                 file_dict[name] = file
 
-    with open(os.path.join(path, 'record.json'), 'w') as json_file:
+    with open(os.path.join(str(path), 'record.json'), 'w') as json_file:
         json.dump(file_dict, json_file, cls=JSONEncoder)
 
 
