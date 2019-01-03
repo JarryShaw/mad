@@ -101,6 +101,8 @@ MAX_FILE = getProcessedFile()
 LOCK = multiprocessing.Lock()
 # retrain flag
 RETRAIN = multiprocessing.Value('B', False)
+# devel flag
+DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
 
 FLOW_DICT = {
     # 'Browser_PC': lambda stream: stream.GetBrowserGroup_PC(),
@@ -126,7 +128,10 @@ def beholder(func):
         except BaseException:
             if MODE != 3:
                 raise
-            traceback.print_exc()
+            elif DEVEL:
+                sys.exit(traceback.format_exc())
+            else:
+                traceback.print_exc()
     return wrapper
 
 
@@ -176,7 +181,6 @@ def main(mode=3, path='/mad/pcap', sample=None):
     print(f'Current MAX_FILE: {MAX_FILE!r}')
 
     # break in devel mode or others
-    DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
     if DEVEL or MODE != 3:
         return
 
@@ -314,7 +318,7 @@ def start_worker(path):
     # but record files should be reserved for further usage
     for name in {'Background_PC', 'stream', 'tmp'}:
         with contextlib.suppress(FileNotFoundError):
-            shutil.rmtree(os.path.join(path, name))
+            shutil.rmtree(os.path.join(str(path), name))
 
     milestone_5 = time.time()
     print(f'Worked for {milestone_5-milestone_0} seconds')
