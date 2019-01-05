@@ -42,8 +42,8 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 if [[ "${tag}" =~ "^test$" ]] ; then
-    cp docker-compose.yml~orig build/docker-compose.yml
-    cp app/init.sh~orig build/app/init.sh
+    cp docker-compose~orig.yml build/docker-compose.yml
+    cp app/init~orig.sh build/app/init.sh
     tag="latest"
 fi
 
