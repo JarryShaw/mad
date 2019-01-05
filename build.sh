@@ -2,6 +2,9 @@
 
 set -x
 
+# check argv
+tag=$1
+
 # allow ** in glob
 shopt -s globstar
 
@@ -38,10 +41,10 @@ if [[ $returncode -ne "0" ]] ; then
     exit $returncode
 fi
 
-platform=`python -c "print(__import__('sys').platform)"`
-if [[ $platform =~ "darwin" ]] ; then
+if [[ "${tag}" =~ "^test$" ]] ; then
     cp docker-compose.yml~orig build/docker-compose.yml
     cp app/init.sh~orig build/app/init.sh
+    tag="latest"
 fi
 
 # de-f-string
@@ -52,10 +55,10 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # build docker
-if [[ -z $1 ]] ; then
+if [[ -z "${tag}" ]] ; then
     docker build --rm --tag mad build
 else
-    docker build --rm --tag mad:$1 build
+    docker build --rm --tag "mad:${tag}" build
 fi
 
 # run docker-compose

@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 
+set -x
+
 case $1 in
-    docker)
-        bash build.sh
-        sudo docker run -v /data/httpdump:/mad/pcap mad --path /mad/pcap
-        ;;
-    docker-compose)
-        sudo docker-compose up --build
-        ;;
+    docker)         docker build --tag mad .
+                    docker run -v /home/traffic/pcapfile:/mad/pcap mad --path /mad/pcap ;;
+    docker-compose) docker-compose up --build ;;
 esac
