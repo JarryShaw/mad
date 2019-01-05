@@ -59,7 +59,7 @@ class StreamManager:
             os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
         for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_syn')):
             os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
-    print("流转化完成！")
+        print("流转化完成！")
 
     def classify(self, ips):
         files = os.listdir(self.datapath+"/stream")

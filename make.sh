@@ -56,7 +56,7 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # test commit
-if [[ $1 =~ "test" ]] ; then
+if [[ $1 =~ "^test$" ]] ; then
     exit 0
 fi
 

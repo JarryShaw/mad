@@ -65,6 +65,7 @@ import sys
 import time
 import traceback
 
+import dpkt
 import scapy.all
 
 from fingerprints.fingerprintsManager import fingerprintManager
@@ -165,9 +166,19 @@ def main(mode=3, path='/mad/pcap', sample=None):
     #     MAX_FILE = name
     print(f'Current MAX_FILE: {MAX_FILE!r}')
 
+    def _validate_pcap(entry):
+        if entry.is_file():
+            try:
+                with open(entry.path, 'rb') as file:
+                    dpkt.pcap.Reader(file)
+                return True
+            except (ValueError, dpkt.dpkt.Error):
+                return False
+        return False
+
     # update file list
     filelist = list()
-    for item in filter(lambda e: e.is_file(), os.scandir(PATH)):
+    for item in filter(lambda e: _validate_pcap(e), os.scandir(PATH)):
         filename = item.path
         print(filename, (filename <= MAX_FILE))
         if filename <= MAX_FILE:
@@ -187,7 +198,7 @@ def main(mode=3, path='/mad/pcap', sample=None):
     # enter main loop
     while True:
         filelist = list()
-        for item in filter(lambda e: e.is_file(), os.scandir(PATH)):
+        for item in filter(lambda e: _validate_pcap(e), os.scandir(PATH)):
             filename = item.path
             if filename <= MAX_FILE:
                 continue
@@ -317,7 +328,7 @@ def start_worker(path):
     # finally, remove used temporary dataset files
     # but record files should be reserved for further usage
     if DEVEL:
-        print('Not to remove temporary files @ {path!r}.')
+        print(f'Not to remove temporary files @ {str(path)!r}.')
     else:
         for name in {'Background_PC', 'stream', 'tmp'}:
             with contextlib.suppress(FileNotFoundError):

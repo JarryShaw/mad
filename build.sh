@@ -6,7 +6,7 @@ set -x
 shopt -s globstar
 
 # prepare source files
-sudo rm -rf build && \
+rm -rf build && \
 mkdir -p build && \
 cp -rf .dockerignore \
        docker-compose.yml \
@@ -38,6 +38,12 @@ if [[ $returncode -ne "0" ]] ; then
     exit $returncode
 fi
 
+platform=`python -c "print(__import__('sys').platform)"`
+if [[ $platform =~ "darwin" ]] ; then
+    cp docker-compose.yml~orig build/docker-compose.yml
+    cp app/init.sh~orig build/app/init.sh
+fi
+
 # de-f-string
 pipenv run f2format -n build
 returncode="$?"
@@ -47,11 +53,11 @@ fi
 
 # build docker
 if [[ -z $1 ]] ; then
-    sudo docker build --force-rm --tag mad build
+    docker build --rm --tag mad build
 else
-    sudo docker build --force-rm --tag mad:$1 build
+    docker build --rm --tag mad:$1 build
 fi
 
 # run docker-compose
 cd build
-sudo docker-compose up
+docker-compose up

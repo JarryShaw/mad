@@ -1,7 +1,7 @@
 # docker-compose version
 version: "3"
 
-# MAD sercives
+# MAD services
 services:
   mad_app:
     build: .
