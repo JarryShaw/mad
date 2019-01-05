@@ -28,7 +28,7 @@ def get_parser():
     general_group = parser.add_argument_group(title='general arguments')
     general_group.add_argument('-m', '--mode', action='store', default=3, type=int, choices=[1, 2, 3, 4, 5],
                                help='runtime mode')
-    general_group.add_argument('-p', '--path', action='store', type=str,
+    general_group.add_argument('-p', '--path', action='store', type=str, default='/mad/pcap',
                                help='input file name or directory (mode=1/2/3)')
     general_group.add_argument('-s', '--sample', action='store', type=str,
                                help='sample (mode=2/5)')
@@ -73,6 +73,7 @@ if __name__ == '__main__':
         resource.setrlimit(resource.RLIMIT_VMEM, (soft, hard))  # pylint: disable=E1101
 
     os.environ['CPU_CNT'] = str(args.cpu)
+    os.environ['MAD_PATH'] = str(args.path)
     os.environ['MAD_DEVEL'] = str(args.devel)
 
     from mad import main

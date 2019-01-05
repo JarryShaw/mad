@@ -265,14 +265,15 @@ def start_worker(path):
     # first, we sniff packets using Scapy
     # or load data from an existing PCAP file
     name = make_sniff(path)
-    pobj = pathlib.Path(name)
-    stem = pathlib.Path(name).stem
-    if pobj.suffix != '.pcap':
-        pext = pobj.suffix.strip('.pcap')
-        dsname = shlex.quote(f'{stem}_{pext}')
-    else:
-        dsname = shlex.quote(pathlib.Path(name).stem)
     osname = shlex.quote(name)
+    dsname = shlex.quote(os.path.split(name)[1])
+    # pobj = pathlib.Path(name)
+    # stem = pathlib.Path(name).stem
+    # if pobj.suffix != '.pcap':
+    #     pext = pobj.suffix.strip('.pcap')
+    #     dsname = shlex.quote(f'{stem}_{pext}')
+    # else:
+    #     dsname = shlex.quote(pathlib.Path(name).stem)
 
     # create directory for new dataset
     # and initialise fingerprint manager

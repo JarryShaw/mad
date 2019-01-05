@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import ast
 import glob
 import os
 import pathlib
@@ -14,6 +15,9 @@ import dpkt
 from DataLabeler.DataLabeler import Datalabler  # pylint: disable=E0401
 
 # from scapy.all import *
+
+# devel flag
+DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
 
 
 class StreamManager:
@@ -56,9 +60,15 @@ class StreamManager:
             # return
             raise
         for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_nosyn')):
-            os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
+            if DEVEL:
+                shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
+            else:
+                os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
         for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_syn')):
-            os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
+            if DEVEL:
+                shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
+            else:
+                os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
         print("流转化完成！")
 
     def classify(self, ips):

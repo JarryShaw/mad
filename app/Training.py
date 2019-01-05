@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import ast
 import collections
 import datetime as dt
 import ipaddress
@@ -29,6 +30,11 @@ ModelPath = sys.argv[2]
 mode = sys.argv[3]
 T = sys.argv[4]
 ppid = int(sys.argv[5])
+
+# source path
+PATH = os.environ['MAD_PATH']
+# devel flag
+DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
 
 TrainRate = 0.8
 
@@ -569,7 +575,10 @@ def main(unused):
         val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
         loss = 1 - (len(val)/sum(predicted_classes) if sum(predicted_classes) else 1.0)
         # print('### Testing:', len(val), val, sum(predicted_classes), predicted_classes) ###
-        dobj = dt.datetime.strptime(stem, r'%Y_%m_%d_%H_%M_%S').isoformat()
+        if DEVEL:
+            dobj = dt.datetime.strptime(os.path.splitext(stem)[0], r'%Y_%m_%d_%H_%M_%S').isoformat()
+        else:
+            dobj = dt.datetime.fromtimestamp(os.stat(os.path.join(PATH, stem)).st_birthtime).isoformat()
         saveLoss(loss, dobj)
         # loss_record = list()
         # if os.path.isfile("/mad/loss.json"):
