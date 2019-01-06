@@ -34,7 +34,7 @@ def dump_stream(labels, *, path):
                 file_dict[name] = file
 
     with open(os.path.join(str(path), 'record.json'), 'w') as json_file:
-        json.dump(file_dict, json_file, cls=JSONEncoder)
+        json.dump(file_dict, json_file, cls=JSONEncoder, indent=2)
 
 
 def load_stream():

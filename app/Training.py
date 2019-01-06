@@ -643,6 +643,8 @@ def main(unused):
         report.extend(CNNMalicious)
         pprint.pprint(report)
         saveReports(report)
+        with open(os.path.join(DataPath, "report.json"), 'w') as file:
+            json.dump(report, file, cls=JSONEncoder, indent=2)
         # calculate running time
         end = time.time()
         print(end)
