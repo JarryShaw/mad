@@ -58,7 +58,7 @@ def get_parser():
                                help='sample for model training (mode=2/5)')
 
     runtime_group = parser.add_argument_group(title='runtime arguments')
-    runtime_group.add_argument('-c', '--concurrent', action='store', default=PROC_CNT, type=int, metavar='PROC',
+    runtime_group.add_argument('-c', '--process', action='store', default=PROC_CNT, type=int, metavar='PROC',
                                help=f'number of concurrent processes that may run (default is {PROC_CNT})')
     runtime_group.add_argument('-l', '--memlock', action='store', default=MEMLOCK_HARD, type=int, metavar='MEM',
                                help=('number of bytes of memory that may be locked into RAM '
@@ -103,7 +103,7 @@ if __name__ == '__main__':
         resource.setrlimit(resource.RLIMIT_VMEM, (vmem_soft, vmem_hard))  # pylint: disable=E1101
 
     os.environ['CPU_CNT'] = str(CPU_CNT)
-    os.environ['PROC_CNT'] = str(args.concurrent)
+    os.environ['PROC_CNT'] = str(args.process)
 
     os.environ['MAD_PATH'] = str(args.path)
     os.environ['MAD_DEVEL'] = str(args.devel)

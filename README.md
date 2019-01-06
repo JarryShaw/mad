@@ -54,7 +54,7 @@ cd mad
 ### CLI
 
 ```
-$ python run_mad.py -h
+$ python run_mad.py --help
 usage: mad [-h] [-V] [-m {1,2,3,4,5}] [-p DIR] [-s FILE] [-c PROC] [-l MEM]
            [-v MEM] [-i] [-e SHELL] [-d]
 
@@ -72,19 +72,19 @@ general arguments:
                         sample for model training (mode=2/5)
 
 runtime arguments:
-  -c PROC, --concurrent PROC
+  -c PROC, --process PROC
                         number of concurrent processes that may run (default
-                        is 1)
+                        is %log2(CPU)%)
   -l MEM, --memlock MEM
                         number of bytes of memory that may be locked into RAM
-                        (default is 83968000)
+                        (default is %MEMLOCK%)
   -v MEM, --vmem MEM    largest area of mapped memory which the process may
-                        occupy (default is infinity)
+                        occupy (default is %VMEM%)
 
 development arguments:
   -i, --interactive     enter interactive mode (running SHELL)
   -e SHELL, --shell SHELL
-                        shell for interactive mode (default is '/bin/sh')
+                        shell for interactive mode (default is %SHELL%)
   -d, --devel           run in develop mode (quit after first round)
 ```
 
