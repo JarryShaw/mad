@@ -121,6 +121,7 @@ if __name__ == '__main__':
           f'{"infinity" if vmem_hard == resource.RLIM_INFINITY else vmem_hard})')
     print(f'    Current MEMLOCK limit: ({"infinity" if memlock_soft == resource.RLIM_INFINITY else memlock_soft}, '
           f'{"infinity" if memlock_hard == resource.RLIM_INFINITY else memlock_hard})')
+    print()
 
     from mad import main
     sys.exit(main(mode=args.mode, path=args.path, sample=args.sample))
