@@ -13,11 +13,12 @@ import argparse
 import contextlib
 import math
 import resource
+import shutil
 import time
 import warnings
 
 # get SHELL
-SHELL = os.environ.get('SHELL', '/bin/sh')
+SHELL = os.environ.get('SHELL', shutil.which('sh'))
 
 # limit on CPU
 if os.name == 'posix' and 'SC_NPROCESSORS_CONF' in os.sysconf_names:
@@ -46,6 +47,24 @@ with contextlib.suppress(AttributeError, ValueError):
     if VMEM_HARD == sys.maxsize:
         VMEM_HARD = resource.RLIM_INFINITY
 
+# limit on memory (as)
+AS_SOFT = AS_HARD = resource.RLIM_INFINITY
+with contextlib.suppress(AttributeError, ValueError):
+    AS_SOFT, AS_HARD = resource.getrlimit(resource.RLIMIT_AS)
+    if AS_SOFT == sys.maxsize:
+        AS_SOFT = resource.RLIM_INFINITY
+    if AS_HARD == sys.maxsize:
+        AS_HARD = resource.RLIM_INFINITY
+
+# limit on memory (swap)
+SWAP_SOFT = SWAP_HARD = resource.RLIM_INFINITY
+with contextlib.suppress(AttributeError, ValueError):
+    SWAP_SOFT, SWAP_HARD = resource.getrlimit(resource.RLIMIT_SWAP)  # pylint: disable=E1101
+    if SWAP_SOFT == sys.maxsize:
+        SWAP_SOFT = resource.RLIM_INFINITY
+    if SWAP_HARD == sys.maxsize:
+        SWAP_HARD = resource.RLIM_INFINITY
+
 
 def get_parser():
     parser = argparse.ArgumentParser(prog='mad',
@@ -68,7 +87,16 @@ def get_parser():
                                      f'(default is {"unlimited" if MEMLOCK_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})'))  # noqa
     runtime_group.add_argument('-v', '--vmem', action='store', default=VMEM_HARD, type=int, metavar='MEM',
                                help=('largest area of mapped memory which the process may occupy '
-                                     f'(default is {"unlimited" if VMEM_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})'))  # noqa
+                                     f'(default is {"unlimited" if VMEM_HARD == resource.RLIM_INFINITY else VMEM_HARD})'))  # noqa
+    runtime_group.add_argument('-a', '--address-space', action='store', default=AS_HARD, type=int, metavar='MEM',
+                               help=('maximum area (in bytes) of address space which may be taken by the process '
+                                     f'(default is {"unlimited" if AS_HARD == resource.RLIM_INFINITY else AS_HARD})'))  # noqa
+    runtime_group.add_argument('-w', '--swap', action='store', default=SWAP_HARD, type=int, metavar='MEM',
+                               help=('maximum size (in bytes) of the swap space that '
+                                     "may be reserved or used by all of this user id's processes "
+                                     f'(default is {"unlimited" if SWAP_HARD == resource.RLIM_INFINITY else SWAP_HARD})'))  # noqa
+    runtime_group.add_argument('-n', '--no-validate', action='store_true',
+                               help='do not run validate process after prediction (mode=3)')
 
     develop_group = parser.add_argument_group(title='development arguments')
     develop_group.add_argument('-i', '--interactive', action='store_true',
@@ -125,21 +153,56 @@ if __name__ == '__main__':
                              ResourceWarning, filename=__file__, lineno=0,
                              line=f'{sys.executable} {" ".join(sys.argv)}')
 
+    try:
+        as_hard = args.address_space
+        as_soft = as_hard // 2
+        if as_soft >= sys.maxsize:
+            as_soft = resource.RLIM_INFINITY
+        resource.setrlimit(resource.RLIMIT_AS, (as_soft, as_hard))
+    except (AttributeError, ValueError) as error:
+        as_hard = AS_HARD
+        as_soft = AS_SOFT
+        warnings.showwarning(f'setting AS limit failed with error message: {error.args[0]!r}',
+                             ResourceWarning, filename=__file__, lineno=0,
+                             line=f'{sys.executable} {" ".join(sys.argv)}')
+
+    try:
+        swap_hard = args.swap
+        swap_soft = swap_hard // 2
+        if swap_soft >= sys.maxsize:
+            swap_soft = resource.RLIM_INFINITY
+        resource.setrlimit(resource.RLIMIT_SWAP, (swap_soft, swap_hard))  # pylint: disable=E1101
+    except (AttributeError, ValueError) as error:
+        swap_hard = VMEM_HARD
+        swap_soft = VMEM_SOFT
+        warnings.showwarning(f'setting SWAP limit failed with error message: {error.args[0]!r}',
+                             ResourceWarning, filename=__file__, lineno=0,
+                             line=f'{sys.executable} {" ".join(sys.argv)}')
+
     os.environ['CPU_CNT'] = str(CPU_CNT)
     os.environ['PROC_CNT'] = str(PROC_CNT)
 
     os.environ['MAD_PATH'] = str(args.path)
     os.environ['MAD_DEVEL'] = str(args.devel)
+    os.environ['MAD_NOVAL'] = str(args.no_validate)
 
     print('Runtime summary:')
     print()
     print(f'    System CPU count: {CPU_CNT}')
+    print(f'    System AS limit: ({"unlimited" if AS_SOFT == resource.RLIM_INFINITY else AS_SOFT}, '
+          f'{"unlimited" if AS_HARD == resource.RLIM_INFINITY else AS_HARD})')
+    print(f'    System SWAP limit: ({"unlimited" if SWAP_SOFT == resource.RLIM_INFINITY else SWAP_SOFT}, '
+          f'{"unlimited" if SWAP_HARD == resource.RLIM_INFINITY else SWAP_HARD})')
     print(f'    System VMEM limit: ({"unlimited" if VMEM_SOFT == resource.RLIM_INFINITY else VMEM_SOFT}, '
           f'{"unlimited" if VMEM_HARD == resource.RLIM_INFINITY else VMEM_HARD})')
     print(f'    System MEMLOCK limit: ({"unlimited" if MEMLOCK_SOFT == resource.RLIM_INFINITY else MEMLOCK_SOFT}, '
           f'{"unlimited" if MEMLOCK_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})')
     print()
     print(f'    Concurrent process: {PROC_CNT}')
+    print(f'    Concurrent AS limit: ({"unlimited" if as_soft == resource.RLIM_INFINITY else as_soft}, '
+          f'{"unlimited" if as_hard == resource.RLIM_INFINITY else as_hard})')
+    print(f'    Concurrent SWAP limit: ({"unlimited" if swap_soft == resource.RLIM_INFINITY else swap_soft}, '
+          f'{"unlimited" if swap_hard == resource.RLIM_INFINITY else swap_hard})')
     print(f'    Concurrent VMEM limit: ({"unlimited" if vmem_soft == resource.RLIM_INFINITY else vmem_soft}, '
           f'{"unlimited" if vmem_hard == resource.RLIM_INFINITY else vmem_hard})')
     print(f'    Concurrent MEMLOCK limit: ({"unlimited" if memlock_soft == resource.RLIM_INFINITY else memlock_soft}, '

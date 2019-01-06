@@ -80,6 +80,13 @@ runtime arguments:
                         (default is %MEMLOCK%)
   -v MEM, --vmem MEM    largest area of mapped memory which the process may
                         occupy (default is %VMEM%)
+  -a MEM, --address-space MEM
+                        maximum area (in bytes) of address space which may be
+                        taken by the process (default is %AS%)
+  -w MEM, --swap MEM    maximum size (in bytes) of the swap space that may be
+                        reserved or used by all of this user id's processes
+                        (default is %SWAP%)
+  -n, --no-validate     do not run validate process after prediction (mode=3)
 
 development arguments:
   -i, --interactive     enter interactive mode (running SHELL)

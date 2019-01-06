@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import ast
 import collections
 import datetime as dt
 import ipaddress
@@ -32,6 +33,8 @@ ppid = int(sys.argv[5])
 
 # source path
 PATH = os.environ['MAD_PATH']
+# no validate flag
+MAD_NOVAL = ast.literal_eval(os.environ['MAD_NOVAL'])
 
 TrainRate = 0.8
 
@@ -515,16 +518,6 @@ def main(unused):
                                   info=parse(filedict["UA"]),
                                   detected_by_cnn=False,
                                   ))
-        # validate process
-        val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
-        for item in Malicious:
-            flag = int(item["name"]+".pcap" in val)
-            item["is_malicious"] = flag
-            if flag:
-                ind = val.index(item["name"]+".pcap")
-                item["malicious_url"] = url[ind]
-            else:
-                item["malicious_url"] = None
         # print("detected by CNN: ")
         # CNN detection results
         CNNClean = list()
@@ -568,10 +561,23 @@ def main(unused):
             else:
                 CNNClean.append(temp_dict)
         # calculate loss
-        stem = pathlib.Path(DataPath).name
-        val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
-        loss = 1 - (len(val)/sum(predicted_classes) if sum(predicted_classes) else 1.0)
+        if MAD_NOVAL:
+            loss = 0.0
+        else:
+            # validate process
+            val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
+            for item in Malicious:
+                flag = int(item["name"]+".pcap" in val)
+                item["is_malicious"] = flag
+                if flag:
+                    ind = val.index(item["name"]+".pcap")
+                    item["malicious_url"] = url[ind]
+                else:
+                    item["malicious_url"] = None
+            # val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
+            loss = 1 - (len(val)/sum(predicted_classes) if sum(predicted_classes) else 1.0)
         # print('### Testing:', len(val), val, sum(predicted_classes), predicted_classes) ###
+        stem = pathlib.Path(DataPath).name
         try:
             dobj = dt.datetime.strptime(os.path.splitext(stem)[0], r'%Y_%m_%d_%H_%M_%S').isoformat()
         except ValueError:
@@ -597,15 +603,6 @@ def main(unused):
         # ))
         # with open("/mad/loss.json", "w") as file:
         #     json.dump(loss_record, file, cls=JSONEncoder, indent=2)
-        if loss > 0.5:
-            print(f'{DataPath} needs retrain...')
-            try:
-                os.kill(ppid, signal.SIGUSR2)
-            except OSError:
-                traceback.print_exc()
-        end = time.time()
-        print(end)
-        print('Running time: %s Seconds' % (end - start))
         # make retrain dataset
         retrain_index = load_stream()
         for kind in {'Background_PC', }:
@@ -631,6 +628,13 @@ def main(unused):
         with open(os.path.join(DataPath, "stream.json"), 'w') as file:
             json.dump(retrain_index, file, cls=JSONEncoder, indent=2)
         shutil.copy(os.path.join(DataPath, "stream.json"), '/mad/retrain/stream.json')
+        # retrain if needed
+        if loss > 0.5:
+            print(f'{DataPath} needs retrain...')
+            try:
+                os.kill(ppid, signal.SIGUSR2)
+            except OSError:
+                traceback.print_exc()
         # save reports to database
         report = list()
         report.extend(Clean)
@@ -639,6 +643,10 @@ def main(unused):
         report.extend(CNNMalicious)
         pprint.pprint(report)
         saveReports(report)
+        # calculate running time
+        end = time.time()
+        print(end)
+        print('Running time: %s Seconds' % (end - start))
 
     # Used for evaluating our system
     elif mode == "evaluate":

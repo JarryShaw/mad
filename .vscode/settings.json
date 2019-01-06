@@ -16,6 +16,7 @@
         "MEMLOCK",
         "MMDD",
         "MSIE",
+        "NOVAL",
         "NPROCESSORS",
         "RLIM",
         "RLIMIT",
@@ -36,6 +37,7 @@
         "clicktion",
         "conv",
         "counterup",
+        "ctime",
         "devel",
         "dict",
         "dobj",
@@ -82,8 +84,7 @@
         "tstamp",
         "wanyong",
         "wrpcap",
-        "wsgi",
-        "ctime"
+        "wsgi"
     ],
     "python.pythonPath": "/Users/jarryshaw/.local/share/virtualenvs/mad-tCBWswa7/bin/python",
     "python.linting.pylintEnabled": true
