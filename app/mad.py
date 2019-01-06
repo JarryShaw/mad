@@ -47,6 +47,7 @@
         |-- stream.json                         # stream index for retrain
 
 """
+import argparse
 import ast
 import collections
 import contextlib
@@ -75,10 +76,16 @@ from StreamManager.StreamManager4 import StreamManager
 from utils import JSONEncoder, object_hook
 from webgraphic.webgraphic import webgraphic
 
+try:
+    import threading
+except ImportError:
+    import dummy_threading as threading
+
 # CPU number
 try:        # try first
     import multiprocessing
 except ImportError:
+    multiprocessing = None
     proc_cnt = 0
 else:       # CPU number if multiprocessing supported
     proc_cnt = ast.literal_eval(os.environ['PROC_CNT'])
@@ -95,12 +102,19 @@ MODE = 3
 PATH = '/mad/pcap'
 # latest processing file name
 MAX_FILE = getProcessedFile()
-# file lock
-LOCK = multiprocessing.Lock()
-# retrain flag
-RETRAIN = multiprocessing.Value('B', False)
 # devel flag
 DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
+
+# file lock
+if multiprocessing is None:
+    LOCK = threading.Lock()
+else:
+    LOCK = multiprocessing.Lock()
+# retrain flag
+if multiprocessing is None:
+    RETRAIN = argparse.Namespace(value=False)
+else:
+    RETRAIN = multiprocessing.Value('B', False)
 
 FLOW_DICT = {
     # 'Browser_PC': lambda stream: stream.GetBrowserGroup_PC(),
@@ -217,11 +231,18 @@ def retrain_cnn(*args):
     RETRAIN.value = True
 
     # start retrain
-    multiprocessing.Process(
-        target=run_cnn,
-        kwargs={'path': '/mad/retrain',
-                'retrain': True},
-    ).start()
+    if multiprocessing is None:
+        threading.Thread(
+            target=run_cnn,
+            kwargs={'path': '/mad/retrain',
+                    'retrain': True}
+        ).start()
+    else:
+        multiprocessing.Process(
+            target=run_cnn,
+            kwargs={'path': '/mad/retrain',
+                    'retrain': True},
+        ).start()
 
 
 def make_worker(filelist, sample=None):

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import ast
 import collections
 import datetime as dt
 import ipaddress
@@ -33,8 +32,6 @@ ppid = int(sys.argv[5])
 
 # source path
 PATH = os.environ['MAD_PATH']
-# devel flag
-DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
 
 TrainRate = 0.8
 
@@ -575,10 +572,19 @@ def main(unused):
         val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
         loss = 1 - (len(val)/sum(predicted_classes) if sum(predicted_classes) else 1.0)
         # print('### Testing:', len(val), val, sum(predicted_classes), predicted_classes) ###
-        if DEVEL:
+        try:
             dobj = dt.datetime.strptime(os.path.splitext(stem)[0], r'%Y_%m_%d_%H_%M_%S').isoformat()
-        else:
-            dobj = dt.datetime.fromtimestamp(os.stat(os.path.join(PATH, stem)).st_birthtime).isoformat()
+        except ValueError:
+            orig_file = os.path.join(PATH, stem)
+            try:
+                stat_result = os.stat(orig_file)
+                try:
+                    birthtime = stat_result.st_birthtime
+                except AttributeError:
+                    birthtime = stat_result.st_ctime
+                dobj = dt.datetime.fromtimestamp(birthtime).isoformat()
+            except FileNotFoundError:
+                dobj = dt.datetime.now().isoformat()
         saveLoss(loss, dobj)
         # loss_record = list()
         # if os.path.isfile("/mad/loss.json"):
