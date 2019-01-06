@@ -51,7 +51,6 @@ services:
       - default
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
-      - /home/traffic/log/mysql:/var/lib/mysql
 
 # network settings
 networks:
