@@ -79,14 +79,11 @@ from webgraphic.webgraphic import webgraphic
 try:        # try first
     import multiprocessing
 except ImportError:
-    multiprocessing = None
+    proc_cnt = 0
 else:       # CPU number if multiprocessing supported
-    tmp_cnt = ast.literal_eval(os.environ['CPU_CNT'])
-finally:    # limit on CPUs
-    if multiprocessing is None:
-        CPU_CNT = 0
-    else:
-        CPU_CNT = int(math.log2(tmp_cnt))
+    proc_cnt = ast.literal_eval(os.environ['PROC_CNT'])
+finally:
+    CPU_CNT = proc_cnt
 
 # PID
 PID = os.getpid()

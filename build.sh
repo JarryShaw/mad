@@ -2,9 +2,6 @@
 
 set -x
 
-# check argv
-tag=$1
-
 # allow ** in glob
 shopt -s globstar
 
@@ -41,12 +38,6 @@ if [[ $returncode -ne "0" ]] ; then
     exit $returncode
 fi
 
-if [[ "${tag}" =~ "^test$" ]] ; then
-    cp docker-compose~orig.yml build/docker-compose.yml
-    cp app/init~orig.sh build/app/init.sh
-    tag="latest"
-fi
-
 # de-f-string
 pipenv run f2format -n build
 returncode="$?"
@@ -55,10 +46,10 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # build docker
-if [[ -z "${tag}" ]] ; then
+if [[ -z $1 ]] ; then
     docker build --rm --tag mad build
 else
-    docker build --rm --tag "mad:${tag}" build
+    docker build --rm --tag mad:$1 build
 fi
 
 # run docker-compose

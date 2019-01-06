@@ -55,31 +55,36 @@ cd mad
 
 ```
 $ python run_mad.py -h
-usage: mad [-h] [-v] [-m {1,2,3,4,5}] [-p PATH] [-s SAMPLE] [-c CPU]
-           [-l MEMORY] [-i] [-e SHELL] [-d]
+usage: mad [-h] [-V] [-m {1,2,3,4,5}] [-p DIR] [-s FILE] [-c PROC] [-l MEM]
+           [-v MEM] [-i] [-e SHELL] [-d]
 
 Malicious Application Detector
 
 optional arguments:
   -h, --help            show this help message and exit
-  -v, --version         show program's version number and exit
+  -V, --version         show program's version number and exit
 
 general arguments:
   -m {1,2,3,4,5}, --mode {1,2,3,4,5}
                         runtime mode
-  -p PATH, --path PATH  input file name or directory (mode=1/2/3)
-  -s SAMPLE, --sample SAMPLE
-                        sample (mode=2/5)
+  -p DIR, --path DIR    input file name or directory (mode=1/2/3)
+  -s FILE, --sample FILE
+                        sample for model training (mode=2/5)
 
 runtime arguments:
-  -c CPU, --cpu CPU     override the detection of CPUs on the machine (mode=3)
-  -l MEMORY, --memory MEMORY
+  -c PROC, --concurrent PROC
+                        number of concurrent processes that may run (default
+                        is 1)
+  -l MEM, --memlock MEM
                         number of bytes of memory that may be locked into RAM
+                        (default is 83968000)
+  -v MEM, --vmem MEM    largest area of mapped memory which the process may
+                        occupy (default is infinity)
 
 development arguments:
   -i, --interactive     enter interactive mode (running SHELL)
   -e SHELL, --shell SHELL
-                        shell for interactive mode
+                        shell for interactive mode (default is '/bin/sh')
   -d, --devel           run in develop mode (quit after first round)
 ```
 
