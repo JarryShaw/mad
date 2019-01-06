@@ -4,6 +4,8 @@
 ################################################################################
 import os
 import sys
+
+sys.warnoptions.append('default::ResourceWarning:__main__')  # noqa
 sys.path.insert(0, os.path.realpath(os.path.dirname(__file__)))  # noqa
 ################################################################################
 
@@ -12,6 +14,7 @@ import contextlib
 import math
 import resource
 import time
+import warnings
 
 # get SHELL
 SHELL = os.environ.get('SHELL', '/bin/sh')
@@ -62,10 +65,10 @@ def get_parser():
                                help=f'number of concurrent processes that may run (default is {PROC_CNT})')
     runtime_group.add_argument('-l', '--memlock', action='store', default=MEMLOCK_HARD, type=int, metavar='MEM',
                                help=('number of bytes of memory that may be locked into RAM '
-                                     f'(default is {"infinity" if MEMLOCK_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})'))  # noqa
+                                     f'(default is {"unlimited" if MEMLOCK_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})'))  # noqa
     runtime_group.add_argument('-v', '--vmem', action='store', default=VMEM_HARD, type=int, metavar='MEM',
                                help=('largest area of mapped memory which the process may occupy '
-                                     f'(default is {"infinity" if VMEM_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})'))  # noqa
+                                     f'(default is {"unlimited" if VMEM_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})'))  # noqa
 
     develop_group = parser.add_argument_group(title='development arguments')
     develop_group.add_argument('-i', '--interactive', action='store_true',
@@ -86,7 +89,15 @@ if __name__ == '__main__':
         shell = args.shell
         os.execlp(shell, shell)
 
-    with contextlib.suppress(AttributeError, ValueError):
+    if args.process > CPU_CNT:
+        warnings.showwarning(f'current system has only {CPU_CNT} CPU'
+                             f'{"s" if CPU_CNT > 1 else ""}; '
+                             f'recommended process count is {PROC_CNT}',
+                             ResourceWarning, filename=__file__, lineno=0,
+                             line=f'{sys.executable} {" ".join(sys.argv)}')
+    PROC_CNT = args.process
+
+    try:
         memlock_hard = args.memlock
         memlock_soft = memlock_hard // 2
         if memlock_hard >= sys.maxsize:
@@ -94,16 +105,28 @@ if __name__ == '__main__':
         if memlock_soft >= sys.maxsize:
             memlock_soft = resource.RLIM_INFINITY
         resource.setrlimit(resource.RLIMIT_MEMLOCK, (memlock_soft, memlock_hard))
+    except (AttributeError, ValueError) as error:
+        memlock_hard = MEMLOCK_HARD
+        memlock_soft = MEMLOCK_SOFT
+        warnings.showwarning(f'setting MEMLOCK limit failed with error message: {error.args[0]!r}',
+                             ResourceWarning, filename=__file__, lineno=0,
+                             line=f'{sys.executable} {" ".join(sys.argv)}')
 
-    with contextlib.suppress(AttributeError, ValueError):
+    try:
         vmem_hard = args.vmem
         vmem_soft = vmem_hard // 2
         if vmem_soft >= sys.maxsize:
             vmem_soft = resource.RLIM_INFINITY
         resource.setrlimit(resource.RLIMIT_VMEM, (vmem_soft, vmem_hard))  # pylint: disable=E1101
+    except (AttributeError, ValueError) as error:
+        vmem_hard = VMEM_HARD
+        vmem_soft = VMEM_SOFT
+        warnings.showwarning(f'setting VMEM limit failed with error message: {error.args[0]!r}',
+                             ResourceWarning, filename=__file__, lineno=0,
+                             line=f'{sys.executable} {" ".join(sys.argv)}')
 
     os.environ['CPU_CNT'] = str(CPU_CNT)
-    os.environ['PROC_CNT'] = str(args.process)
+    os.environ['PROC_CNT'] = str(PROC_CNT)
 
     os.environ['MAD_PATH'] = str(args.path)
     os.environ['MAD_DEVEL'] = str(args.devel)
@@ -111,16 +134,16 @@ if __name__ == '__main__':
     print('Runtime summary:')
     print()
     print(f'    System CPU count: {CPU_CNT}')
-    print(f'    System VMEM limit: ({"infinity" if VMEM_SOFT == resource.RLIM_INFINITY else VMEM_SOFT}, '
-          f'{"infinity" if VMEM_HARD == resource.RLIM_INFINITY else VMEM_HARD})')
-    print(f'    System MEMLOCK limit: ({"infinity" if MEMLOCK_SOFT == resource.RLIM_INFINITY else MEMLOCK_SOFT}, '
-          f'{"infinity" if MEMLOCK_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})')
+    print(f'    System VMEM limit: ({"unlimited" if VMEM_SOFT == resource.RLIM_INFINITY else VMEM_SOFT}, '
+          f'{"unlimited" if VMEM_HARD == resource.RLIM_INFINITY else VMEM_HARD})')
+    print(f'    System MEMLOCK limit: ({"unlimited" if MEMLOCK_SOFT == resource.RLIM_INFINITY else MEMLOCK_SOFT}, '
+          f'{"unlimited" if MEMLOCK_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})')
     print()
     print(f'    Concurrent process: {PROC_CNT}')
-    print(f'    Current VMEM limit: ({"infinity" if vmem_soft == resource.RLIM_INFINITY else vmem_soft}, '
-          f'{"infinity" if vmem_hard == resource.RLIM_INFINITY else vmem_hard})')
-    print(f'    Current MEMLOCK limit: ({"infinity" if memlock_soft == resource.RLIM_INFINITY else memlock_soft}, '
-          f'{"infinity" if memlock_hard == resource.RLIM_INFINITY else memlock_hard})')
+    print(f'    Concurrent VMEM limit: ({"unlimited" if vmem_soft == resource.RLIM_INFINITY else vmem_soft}, '
+          f'{"unlimited" if vmem_hard == resource.RLIM_INFINITY else vmem_hard})')
+    print(f'    Concurrent MEMLOCK limit: ({"unlimited" if memlock_soft == resource.RLIM_INFINITY else memlock_soft}, '
+          f'{"unlimited" if memlock_hard == resource.RLIM_INFINITY else memlock_hard})')
     print()
 
     from mad import main
