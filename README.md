@@ -282,7 +282,7 @@ None
 
 ```text
 /mad/
-    |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready)
+    |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready; 4-error)
     |-- fingerprint.pickle                      # pickled fingerprint database
     |-- pcap/
     |   |-- apt_log.txt                         # log file

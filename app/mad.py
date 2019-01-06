@@ -2,7 +2,7 @@
 """MAD -- Malicious Application Detector
 
 /mad/
-    |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready)
+    |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready; 4-error)
     |-- fingerprint.pickle                      # pickled fingerprint database
     |-- pcap/
     |   |-- apt_log.txt                         # log file
@@ -105,11 +105,23 @@ MAX_FILE = getProcessedFile()
 # devel flag
 DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
 
+# current proc info
+if multiprocessing is None:
+    PROC = threading.local()
+    PROC.src = '<undefined>'
+    PROC.dst = '<undefined>'
+else:
+    PROC = argparse.Namespace(
+        src='<undefined>',
+        dst='<undefined>'
+    )
+
 # file lock
 if multiprocessing is None:
     LOCK = threading.Lock()
 else:
     LOCK = multiprocessing.Lock()
+
 # retrain flag
 if multiprocessing is None:
     RETRAIN = argparse.Namespace(value=False)
@@ -137,7 +149,12 @@ def beholder(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except BaseException:
+        except BaseException as error:
+            with LOCK:
+                with open('/mad/mad.log', 'at', 1) as file:
+                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} {error.args}\n')
+                with open('/mad/pcap/apt_log.txt', 'at', 1) as file:
+                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} {error.args}\n')
             if MODE != 3:
                 raise
             elif DEVEL:
@@ -292,6 +309,8 @@ def start_worker(path):
     #     dsname = shlex.quote(f'{stem}_{pext}')
     # else:
     #     dsname = shlex.quote(pathlib.Path(name).stem)
+    PROC.src = name
+    PROC.dst = osname
 
     # create directory for new dataset
     # and initialise fingerprint manager
