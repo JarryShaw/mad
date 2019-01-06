@@ -562,7 +562,8 @@ def main(unused):
                 CNNClean.append(temp_dict)
         # calculate loss
         if MAD_NOVAL:
-            loss = 0.0
+            val = list()
+            url = list()
         else:
             # validate process
             val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
@@ -574,8 +575,8 @@ def main(unused):
                     item["malicious_url"] = url[ind]
                 else:
                     item["malicious_url"] = None
-            # val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
-            loss = 1 - (len(val)/sum(predicted_classes) if sum(predicted_classes) else 1.0)
+        # val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
+        loss = 1 - (len(val)/sum(predicted_classes) if sum(predicted_classes) else 1.0)
         # print('### Testing:', len(val), val, sum(predicted_classes), predicted_classes) ###
         stem = pathlib.Path(DataPath).name
         try:

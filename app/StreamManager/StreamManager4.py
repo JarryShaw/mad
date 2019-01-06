@@ -363,18 +363,18 @@ class StreamManager:
         got_ua = 0
         got_uri = 0
         while packet:
-            s = packet_to_bytes(packet)
+            s = str(packet_to_bytes(packet), encoding='utf-8', errors='replace')
             '''
             try:
                 s = str(packet[Raw].load)
             except Exception:
                 packet = source.read_packet()
                 continue
-           '''
-            ptr = bytes(".*(GET|POST|HEAD).*HTTP.*".encode())
+            '''
+            ptr = ".*(GET|POST|HEAD).*HTTP.*"
             if re.match(ptr, s):
                 http_load.append(s)
-                s = str(s)
+                # s = s.decode()
                 if not got_ua:
                     try:
                         ua = re.findall(pattern, s)[0].strip("\\r")
@@ -498,5 +498,5 @@ def packet_to_bytes(packet):
         p = dpkt.ethernet.Ethernet(packet[1])
         s = p.data.data.pack()[p.data.data.__hdr_len__:]
     except Exception:
-        return "notvalid"
+        return b"notvalid"
     return s
