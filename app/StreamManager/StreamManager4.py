@@ -363,7 +363,9 @@ class StreamManager:
         got_ua = 0
         got_uri = 0
         while packet:
-            s = str(packet_to_bytes(packet), encoding='utf-8', errors='replace')
+            # s = packet_to_bytes(packet)
+            payload = packet_to_bytes(packet)
+            s = str(payload, encoding='utf-8', errors='replace')
             '''
             try:
                 s = str(packet[Raw].load)
@@ -373,7 +375,7 @@ class StreamManager:
             '''
             ptr = ".*(GET|POST|HEAD).*HTTP.*"
             if re.match(ptr, s):
-                http_load.append(s)
+                http_load.append(payload)
                 # s = s.decode()
                 if not got_ua:
                     try:
