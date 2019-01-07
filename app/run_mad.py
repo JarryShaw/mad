@@ -77,34 +77,38 @@ def get_parser():
     general_group.add_argument('-p', '--path', action='store', type=str, default='/mad/pcap', metavar='DIR',
                                help='input file name or directory (mode=1/2/3)')
     general_group.add_argument('-s', '--sample', action='store', type=str, metavar='FILE',
-                               help='sample for model training (mode=2/5)')
+                               help='sample file(s) for model training (mode=2/5)')
 
     runtime_group = parser.add_argument_group(title='runtime arguments')
-    runtime_group.add_argument('-c', '--process', action='store', default=PROC_CNT, type=int, metavar='PROC',
-                               help=f'number of concurrent processes that may run (default is {PROC_CNT})')
-    runtime_group.add_argument('-l', '--memlock', action='store', default=MEMLOCK_HARD, type=int, metavar='MEM',
-                               help=('number of bytes of memory that may be locked into RAM '
-                                     f'(default is {"unlimited" if MEMLOCK_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})'))  # noqa
-    runtime_group.add_argument('-v', '--vmem', action='store', default=VMEM_HARD, type=int, metavar='MEM',
-                               help=('largest area of mapped memory which the process may occupy '
-                                     f'(default is {"unlimited" if VMEM_HARD == resource.RLIM_INFINITY else VMEM_HARD})'))  # noqa
-    runtime_group.add_argument('-a', '--address-space', action='store', default=AS_HARD, type=int, metavar='MEM',
-                               help=('maximum area (in bytes) of address space which may be taken by the process '
-                                     f'(default is {"unlimited" if AS_HARD == resource.RLIM_INFINITY else AS_HARD})'))  # noqa
-    runtime_group.add_argument('-w', '--swap', action='store', default=SWAP_HARD, type=int, metavar='MEM',
-                               help=('maximum size (in bytes) of the swap space that '
-                                     "may be reserved or used by all of this user id's processes "
-                                     f'(default is {"unlimited" if SWAP_HARD == resource.RLIM_INFINITY else SWAP_HARD})'))  # noqa
     runtime_group.add_argument('-n', '--no-validate', action='store_true',
                                help='do not run validate process after prediction (mode=3)')
+    runtime_group.add_argument('-t', '--sampling-interval', action='store', type=int, default=0, metavar='INT',
+                               help='sample every %%INT%% file(s) (mode=3; default is 0, i.e. sampling from all files)')
+
+    resource_group = parser.add_argument_group(title='resource arguments')
+    resource_group.add_argument('-c', '--process', action='store', default=PROC_CNT, type=int, metavar='PROC',
+                                help=f'number of concurrent processes that may run (default is {PROC_CNT})')
+    resource_group.add_argument('-l', '--memlock', action='store', default=MEMLOCK_HARD, type=int, metavar='MEM',
+                                help=('number of bytes of memory that may be locked into RAM '
+                                      f'(default is {"unlimited" if MEMLOCK_HARD == resource.RLIM_INFINITY else MEMLOCK_HARD})'))  # noqa
+    resource_group.add_argument('-v', '--vmem', action='store', default=VMEM_HARD, type=int, metavar='MEM',
+                                help=('largest area of mapped memory which the process may occupy '
+                                      f'(default is {"unlimited" if VMEM_HARD == resource.RLIM_INFINITY else VMEM_HARD})'))  # noqa
+    resource_group.add_argument('-a', '--address-space', action='store', default=AS_HARD, type=int, metavar='MEM',
+                                help=('maximum area (in bytes) of address space which may be taken by the process '
+                                      f'(default is {"unlimited" if AS_HARD == resource.RLIM_INFINITY else AS_HARD})'))  # noqa
+    resource_group.add_argument('-w', '--swap', action='store', default=SWAP_HARD, type=int, metavar='MEM',
+                                help=('maximum size (in bytes) of the swap space that '
+                                      "may be reserved or used by all of this user id's processes "
+                                      f'(default is {"unlimited" if SWAP_HARD == resource.RLIM_INFINITY else SWAP_HARD})'))  # noqa
 
     develop_group = parser.add_argument_group(title='development arguments')
+    develop_group.add_argument('-d', '--devel', action='store_true',
+                               help='run in develop mode (quit after first round)')
     develop_group.add_argument('-i', '--interactive', action='store_true',
                                help='enter interactive mode (running SHELL)')
     develop_group.add_argument('-e', '--shell', action='store', default=SHELL,
                                help=f'shell for interactive mode (default is {SHELL!r})')
-    develop_group.add_argument('-d', '--devel', action='store_true',
-                               help='run in develop mode (quit after first round)')
 
     return parser
 
@@ -117,16 +121,32 @@ if __name__ == '__main__':
         shell = args.shell
         os.execlp(shell, shell)
 
-    if args.process > CPU_CNT:
-        warnings.showwarning(f'current system has only {CPU_CNT} CPU'
-                             f'{"s" if CPU_CNT > 1 else ""}; '
-                             f'recommended process count is {PROC_CNT}',
-                             ResourceWarning, filename=__file__, lineno=0,
+    if args.sampling_interval < 0:
+        warnings.showwarning(f'invalid sampling interval: {args.sampling_interval}; '
+                             f'sampling from all files instead',
+                             RuntimeWarning, filename=__file__, lineno=0,
                              line=f'{sys.executable} {" ".join(sys.argv)}')
-    PROC_CNT = args.process
+        args.sampling_interval = 0
+
+    if args.process < 0:
+        warnings.showwarning(f'invalid process number: {args.process}; '
+                             f'using default number {PROC_CNT} instead',
+                             RuntimeWarning, filename=__file__, lineno=0,
+                             line=f'{sys.executable} {" ".join(sys.argv)}')
+    else:
+        if args.process > CPU_CNT:
+            warnings.showwarning(f'current system has only {CPU_CNT} CPU'
+                                 f'{"s" if CPU_CNT > 1 else ""}; '
+                                 f'recommended process number is {PROC_CNT}',
+                                 ResourceWarning, filename=__file__, lineno=0,
+                                 line=f'{sys.executable} {" ".join(sys.argv)}')
+        PROC_CNT = args.process
 
     try:
-        memlock_hard = args.memlock
+        if args.memlock < 0:
+            memlock_hard = resource.RLIM_INFINITY
+        else:
+            memlock_hard = args.memlock
         memlock_soft = memlock_hard // 2
         if memlock_hard >= sys.maxsize:
             hard = resource.RLIM_INFINITY
@@ -141,7 +161,10 @@ if __name__ == '__main__':
                              line=f'{sys.executable} {" ".join(sys.argv)}')
 
     try:
-        vmem_hard = args.vmem
+        if args.vmem < 0:
+            vmem_hard = resource.RLIM_INFINITY
+        else:
+            vmem_hard = args.vmem
         vmem_soft = vmem_hard // 2
         if vmem_soft >= sys.maxsize:
             vmem_soft = resource.RLIM_INFINITY
@@ -154,7 +177,10 @@ if __name__ == '__main__':
                              line=f'{sys.executable} {" ".join(sys.argv)}')
 
     try:
-        as_hard = args.address_space
+        if args.address_space < 0:
+            as_hard = resource.RLIM_INFINITY
+        else:
+            as_hard = args.address_space
         as_soft = as_hard // 2
         if as_soft >= sys.maxsize:
             as_soft = resource.RLIM_INFINITY
@@ -167,7 +193,10 @@ if __name__ == '__main__':
                              line=f'{sys.executable} {" ".join(sys.argv)}')
 
     try:
-        swap_hard = args.swap
+        if args.swap < 0:
+            swap_hard = resource.RLIM_INFINITY
+        else:
+            swap_hard = args.swap
         swap_soft = swap_hard // 2
         if swap_soft >= sys.maxsize:
             swap_soft = resource.RLIM_INFINITY
@@ -185,6 +214,7 @@ if __name__ == '__main__':
     os.environ['MAD_PATH'] = str(args.path)
     os.environ['MAD_DEVEL'] = str(args.devel)
     os.environ['MAD_NOVAL'] = str(args.no_validate)
+    os.environ['MAD_INTERVAL'] = str(args.sampling_interval)
 
     print('Runtime summary:')
     print()

@@ -104,6 +104,8 @@ PATH = '/mad/pcap'
 MAX_FILE = getProcessedFile()
 # devel flag
 DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
+# sampling interval
+INTERVAL = ast.literal_eval(os.environ['MAD_INTERVAL'])
 
 # current proc info
 if multiprocessing is None:
@@ -204,6 +206,16 @@ def main(mode=3, path='/mad/pcap', sample=None):
                 return False
         return False
 
+    def _sampling(filelist):
+        if INTERVAL == 0:
+            return sorted(filelist)
+        pool = list()
+        modulus = INTERVAL + 1
+        for index, filename in enumerate(sorted(filelist)):
+            if index % modulus == 0:
+                pool.append(filename)
+        return sorted(pool)
+
     # update file list
     filelist = list()
     for item in filter(lambda e: _validate_pcap(e), os.scandir(PATH)):
@@ -214,13 +226,15 @@ def main(mode=3, path='/mad/pcap', sample=None):
         filelist.append(filename)
 
     # start procedure
-    make_worker(filelist, sample=sample)
+    pool = _sampling(filelist)
+    make_worker(pool, sample=sample)
     with contextlib.suppress(ValueError):
-        MAX_FILE = max(filelist)
+        MAX_FILE = max(pool)
     print(f'Current MAX_FILE: {MAX_FILE!r}')
 
     # break in devel mode or others
     if DEVEL or MODE != 3:
+        print('Quit on demand')
         return
 
     # enter main loop
@@ -231,9 +245,10 @@ def main(mode=3, path='/mad/pcap', sample=None):
             if filename <= MAX_FILE:
                 continue
             filelist.append(filename)
-        make_worker(filelist)
+        pool = _sampling(filelist)
+        make_worker(pool)
         with contextlib.suppress(ValueError):
-            MAX_FILE = max(filelist)
+            MAX_FILE = max(pool)
         print(f'Current MAX_FILE: {MAX_FILE!r}')
 
 
@@ -262,7 +277,7 @@ def retrain_cnn(*args):
         ).start()
 
 
-def make_worker(filelist, sample=None):
+def make_worker(pool, sample=None):
     """Create child process."""
     # not implemented
     global MODE
@@ -273,11 +288,11 @@ def make_worker(filelist, sample=None):
     # using worker Pool or sequential solution
     if MODE == 3:
         print('Current worker pool:')
-        pprint.pprint(sorted(filelist))
+        pprint.pprint(pool)
         if CPU_CNT <= 1:
-            [start_worker(file) for file in sorted(filelist)]
+            [start_worker(file) for file in pool]
         else:
-            multiprocessing.Pool(processes=CPU_CNT).map(start_worker, sorted(filelist))
+            multiprocessing.Pool(processes=CPU_CNT).map(start_worker, pool)
         return
 
     # or force to run retrain process
@@ -289,7 +304,7 @@ def make_worker(filelist, sample=None):
     start_worker(sample)
     if MODE in (2, 5):
         MODE = 3
-        return make_worker(filelist)
+        return make_worker(pool)
 
 
 @beholder
@@ -362,6 +377,11 @@ def start_worker(path):
         saveProcessedFile(name)
         with open('/mad/pcap/apt_log.txt', 'at', 1) as file:
             file.write(f'1 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
+
+    # # also, send a signal to update the database
+    # # this is only for prediction mode
+    # if MODE == 3:
+    #     os.kill(PID, signal.SIGUSR1)
 
     # finally, remove used temporary dataset files
     # but record files should be reserved for further usage

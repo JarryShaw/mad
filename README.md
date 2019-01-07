@@ -55,8 +55,8 @@ cd mad
 
 ```
 $ python run_mad.py --help
-usage: mad [-h] [-V] [-m {1,2,3,4,5}] [-p DIR] [-s FILE] [-c PROC] [-l MEM]
-           [-v MEM] [-i] [-e SHELL] [-d]
+usage: mad [-h] [-V] [-m {1,2,3,4,5}] [-p DIR] [-s FILE] [-n] [-t INT]
+           [-c PROC] [-l MEM] [-v MEM] [-a MEM] [-w MEM] [-d] [-i] [-e SHELL]
 
 Malicious Application Detector
 
@@ -69,9 +69,15 @@ general arguments:
                         runtime mode
   -p DIR, --path DIR    input file name or directory (mode=1/2/3)
   -s FILE, --sample FILE
-                        sample for model training (mode=2/5)
+                        sample file(s) for model training (mode=2/5)
 
 runtime arguments:
+  -n, --no-validate     do not run validate process after prediction (mode=3)
+  -t INT, --sampling-interval INT
+                        sample every %INT% file(s) (mode=3; default is 0, i.e.
+                        sampling from all files)
+
+resource arguments:
   -c PROC, --process PROC
                         number of concurrent processes that may run (default
                         is %log2(CPU)%)
@@ -89,10 +95,10 @@ runtime arguments:
   -n, --no-validate     do not run validate process after prediction (mode=3)
 
 development arguments:
+  -d, --devel           run in develop mode (quit after first round)
   -i, --interactive     enter interactive mode (running SHELL)
   -e SHELL, --shell SHELL
-                        shell for interactive mode (default is %SHELL%)
-  -d, --devel           run in develop mode (quit after first round)
+                        shell for interactive mode (default is '/bin/sh')
 ```
 
 ### API
