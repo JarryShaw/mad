@@ -28,14 +28,15 @@ cp -rf app/init.sh \
        app/mad.py \
        app/make_stream.py \
        app/run_mad.py \
-       app/SQLManager.py \
        app/Training.py \
        app/utils.py \
        app/DataLabeler \
        app/fingerprints \
+       app/SQLManager \
        app/StreamManager \
        app/webgraphic apt/app && \
 cp -rf gen/generate_report.py \
+       gen/SQLManager \
        gen/init.sh apt/gen && \
 cp -rf sql/MySQL.sql apt/sql && \
 cp -rf www/init.sh \
