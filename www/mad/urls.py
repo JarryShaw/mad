@@ -14,6 +14,6 @@ urlpatterns = [
     path('outer/', views.outerIp, name='outerIp'),
     path('outer/<str:dstIP>/', views.outerDetail, name='outerDetail'),
     path('ua/', views.ua, name='ua'),
-    path('ua/<str:userAgent>/', views.uaDetail, name='uaDetail'),
+    path('ua/<path:userAgent>/', views.uaDetail, name='uaDetail'),
     path('connection/<str:srcIP>/<str:dstIP>/', views.connection, name='connection'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

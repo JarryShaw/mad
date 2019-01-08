@@ -99,6 +99,12 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="panel panel-default card-view">
+							<div class="panel-heading">
+								<div class="pull-left">
+									<h6 class="panel-title txt-dark">主机{{ srcIP }}</h6>
+								</div>
+								<div class="clearfix"></div>
+							</div>
 							<div class="panel-wrapper collapse in">
 								<div class="panel-body">
 									<div class="table-wrap">
@@ -115,19 +121,17 @@
 												</thead>
 												<tbody>
                                                 {% for outer in outers %}
-                                                    <a href="{% url 'connection' srcip outer.dstip %}">
-                                                        <tr>
-                                                            <td>{{ outer.dstip }}</td>
-                                                        {% if outer.is_malicious %}
-                                                            <td><span class="label label-danger">{{ outer.is_malicious }}</span></td>
-                                                        {% else %}
-                                                            <td><span class="label label-success">{{ outer.is_malicious }}</span></td>
-                                                        {% endif %}
-                                                            <td>{{ outer.ua }}</td>
-                                                            <td>{{ outer.stime }}</td>
-                                                            <td>{{ outer.etime }}</td>
-                                                        </tr>
-                                                    </a>
+                                                    <tr>
+                                                        <td><a href="/connection/{{ srcIP }}/{{ outer.dstip }}/">{{ outer.dstip }}</a></td>
+                                                    {% if outer.is_malicious %}
+                                                        <td><span class="label label-danger">恶意</span></td>
+                                                    {% else %}
+                                                        <td><span class="label label-success">良性</span></td>
+                                                    {% endif %}
+                                                        <td>{{ outer.ua }}</td>
+                                                        <td>{{ outer.stime }}</td>
+                                                        <td>{{ outer.etime }}</td>
+                                                    </tr>
                                                 {% endfor %}
 												</tbody>
 												</tbody>

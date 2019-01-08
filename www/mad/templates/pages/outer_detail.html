@@ -101,11 +101,10 @@
 						<div class="panel panel-default card-view">
 							<div class="panel-heading">
 								<div class="pull-left">
-									<h6 class="panel-title txt-dark">与{{ dstIP }}通信的主机</h6>
-                                    {% if is_malicious %}
-                                        <h6><span class="label label-danger">{{ is_malicious }}</span></h6>
+                                    {% if is_malicious.is_malicious %}
+									<h6 class="panel-title txt-dark">与<span class="label label-danger">{{ dstIP }}</span>通信的主机</h6>
                                     {% else %}
-                                        <h6><span class="label label-success">{{ is_malicious }}</span></h6>
+                                    <h6 class="panel-title txt-dark">与<span class="label label-success">{{ dstIP }}</span>通信的主机</h6>
                                     {% endif %}
 								</div>
 								<div class="clearfix"></div>
@@ -125,14 +124,12 @@
 												</thead>
 												<tbody>
                                                 {% for inner in inners %}
-                                                    <a href="{% url 'connection' inner.srcip dstip %}">
-                                                        <tr>
-                                                            <td>{{ inner.srcip }}</td>
-                                                            <td>{{ inner.ua }}</td>
-                                                            <td>{{ inner.stime }}</td>
-                                                            <td>{{ inner.etime }}</td>
-                                                        </tr>
-                                                    </a>
+                                                    <tr>
+                                                        <td><a href="/connection/{{ inner.srcip }}/{{ dstIP }}/">{{ inner.srcip }}</a></td>
+                                                        <td>{{ inner.ua }}</td>
+                                                        <td>{{ inner.stime }}</td>
+                                                        <td>{{ inner.etime }}</td>
+                                                    </tr>
                                                 {% endfor %}
 												</tbody>
 											</table>

@@ -117,18 +117,16 @@
 												</thead>
 												<tbody id="results-display">
                                                 {% for report in reports %}
-                                                    <a href="{% url 'ua' report.ua %}">
-                                                        <tr>
-                                                            <td>{{ report.ua }}</td>
-                                                            <td>{{ report.stime }}</td>
-                                                            <td>{{ report.etime }}</td>
-                                                        {% if report.malicious %}
-                                                            <td><span class="label label-danger">{{ report.malicious }}</span></td>
-                                                        {% else %}
-                                                            <td><span class="label label-success">{{ report.malicious }}</span></td>
-                                                        {% endif %}
-                                                        </tr>
-                                                    </a>
+                                                    <tr>
+                                                        <td><a href="/ua/{{ report.ua }}/">{{ report.ua }}</a></td>
+                                                        <td>{{ report.stime }}</td>
+                                                        <td>{{ report.etime }}</td>
+                                                    {% if report.malicious %}
+                                                        <td><span class="label label-danger">{{ report.malicious }}</span></td>
+                                                    {% else %}
+                                                        <td><span class="label label-success">{{ report.malicious }}</span></td>
+                                                    {% endif %}
+                                                    </tr>
                                                 {% endfor %}
 												</tbody>
 											</table>

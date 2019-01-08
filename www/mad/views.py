@@ -19,8 +19,7 @@ def index(request):
 def more(request):
     template = loader.get_template('pages/more.html')
     context = {
-        "reports": Mad_Report.objects.filter(is_malicious=True).order_by('id').values("srcip", "srcport", "dstip",
-                                                                                      "dstport", "ua", "time", "is_malicious")
+        "reports": Mad_Report.objects.order_by('id').values("srcip", "srcport", "dstip", "dstport", "ua", "time", "is_malicious")
     }
     return HttpResponse(template.render(context, request))
     # return HttpResponse("Hello, world. You're at the more.")

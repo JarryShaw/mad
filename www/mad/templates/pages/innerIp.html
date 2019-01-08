@@ -116,17 +116,15 @@
 												</thead>
 												<tbody id="results-display">
                                                 {% for report in reports %}
-                                                    <a href="{% url 'innerDetail' report.srcip %}">
-                                                        <tr>
-                                                            <td>{{ report.srcip }}</td>
-                                                            <td>{{ report.ua_num }}</td>
-                                                        {% if report.malicious %}
-                                                            <td><span class="label label-danger">{{ report.malicious }}</span></td>
-                                                        {% else %}
-                                                            <td><span class="label label-success">{{ report.malicious }}</span></td>
-                                                        {% endif %}
+                                                    <tr>
+                                                        <td><a  href="/inner/{{ report.srcip }}/">{{ report.srcip }}</a></td>
+                                                        <td>{{ report.ua_num }}</td>
+                                                    {% if report.malicious %}
+                                                        <td><span class="label label-danger">{{ report.malicious }}</span></td>
+                                                    {% else %}
+                                                        <td><span class="label label-success">{{ report.malicious }}</span></td>
+                                                    {% endif %}
                                                         </tr>
-                                                    </a>
                                                 {% endfor %}
 												</tbody>
 											</table>
