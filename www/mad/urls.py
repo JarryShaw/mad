@@ -9,7 +9,11 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('more/', views.more, name='more'),
-    path('inner_detail/', views.inner_detail, name='inner_detail'),
-    path('outer_detail/', views.outer_detail, name='outer_detail'),
-    path('ua_detail/', views.ua_detail, name='ua_detail'),
+    path('inner/', views.innerIp, name='innerIp'),
+    path('inner/<str:srcIP>/', views.innerDetail, name='innerDetail'),
+    path('outer/', views.outerIp, name='outerIp'),
+    path('outer/<str:dstIP>/', views.outerDetail, name='outerDetail'),
+    path('ua/', views.ua, name='ua'),
+    path('ua/<str:userAgent>/', views.uaDetail, name='uaDetail'),
+    path('connection/<str:srcIP>/<str:dstIP>/', views.connection, name='connection'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -125,7 +125,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'mad/templates/static'),
-    os.path.join(BASE_DIR, 'mad/templates/static/vendors'),
-    os.path.join(BASE_DIR, 'mad/templates/static/img'),
-    os.path.join(BASE_DIR, 'mad/templates/static/dist')
+    # os.path.join(BASE_DIR, 'mad/templates/static/vendors'),
+    # os.path.join(BASE_DIR, 'mad/templates/static/img'),
+    # os.path.join(BASE_DIR, 'mad/templates/static/dist'),
+    # os.path.join(BASE_DIR, 'mad/templates/static/report'),
+    '/mad',
 ]

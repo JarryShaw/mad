@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<title>MAD|恶意软件</title>
+	<title>MAD|恶意服务器</title>
 
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="/static/img/favicon.png">
@@ -101,7 +101,7 @@
 						<div class="panel panel-default card-view">
 							<div class="panel-heading">
 								<div class="pull-left">
-									<h6 class="panel-title txt-dark">连接统计</h6>
+									<h6 class="panel-title txt-dark">{{ srcIP }}与{{ dstIP }}的通信</h6>
 								</div>
 								<div class="clearfix"></div>
 							</div>
@@ -112,25 +112,29 @@
 											<table id="datable_1" class="table mb-0">
 												<thead>
 													<tr>
-														<th>设备</th>
-														<th>操作系统</th>
-														<th>浏览器</th>
-														<th>类型</th>
+														<th>时间</th>
+														<th>User Agent</th>
+														<th>源端口</th>
+														<th>目的端口</th>
+														<th>评级</th>
 													</tr>
 												</thead>
 												<tbody>
-                                                {% for connect in connections %}
+                                                {% for connection in connections %}
                                                     <tr>
-                                                        <td>{{ connect.srcip }}</td>
-                                                        <td>{{ connect.srcport }}</td>
-                                                        <td>{{ connect.dstip }}</td>
-                                                        <td>{{ connect.dstport }}</td>
-                                                        <td>{{ connect.stime }}</td>
-                                                        <td>{{ connect.etime }}</td>
-                                                    {% if connect.is_malicious %}
-                                                        <td><span class="label label-danger">{{ connect.is_malicious }}</span></td>
+                                                        <td>{{ connection.time }}</td>
+                                                        <td>{{ connection.ua }}</td>
+                                                        <td>{{ connection.srcport }}</td>
+                                                        <td>{{ connection.dstport }}</td>
+                                                    {% if connection.is_malicious %}
+                                                        <td><span class="label label-danger">{{ connection.is_malicious }}</span></td>
                                                     {% else %}
-                                                        <td><span class="label label-success">{{ connect.is_malicious }}</span></td>
+                                                        <td><span class="label label-success">{{ connection.is_malicious }}</span></td>
+                                                    {% endif %}
+                                                    {% if connection.detected_by_cnn %}
+                                                        <td><span class="label label-warning">CNN</span></td>
+                                                    {% else %}
+                                                        <td><span class="label label-warning">Finger Print</span></td>
                                                     {% endif %}
                                                     </tr>
                                                 {% endfor %}
@@ -165,6 +169,7 @@
 
 	<!-- JavaScript -->
 
+
     <!-- jQuery -->
     <script src="/static/vendors/bower_components/jquery/dist/jquery.min.js"></script>
 
@@ -195,7 +200,6 @@
 	<!-- Init JavaScript -->
 	<script type="text/javascript">
         $('#datable_1').DataTable();
-        $('#datable_2').DataTable();
     </script>
 	<script src="/static/dist/js/index/init.js"></script>
 </body>

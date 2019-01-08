@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<title>MAD|恶意软件</title>
+	<title>MAD|主机检测</title>
 
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="/static/img/favicon.png">
@@ -58,12 +58,9 @@
                                     </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-                                    <a  href="/inner/">
-                                        <button class="btn btn-success btn-rounded btn-block btn-anim">
-                                            <i class="icon-screen-desktop"></i>
-                                            <span class="btn-text">主机检测</span>
-                                        </button>
-                                    </a>
+									<button class="btn btn-default btn-rounded btn-block disabled">
+										<span class="btn-text">主机检测</span>
+									</button>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
                                     <a  href="/ua/">
@@ -96,43 +93,40 @@
 				</div>
 
 				<!-- Row -->
-                <div class="row">
+				<div class="row">
 					<div class="col-sm-12">
 						<div class="panel panel-default card-view">
 							<div class="panel-heading">
 								<div class="pull-left">
-									<h6 class="panel-title txt-dark">连接统计</h6>
+									<h6 class="panel-title txt-dark">活动主机</h6>
 								</div>
 								<div class="clearfix"></div>
 							</div>
 							<div class="panel-wrapper collapse in">
 								<div class="panel-body">
-									<div class="table-wrap mt-40">
+									<div class="table-wrap">
 										<div class="table-responsive">
-											<table id="datable_1" class="table mb-0">
+											<table id="datable_1" class="table table-hover display  pb-30">
 												<thead>
 													<tr>
-														<th>设备</th>
-														<th>操作系统</th>
-														<th>浏览器</th>
-														<th>类型</th>
+														<th>主机IP地址</th>
+														<th>UA数量</th>
+														<th>恶意UA数量</th>
 													</tr>
 												</thead>
-												<tbody>
-                                                {% for connect in connections %}
-                                                    <tr>
-                                                        <td>{{ connect.srcip }}</td>
-                                                        <td>{{ connect.srcport }}</td>
-                                                        <td>{{ connect.dstip }}</td>
-                                                        <td>{{ connect.dstport }}</td>
-                                                        <td>{{ connect.stime }}</td>
-                                                        <td>{{ connect.etime }}</td>
-                                                    {% if connect.is_malicious %}
-                                                        <td><span class="label label-danger">{{ connect.is_malicious }}</span></td>
-                                                    {% else %}
-                                                        <td><span class="label label-success">{{ connect.is_malicious }}</span></td>
-                                                    {% endif %}
-                                                    </tr>
+												<tbody id="results-display">
+                                                {% for report in reports %}
+                                                    <a href="{% url 'innerDetail' report.srcip %}">
+                                                        <tr>
+                                                            <td>{{ report.srcip }}</td>
+                                                            <td>{{ report.ua_num }}</td>
+                                                        {% if report.malicious %}
+                                                            <td><span class="label label-danger">{{ report.malicious }}</span></td>
+                                                        {% else %}
+                                                            <td><span class="label label-success">{{ report.malicious }}</span></td>
+                                                        {% endif %}
+                                                        </tr>
+                                                    </a>
                                                 {% endfor %}
 												</tbody>
 											</table>
@@ -144,7 +138,6 @@
 					</div>
 				</div>
 				<!-- /Row -->
-
 			</div>
 
 			<!-- Footer -->
@@ -173,9 +166,16 @@
 
 	<!-- Data table JavaScript -->
 	<script src="/static/vendors/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript">
+        $('#datable_1').DataTable();
+    </script>
 
 	<!-- Slimscroll JavaScript -->
 	<script src="/static/dist/js/jquery.slimscroll.js"></script>
+
+	<!-- Progressbar Animation JavaScript -->
+	<script src="/static/vendors/bower_components/waypoints/lib/jquery.waypoints.min.js"></script>
+	<script src="/static/vendors/bower_components/jquery.counterup/jquery.counterup.min.js"></script>
 
 	<!-- Fancy Dropdown JS -->
 	<script src="/static/dist/js/dropdown-bootstrap-extended.js"></script>
@@ -193,11 +193,11 @@
 	<script src="/static/vendors/bower_components/switchery/dist/switchery.min.js"></script>
 
 	<!-- Init JavaScript -->
-	<script type="text/javascript">
-        $('#datable_1').DataTable();
-        $('#datable_2').DataTable();
-    </script>
 	<script src="/static/dist/js/index/init.js"></script>
+
+	<!--<script src="dist/js/echarts.min.js"></script>-->
+	<!--<script src="dist/js/dataTool.min.js"></script>-->
+	<!--<script src="dist/js/inner_data.js"></script>-->
 </body>
 
 </html>

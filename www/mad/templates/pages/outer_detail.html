@@ -58,7 +58,7 @@
                                     </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-                                    <a  href="/inner_detail/">
+                                    <a  href="/inner/">
                                         <button class="btn btn-success btn-rounded btn-block btn-anim">
                                             <i class="icon-screen-desktop"></i>
                                             <span class="btn-text">主机检测</span>
@@ -66,7 +66,7 @@
                                     </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-                                    <a  href="/ua_detail/">
+                                    <a  href="/ua/">
                                         <button class="btn btn-success btn-rounded btn-block btn-anim">
                                             <i class="icon-grid"></i>
                                             <span class="btn-text">恶意软件</span>
@@ -74,9 +74,12 @@
                                     </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-									<button class="btn btn-default btn-rounded btn-block disabled">
-										<span class="btn-text">恶意服务器</span>
-									</button>
+                                    <a  href="/outer/">
+                                        <button class="btn btn-success btn-rounded btn-block btn-anim">
+                                            <i class="glyphicon glyphicon-cloud"></i>
+                                            <span class="btn-text">恶意服务器</span>
+                                        </button>
+                                    </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
                                     <a  href="/more/">
@@ -93,24 +96,44 @@
 				</div>
 
 				<!-- Row -->
-				<div class="row">
+                <div class="row">
 					<div class="col-sm-12">
 						<div class="panel panel-default card-view">
+							<div class="panel-heading">
+								<div class="pull-left">
+									<h6 class="panel-title txt-dark">与{{ dstIP }}通信的主机</h6>
+                                    {% if is_malicious %}
+                                        <h6><span class="label label-danger">{{ is_malicious }}</span></h6>
+                                    {% else %}
+                                        <h6><span class="label label-success">{{ is_malicious }}</span></h6>
+                                    {% endif %}
+								</div>
+								<div class="clearfix"></div>
+							</div>
 							<div class="panel-wrapper collapse in">
 								<div class="panel-body">
-									<div class="table-wrap">
+									<div class="table-wrap mt-40">
 										<div class="table-responsive">
-											<table id="datable_1" class="table table-hover display  pb-30">
+											<table id="datable_1" class="table mb-0">
 												<thead>
 													<tr>
-														<th>服务器IP地址</th>
-														<!--<th>类型</th>-->
-														<th>首次活动时间</th>
-														<th>最后活动时间</th>
-														<th>内部通信IP信息</th>
+														<th>主机地址</th>
+														<th>User Agent</th>
+														<th>第一次活动时间</th>
+														<th>最后一次活动时间</th>
 													</tr>
 												</thead>
-												<tbody id="results-display">
+												<tbody>
+                                                {% for inner in inners %}
+                                                    <a href="{% url 'connection' inner.srcip dstip %}">
+                                                        <tr>
+                                                            <td>{{ inner.srcip }}</td>
+                                                            <td>{{ inner.ua }}</td>
+                                                            <td>{{ inner.stime }}</td>
+                                                            <td>{{ inner.etime }}</td>
+                                                        </tr>
+                                                    </a>
+                                                {% endfor %}
 												</tbody>
 											</table>
 										</div>
@@ -151,7 +174,6 @@
 
 	<!-- Data table JavaScript -->
 	<script src="/static/vendors/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-    <script src="/static/dist/js/outer_detail.js"></script>
 
 	<!-- Slimscroll JavaScript -->
 	<script src="/static/dist/js/jquery.slimscroll.js"></script>
@@ -172,6 +194,9 @@
 	<script src="/static/vendors/bower_components/switchery/dist/switchery.min.js"></script>
 
 	<!-- Init JavaScript -->
+	<script type="text/javascript">
+        $('#datable_1').DataTable();
+    </script>
 	<script src="/static/dist/js/index/init.js"></script>
 </body>
 

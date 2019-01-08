@@ -58,12 +58,15 @@
                                     </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-									<button class="btn btn-default btn-rounded btn-block disabled">
-										<span class="btn-text">主机检测</span>
-									</button>
+                                    <a  href="/inner/">
+                                        <button class="btn btn-success btn-rounded btn-block btn-anim">
+                                            <i class="icon-screen-desktop"></i>
+                                            <span class="btn-text">主机检测</span>
+                                        </button>
+                                    </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-                                    <a  href="/ua_detail/">
+                                    <a  href="/ua/">
                                         <button class="btn btn-success btn-rounded btn-block btn-anim">
                                             <i class="icon-grid"></i>
                                             <span class="btn-text">恶意软件</span>
@@ -71,7 +74,7 @@
                                     </a>
 								</div>
 								<div class="col-sm-2 col-xs-6 mt-15">
-                                    <a  href="/outer_detail/">
+                                    <a  href="/outer/">
                                         <button class="btn btn-success btn-rounded btn-block btn-anim">
                                             <i class="glyphicon glyphicon-cloud"></i>
                                             <span class="btn-text">恶意服务器</span>
@@ -103,12 +106,30 @@
 											<table id="datable_1" class="table table-hover display  pb-30">
 												<thead>
 													<tr>
-														<th>主机IP地址</th>
-														<th>恶意UA数量</th>
-														<th>查看所有UA</th>
+														<th>服务器地址</th>
+														<th>评级</th>
+														<th>User Agent</th>
+														<th>第一次活动时间</th>
+														<th>最后一次活动时间</th>
 													</tr>
 												</thead>
-												<tbody id="results-display">
+												<tbody>
+                                                {% for outer in outers %}
+                                                    <a href="{% url 'connection' srcip outer.dstip %}">
+                                                        <tr>
+                                                            <td>{{ outer.dstip }}</td>
+                                                        {% if outer.is_malicious %}
+                                                            <td><span class="label label-danger">{{ outer.is_malicious }}</span></td>
+                                                        {% else %}
+                                                            <td><span class="label label-success">{{ outer.is_malicious }}</span></td>
+                                                        {% endif %}
+                                                            <td>{{ outer.ua }}</td>
+                                                            <td>{{ outer.stime }}</td>
+                                                            <td>{{ outer.etime }}</td>
+                                                        </tr>
+                                                    </a>
+                                                {% endfor %}
+												</tbody>
 												</tbody>
 											</table>
 										</div>
@@ -167,7 +188,6 @@
 
 	<!-- Data table JavaScript -->
 	<script src="/static/vendors/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-	<script src="/static/dist/js/inner_detail.js"></script>
 
 	<!-- Slimscroll JavaScript -->
 	<script src="/static/dist/js/jquery.slimscroll.js"></script>
@@ -192,6 +212,9 @@
 	<script src="/static/vendors/bower_components/switchery/dist/switchery.min.js"></script>
 
 	<!-- Init JavaScript -->
+	<script type="text/javascript">
+        $('#datable_1').DataTable();
+    </script>
 	<script src="/static/dist/js/index/init.js"></script>
 
 	<!--<script src="dist/js/echarts.min.js"></script>-->
