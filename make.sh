@@ -36,8 +36,8 @@ cp -rf app/init.sh \
        app/StreamManager \
        app/webgraphic apt/app && \
 cp -rf gen/generate_report.py \
-       gen/SQLManager \
-       gen/init.sh apt/gen && \
+       gen/init.sh \
+       gen/SQLManager apt/gen && \
 cp -rf sql/MySQL.sql apt/sql && \
 cp -rf www/init.sh \
        www/manage.py \

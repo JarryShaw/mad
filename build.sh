@@ -28,8 +28,8 @@ cp -rf app/init.sh \
        app/webgraphic build/app/ && \
 mkdir -p build/gen && \
 cp -rf gen/generate_report.py \
-       gen/SQLManager \
-       gen/init.sh build/gen && \
+       gen/init.sh \
+       gen/SQLManager build/gen && \
 mkdir -p build/sql && \
 cp -rf sql/MySQL.sql build/sql && \
 mkdir -p build/www && \
