@@ -21,6 +21,7 @@ cp -rf .dockerignore \
        docker-compose.yml \
        docker.sh \
        Dockerfile \
+       fingerprint.pickle \
        model.tar.gz \
        retrain.tar.gz apt && \
 cp -rf app/init.sh \
@@ -52,7 +53,7 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # de-f-string
-pipenv run f2format -n apt
+pipenv run f2format --encoding UTF-8 --no-archive apt
 returncode=$?
 if [[ $returncode -ne "0" ]] ; then
     exit $returncode

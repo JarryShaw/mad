@@ -56,6 +56,7 @@ RUN echo 'Asia/Shanghai' > /etc/timezone \
 # copy source files and archives
 ADD model.tar.gz /mad
 ADD retrain.tar.gz /mad
+COPY fingerprint.pickle /mad
 COPY app /app
 COPY gen /gen
 COPY www /www

@@ -11,6 +11,7 @@ mkdir -p build && \
 cp -rf .dockerignore \
        docker-compose.yml \
        Dockerfile \
+       fingerprint.pickle \
        model.tar.gz \
        retrain.tar.gz build && \
 mkdir -p build/app && \
@@ -42,7 +43,7 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # de-f-string
-pipenv run f2format -n build
+pipenv run f2format --encoding UTF-8 --no-archive build
 returncode="$?"
 if [[ $returncode -ne "0" ]] ; then
     exit $returncode
@@ -54,7 +55,11 @@ if [[ -z $1 ]] ; then
 else
     docker build --rm --tag mad:$1 build
 fi
+returncode="$?"
+if [[ $returncode -ne "0" ]] ; then
+    exit $returncode
+fi
 
 # run docker-compose
 cd build
-docker-compose up
+docker-compose up --build
