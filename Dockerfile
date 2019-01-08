@@ -57,6 +57,7 @@ RUN echo 'Asia/Shanghai' > /etc/timezone \
 ADD model.tar.gz /mad
 ADD retrain.tar.gz /mad
 COPY app /app
+COPY gen /gen
 COPY www /www
 
 # entry points

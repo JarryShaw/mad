@@ -82,6 +82,8 @@ def get_parser():
     runtime_group = parser.add_argument_group(title='runtime arguments')
     runtime_group.add_argument('-n', '--no-validate', action='store_true',
                                help='do not run validate process after prediction (mode=3)')
+    runtime_group.add_argument('-o', '--wait-timeout', action='store', type=int, default=0, metavar='SEC',
+                               help='wait for %%SEC%% seconds between each round (mode=3; default is 0)')
     runtime_group.add_argument('-t', '--sampling-interval', action='store', type=int, default=0, metavar='INT',
                                help='sample every %%INT%% file(s) (mode=3; default is 0, i.e. sampling from all files)')
 
@@ -127,6 +129,13 @@ if __name__ == '__main__':
                              RuntimeWarning, filename=__file__, lineno=0,
                              line=f'{sys.executable} {" ".join(sys.argv)}')
         args.sampling_interval = 0
+
+    if args.wait_timeout < 0:
+        warnings.showwarning(f'invalid sleep length: {args.wait_timeout}; '
+                             f'no wait between each round instead',
+                             RuntimeWarning, filename=__file__, lineno=0,
+                             line=f'{sys.executable} {" ".join(sys.argv)}')
+        args.wait_timeout = 0
 
     if args.process < 0:
         warnings.showwarning(f'invalid process number: {args.process}; '
@@ -214,6 +223,7 @@ if __name__ == '__main__':
     os.environ['MAD_PATH'] = str(args.path)
     os.environ['MAD_DEVEL'] = str(args.devel)
     os.environ['MAD_NOVAL'] = str(args.no_validate)
+    os.environ['MAD_TIMEOUT'] = str(args.wait_timeout)
     os.environ['MAD_INTERVAL'] = str(args.sampling_interval)
 
     print('Runtime summary:')

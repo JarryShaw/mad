@@ -73,6 +73,9 @@ general arguments:
 
 runtime arguments:
   -n, --no-validate     do not run validate process after prediction (mode=3)
+  -o SEC, --wait-timeout SEC
+                        wait for %SEC% seconds between each round (mode=3;
+                        default is 0)
   -t INT, --sampling-interval INT
                         sample every %INT% file(s) (mode=3; default is 0, i.e.
                         sampling from all files)
@@ -203,6 +206,9 @@ None
 ├── build.sh
 ├── docker-compose.yml
 ├── docker.sh
+├── gen                             # report generator
+│   ├── generate_report.py          # main module
+│   └── init.sh                     # entry point
 ├── make.sh
 ├── model.tar.gz
 ├── retrain.tar.gz
@@ -321,6 +327,8 @@ None
     |-- model/                                  # where CNN model go
     |   |-- Background_PC/                      # Background_PC models
     |   |   |-- ...
+    |   |-- ...
+    |-- report/                                 # where generated reports go
     |   |-- ...
     |-- retrain/                                # where CNN retrain data go
         |-- Background_PC/                      # Background_PC retrain dataset

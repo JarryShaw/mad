@@ -36,6 +36,8 @@
     |   |-- Background_PC/                      # Background_PC models
     |   |   |-- ...
     |   |-- ...
+    |-- report/                                 # where generated reports go
+    |   |-- ...
     |-- retrain/                                # where CNN retrain data go
         |-- Background_PC/                      # Background_PC retrain dataset
         |   |-- 0/                              # clean ones
@@ -65,6 +67,7 @@ import subprocess
 import sys
 import time
 import traceback
+import warnings
 
 import dpkt
 import scapy.all
@@ -87,6 +90,8 @@ try:        # try first
 except ImportError:
     multiprocessing = None
     proc_cnt = 0
+    warnings.showwarning('current system has not multiprocessing support',
+                         ResourceWarning, filename=__file__, lineno=87)
 else:       # CPU number if multiprocessing supported
     proc_cnt = ast.literal_eval(os.environ['PROC_CNT'])
 finally:
@@ -104,6 +109,8 @@ PATH = '/mad/pcap'
 MAX_FILE = getProcessedFile()
 # devel flag
 DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
+# wait timeout
+TIMEOUT = ast.literal_eval(os.environ['MAD_TIMEOUT'])
 # sampling interval
 INTERVAL = ast.literal_eval(os.environ['MAD_INTERVAL'])
 
@@ -239,6 +246,8 @@ def main(mode=3, path='/mad/pcap', sample=None):
 
     # enter main loop
     while True:
+        if TIMEOUT:
+            time.sleep(TIMEOUT)
         filelist = list()
         for item in filter(lambda e: _validate_pcap(e), os.scandir(PATH)):
             filename = item.path
@@ -289,10 +298,11 @@ def make_worker(pool, sample=None):
     if MODE == 3:
         print('Current worker pool:')
         pprint.pprint(pool)
-        if CPU_CNT <= 1:
-            [start_worker(file) for file in pool]
-        else:
-            multiprocessing.Pool(processes=CPU_CNT).map(start_worker, pool)
+        if pool:
+            if CPU_CNT <= 1:
+                [start_worker(file) for file in pool]
+            else:
+                multiprocessing.Pool(processes=CPU_CNT).map(start_worker, pool)
         return
 
     # or force to run retrain process

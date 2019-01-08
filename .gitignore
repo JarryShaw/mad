@@ -14,7 +14,6 @@ fingerprints/fingerprints
 
 # uploaded to iCloud
 *.icloud
-mad.tar.gz
 model.tar.gz
 retrain.tar.gz
 latest.json

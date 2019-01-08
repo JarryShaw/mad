@@ -8,6 +8,7 @@ cd app
 # run MAD
 # python3 run_mad.py --path /mad/pcap | ts "%Y-%m-%dT%H:%M:%.SZ"
 python3 run_mad.py --path /mad/pcap \
+                   --wait-timeout=0 \
                    --sampling-interval=0 \
                    --process=5 \
                    --memlock=2097152 \

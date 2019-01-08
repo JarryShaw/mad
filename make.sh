@@ -8,6 +8,7 @@ shopt -s globstar
 # prepare source files
 mkdir -p apt \
          apt/app \
+         apt/gen \
          apt/sql \
          apt/www && \
 cp -rf .dockerignore \
@@ -33,6 +34,8 @@ cp -rf app/init.sh \
        app/fingerprints \
        app/StreamManager \
        app/webgraphic apt/app && \
+cp -rf gen/generate_report.py \
+       gen/init.sh apt/gen && \
 cp -rf sql/MySQL.sql apt/sql && \
 cp -rf www/init.sh \
        www/manage.py \

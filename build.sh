@@ -25,6 +25,9 @@ cp -rf app/init.sh \
        app/fingerprints \
        app/StreamManager \
        app/webgraphic build/app/ && \
+mkdir -p build/gen && \
+cp -rf gen/generate_report.py \
+       gen/init.sh build/gen && \
 mkdir -p build/sql && \
 cp -rf sql/MySQL.sql build/sql && \
 mkdir -p build/www && \

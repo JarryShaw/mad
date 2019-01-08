@@ -7,6 +7,8 @@ services:
     build: .
     container_name: mad_app
     depends_on:
+      - mad_db
+      - mad_gen
       - mad_www
     deploy:
       resources:
@@ -27,6 +29,19 @@ services:
     restart: always
     volumes:
       - /home/traffic/pcapfile:/mad/pcap
+  mad_gen:
+    build: .
+    container_name: mad_gen
+    depends_on:
+      - mad_db
+      - mad_www
+    entrypoint: ["wait-for-it", "--timeout=0", "mad_db:3306", "--", "bash", "/gen/init.sh"]
+    image: mad
+    links:
+      - mad_db
+    restart: always
+    volumes:
+      - /home/traffic/log/mad:/mad/report
   mad_www:
     build: .
     container_name: mad_www
@@ -39,6 +54,8 @@ services:
     ports:
       - 8888:80
     restart: always
+    volumes:
+      - /home/traffic/log/mad:/mad/report
   mad_db:
     container_name: mad_db
     environment:
@@ -51,6 +68,7 @@ services:
       - default
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
+      # - /home/traffic/log/mysql:/var/lib/mysql
 
 # network settings
 networks:
