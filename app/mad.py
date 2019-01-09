@@ -75,6 +75,7 @@ import scapy.all
 from fingerprints.fingerprintsManager import fingerprintManager
 from make_stream import JSONEncoder, dump_stream, load_stream, object_hook
 from SQLManager import getProcessedFile, saveProcessedFile
+from SQLManager.Model import minstr
 from StreamManager.StreamManager4 import StreamManager
 from utils import JSONEncoder, object_hook
 from webgraphic.webgraphic import webgraphic
@@ -170,6 +171,7 @@ def beholder(func):
                 sys.exit(traceback.format_exc())
             else:
                 traceback.print_exc()
+            return minstr()
     return wrapper
 
 
@@ -300,10 +302,10 @@ def make_worker(pool, sample=None):
         pprint.pprint(pool)
         if pool:
             if CPU_CNT <= 1:
-                [start_worker(file) for file in pool]
+                filelist = [start_worker(file) for file in pool]
             else:
-                multiprocessing.Pool(processes=CPU_CNT).map(start_worker, pool)
-        return
+                filelist = multiprocessing.Pool(processes=CPU_CNT).map(start_worker, pool)
+        return filelist
 
     # or force to run retrain process
     if MODE == 4:
@@ -404,6 +406,9 @@ def start_worker(path):
 
     milestone_5 = time.time()
     print(f'Worked for {milestone_5-milestone_0} seconds')
+
+    # return processed file
+    return name
 
 
 def make_sniff(path):

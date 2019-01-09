@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from SQLManager.Model import *
+from peewee import fn
+
+from SQLManager.Model import (Mad_Loss, Mad_ProcessedFile, Mad_Report,
+                              Mad_ToBeProcessedFile, minstr)
 
 
 def saveLoss(loss, time):
@@ -12,7 +15,7 @@ def saveLoss(loss, time):
 
 
 def getToBeProcessedFile():
-    files = Mad_ToBeProcessedFile.select().where(Mad_ToBeProcessedFile.status == False)
+    files = Mad_ToBeProcessedFile.select().where(Mad_ToBeProcessedFile.status == False)  # noqa
     output = []
     for file in files:
         output.append(file.path)

@@ -3,7 +3,7 @@
 import functools
 
 from peewee import (BooleanField, CharField, DateTimeField, FloatField,
-                    IntegerField, Model, MySQLDatabase, TextField, fn)
+                    IntegerField, Model, MySQLDatabase, TextField)
 
 db = MySQLDatabase(
     database='deepocean',

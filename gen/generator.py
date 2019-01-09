@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 def updateInfectedComputer(Report, Infected):
     Exist = list()
     infected = 0

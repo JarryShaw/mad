@@ -8,10 +8,11 @@ import time
 
 import requests
 
-API_KEY = os.environ['MAD_TOKEN']
-
 
 def updateServerMap(reportList, serverMap):
+    # get API token
+    API_KEY = os.environ['MAD_TOKEN']
+
     # backup server_map
     server_map = copy.copy(serverMap)
 

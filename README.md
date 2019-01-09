@@ -211,11 +211,13 @@ None
 ├── docker-compose.yml
 ├── docker.sh
 ├── gen                             # report generator
-│   ├── generate_report.py          # main module
 │   ├── SQLManager                  # database interfaces
 │   │   ├── Model.py
 │   │   └── __init__.py
+│   ├── generate_report.py          # main module
+│   ├── generator.py                # generators
 │   └── init.sh                     # entry point
+│   ├── server_map.py               # generator for server_map.json
 ├── make.sh
 ├── model.tar.gz
 ├── retrain.tar.gz
