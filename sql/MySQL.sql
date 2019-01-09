@@ -35,3 +35,10 @@ create table `mad_processedfile` (
     `name` varchar(255) not NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+create table `mad_tobeprocessedfile` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) not NULL,
+    `status` bool not NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

@@ -50,3 +50,8 @@ class Mad_Loss(BaseModel):
 
 class Mad_ProcessedFile(BaseModel):
     name = CharField(max_length=255)
+
+
+class Mad_ToBeProcessedFile(BaseModel):
+    path = CharField(max_length=255)
+    status = BooleanField()

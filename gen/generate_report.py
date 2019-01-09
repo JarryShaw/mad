@@ -7,6 +7,9 @@ import os
 import sys
 import time
 import warnings
+import json
+import ast
+from SQLManager import getToBeProcessedFile
 
 try:
     import multiprocessing
@@ -28,10 +31,10 @@ finally:
 
 def getCurrentPool():
     """Return newly generated report names from the pool."""
-    return list()
+    return getToBeProcessedFile()
 
 
-def generateReport(reportName):
+def generateReport(reportPath):
     """Write reports to /mad/report, and update database."""
     pass
 

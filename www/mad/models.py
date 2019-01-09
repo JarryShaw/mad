@@ -37,3 +37,11 @@ class Mad_ProcessedFile(models.Model):
 
     class Meta:
         db_table = 'mad_processedfile'
+
+
+class Mad_ToBeProcessedFile(models.Model):
+    name = models.CharField(max_length=255)
+    status = models.BooleanField()
+
+    class Meta:
+        db_table = 'mad_tobeprocessedfile'

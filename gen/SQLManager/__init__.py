@@ -11,7 +11,20 @@ def saveLoss(loss, time):
     tmp.save()
 
 
-def saveProcessedFile(file):
+def getToBeProcessedFile():
+    files = Mad_ToBeProcessedFile.select().where(Mad_ToBeProcessedFile.status == False)
+    output = []
+    for file in files:
+        output.append(file.path)
+    return output
+
+
+def saveProcessedFile(file, path):
+    tmp = Mad_ToBeProcessedFile(
+        name=path,
+        status=False
+    )
+    tmp.save()
     count = Mad_ProcessedFile.select().count()  # pylint: disable=E1120
     minimum = Mad_ProcessedFile.select(fn.MIN(Mad_ProcessedFile.id)).scalar()  # pylint: disable=E1120
     while count >= 600:
