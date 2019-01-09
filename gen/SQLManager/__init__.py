@@ -13,9 +13,15 @@ def saveLoss(loss, time):
 
 def getToBeProcessedFile():
     files = Mad_ToBeProcessedFile.select().where(Mad_ToBeProcessedFile.status == False)
+    query = Mad_ToBeProcessedFile.update(Mad_ToBeProcessedFile.status == True).where(Mad_ToBeProcessedFile.status == False)
     output = []
     for file in files:
         output.append(file.path)
+    return output
+
+
+def getLoss():
+    output = Mad_Loss.select().order_by(-Mad_Loss.time).limit(100)
     return output
 
 

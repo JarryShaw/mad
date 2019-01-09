@@ -6,13 +6,15 @@ import getopt
 import json
 import math
 import os
+import pathlib
 import sys
 import time
 import warnings
 
 from sample import anotherFunc
 from server_map import updateServerMap
-from SQLManager import getToBeProcessedFile
+from SQLManager import getToBeProcessedFile, getLoss
+from generator import *
 
 try:
     import multiprocessing
@@ -55,8 +57,10 @@ def generateReport(pool, processes):
             json.dump(context, file, indent=2)
 
     # original file content
-    server_map = load_file('/mad/server_map.json', list())
-    another_report = load_file('/mad/another_report.json', dict())
+    server_map = load_file('/mad/report/server_map.json', list())
+    infected_computer = load_file('/mad/report/infected_computer.json', dict())
+    active_software = load_file('/mad/report/active_software.json', dict())
+    connection = load_file('/mad/report/connection.json', dict())
 
     # traverse report files
     for reportPath in pool:
@@ -68,24 +72,39 @@ def generateReport(pool, processes):
         funcServerMap = functools.partial(updateServerMap,
                                           reportList=reportList,
                                           serverMap=server_map)
-        funcAnotherReport = functools.partial(anotherFunc,
+        funcInfectedComputer = functools.partial(updateInfectedComputer,
                                               reportList=reportList,
-                                              anotherReport=another_report)
+                                              anotherReport=infected_computer)
+        funcActiveSoftware = functools.partial(updateActiveSoftware,
+                                              reportList=reportList,
+                                              anotherReport=active_software)
+        funcConnection = functools.partial(updateConnection,
+                                              reportList=reportList,
+                                              anotherReport=connection)
 
         # run update process
         if processes <= 1:
-            proc_return = [call_func(func) for func in [funcServerMap, funcAnotherReport]]
+            proc_return = [call_func(func) for func in [funcServerMap, funcInfectedComputer, funcActiveSoftware, funcConnection]]
         else:
-            proc_return = multiprocessing.Pool(processes).map(call_func, [funcServerMap, funcAnotherReport])
-        server_map, another_report = proc_return
+            proc_return = multiprocessing.Pool(processes).map(call_func, [funcServerMap, funcInfectedComputer, funcActiveSoftware, funcConnection])
+        server_map, infected_computer, active_software, connection = proc_return
 
     # save file content
-    dump_file('/mad/server_map.json', server_map)
-    dump_file('/mad/another_report.json', another_report)
+    dump_file('/mad/report/server_map.json', server_map)
+    dump_file('/mad/report/infected_computer.json', infected_computer)
+    dump_file('/mad/report/active_software.json', active_software)
+    dump_file('/mad/report/connection.json', connection)
+
+    # save loss
+    lossList = getLoss()
+    loss = saveLoss(lossList)
+    dump_file('/mad/report/loss.json', loss)
+
 
 
 def main():
     # default interval
+    pathlib.Path('/mad/report').mkdir(exist_ok=True, parents=True)
     interval = 300
     process = PROC_CNT
     token = None

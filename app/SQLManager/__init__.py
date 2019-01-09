@@ -19,6 +19,11 @@ def getToBeProcessedFile():
     return output
 
 
+def getLoss():
+    output = Mad_Loss.select().order_by(-Mad_Loss.time).limit(100)
+    return output
+
+
 def saveProcessedFile(file, path):
     tmp = Mad_ToBeProcessedFile(
         name=path,

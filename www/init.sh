@@ -5,14 +5,6 @@ set -x
 # change cwd
 cd www
 
-# create link
-mkdir -p /mad /mad/report && \
-ln -s /mad/report /www/mad/templates/static/report
-returncode=$?
-if [[ $returncode -ne "0" ]] ; then
-    exit $returncode
-fi
-
 # setup db
 python3 manage.py makemigrations && \
 python3 manage.py migrate

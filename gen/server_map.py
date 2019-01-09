@@ -16,8 +16,8 @@ def updateServerMap(reportList, serverMap):
     server_map = copy.copy(serverMap)
 
     # load failed IP addresses
-    if os.path.isfile('/mad/failed.json'):
-        with open('mad/failed.json') as file:
+    if os.path.isfile('/mad/report/failed.json'):
+        with open('mad/report/failed.json') as file:
             failed = set(json.load(file))
     else:
         failed = set()
@@ -46,6 +46,10 @@ def updateServerMap(reportList, serverMap):
         else:
             failed.add(ip)
         time.sleep(1)
+
+    # update failed database
+    with open('/mad/report/failed.json', 'w') as file:
+        json.dump(failed, file, indent=2)
 
     # return modified server_map
     return server_map
