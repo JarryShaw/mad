@@ -14,7 +14,6 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # setup db
-# python3 manage.py migrate | ts "%Y-%m-%dT%H:%M:%.SZ"
 python3 manage.py makemigrations && \
 python3 manage.py migrate
 if [[ $? -ne "0" ]] ; then
@@ -26,7 +25,6 @@ if [[ $? -ne "0" ]] ; then
 fi
 
 # startup server
-# python3 manage.py runserver 0.0.0.0:80 | ts "%Y-%m-%dT%H:%M:%.SZ"
 python3 manage.py runserver 0.0.0.0:80
 returncode=$?
 if [[ $returncode -ne "0" ]] ; then

@@ -62,5 +62,9 @@ if [[ $returncode -ne "0" ]] ; then
 fi
 
 # run docker-compose
-cd build
-docker-compose up --build
+if [[ $1 =~ ^build$ ]] ; then
+    echo "Build only; not to start up docker-compose."
+else
+    cd build
+    docker-compose up --build
+fi

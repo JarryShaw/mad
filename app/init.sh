@@ -6,7 +6,16 @@ set -x
 cd app
 
 # run MAD
-# python3 run_mad.py --path /mad/pcap | ts "%Y-%m-%dT%H:%M:%.SZ"
+#   Sample source: /mad/pcap
+#   Rounds interval: 0
+#   Sampling intervar: 0
+#   Process number: 5
+#   MEMLOCK limit: 2M
+#   VMEM limit: 2M
+#   AS limit: 1G
+#   SWAP limit: 2M
+#   Validation: yes
+#   Develop mode: no
 python3 run_mad.py --path /mad/pcap \
                    --wait-timeout=0 \
                    --sampling-interval=0 \
