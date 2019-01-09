@@ -40,7 +40,7 @@ class Mad_ProcessedFile(models.Model):
 
 
 class Mad_ToBeProcessedFile(models.Model):
-    name = models.CharField(max_length=255)
+    path = models.CharField(max_length=255)
     status = models.BooleanField()
 
     class Meta:
