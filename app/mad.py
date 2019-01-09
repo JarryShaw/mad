@@ -384,7 +384,7 @@ def start_worker(path):
     with LOCK:
         with open('/mad/mad.log', 'at', 1) as file:
             file.write(f'1 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
-        saveProcessedFile(name)
+        saveProcessedFile(name, f'/mad/dataset/{dsname}/report.json')
         with open('/mad/pcap/apt_log.txt', 'at', 1) as file:
             file.write(f'1 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
 

@@ -16,6 +16,7 @@
 - [`pkt2flow`](https://github.com/caesar0301/pkt2flow)
 - CPython 3.5+
 - MySQL (name set to be `mad_db`)
+- [`shodan`](https://www.shodan.io) API token
 
 #### Python dependencies
 

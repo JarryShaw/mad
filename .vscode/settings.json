@@ -75,6 +75,7 @@
         "scandir",
         "sched",
         "setrlimit",
+        "shodan",
         "softmax",
         "srcip",
         "srcport",
