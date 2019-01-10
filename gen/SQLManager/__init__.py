@@ -24,6 +24,11 @@ def getToBeProcessedFile():
     return output
 
 
+def deleteToBeProcessedFile(path):
+    query = Mad_ToBeProcessedFile.delete().where(Mad_ToBeProcessedFile.path == path)  # noqa
+    query.execute()
+
+
 def getLoss():
     output = Mad_Loss.select().order_by(-Mad_Loss.time).limit(100)
     return output
