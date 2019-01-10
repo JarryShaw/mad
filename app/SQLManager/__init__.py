@@ -23,7 +23,7 @@ def getToBeProcessedFile():
 
 
 def deleteToBeProcessedFile(path):
-    query = Mad_ToBeProcessedFile.delete().where(Mad_ToBeProcessedFile.path == path)  # noqa
+    query = Mad_ToBeProcessedFile.delete().where(Mad_ToBeProcessedFile.path == path)
     query.execute()
 
 

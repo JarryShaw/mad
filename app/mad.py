@@ -305,6 +305,9 @@ def make_worker(pool, sample=None):
                 filelist = [start_worker(file) for file in pool]
             else:
                 filelist = multiprocessing.Pool(processes=CPU_CNT).map(start_worker, pool)
+        else:
+            filelist = list()
+            print(f'No PCAP files in the pool, wait for another {TIMEOUT} second(s).')
         return filelist
 
     # or force to run retrain process

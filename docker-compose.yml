@@ -29,6 +29,7 @@ services:
     restart: always
     volumes:
       - /home/traffic/pcapfile:/mad/pcap
+      - /home/traffic/db/mad:/mad/dataset
   mad_gen:
     build: .
     container_name: mad_gen
@@ -42,6 +43,7 @@ services:
     restart: always
     volumes:
       - /home/traffic/log/mad:/mad/report
+      - /home/traffic/db/mad:/mad/dataset
   mad_www:
     build: .
     container_name: mad_www
@@ -68,7 +70,7 @@ services:
       - default
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
-      # - /home/traffic/log/mysql:/var/lib/mysql
+      - /home/traffic/log/mysql:/var/lib/mysql
 
 # network settings
 networks:

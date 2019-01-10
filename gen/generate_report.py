@@ -6,7 +6,7 @@ import getopt
 import json
 import math
 import os
-import pathlib
+import pprint  # ##
 import sys
 import time
 import warnings
@@ -14,7 +14,8 @@ import warnings
 from generator import (updateActiveSoftware, updateConnection,
                        updateInfectedComputer, updateLoss)
 from server_map import updateServerMap
-from SQLManager import getLoss, getToBeProcessedFile
+from SQLManager import (deleteToBeProcessedFile, getLoss, getToBeProcessedFile,
+                        updateToBeProcessedFile)
 
 try:
     import multiprocessing
@@ -56,12 +57,14 @@ def generateReport(pool, processes):
         with open(path, 'w') as file:
             json.dump(context, file, indent=2)
 
+    print('Current worker pool:')
+    pprint.pprint(pool)
+
     # original file content
     server_map = load_file('/mad/report/server_map.json', list())
     infected_computer = load_file('/mad/report/infected_computer.json', dict())
     active_software = load_file('/mad/report/active_software.json', dict())
     connection = load_file('/mad/report/connection.json', dict())
-    lossList = getLoss()
 
     # traverse report files
     for reportPath in pool:
@@ -82,28 +85,33 @@ def generateReport(pool, processes):
         funcConnection = functools.partial(updateConnection,
                                            reportList=reportList,
                                            anotherReport=connection)
-        funcLoss = functools.partial(updateLoss, Report=lossList)
 
         # run update process
         if processes <= 1:
             proc_return = [call_func(func) for func in [funcServerMap, funcInfectedComputer,
-                                                        funcActiveSoftware, funcConnection, funcLoss]]
+                                                        funcActiveSoftware, funcConnection]]
         else:
             proc_return = multiprocessing.Pool(processes).map(call_func, [funcServerMap, funcInfectedComputer,
-                                                                          funcActiveSoftware, funcConnection, funcLoss])
+                                                                          funcActiveSoftware, funcConnection])
         server_map, infected_computer, active_software, connection, loss = proc_return
+
+        print(f'Generated report files for {reportPath!r}...')
+        deleteToBeProcessedFile(reportPath)
 
     # save file content
     dump_file('/mad/report/server_map.json', server_map)
     dump_file('/mad/report/infected_computer.json', infected_computer)
     dump_file('/mad/report/active_software.json', active_software)
     dump_file('/mad/report/connection.json', connection)
+
+    # get loss
+    lossList = getLoss()
+    loss = updateLoss(lossList)
     dump_file('/mad/report/loss.json', loss)
 
 
 def main():
     # default interval
-    pathlib.Path('/mad/report').mkdir(exist_ok=True, parents=True)
     interval = 300
     process = PROC_CNT
     token = None
@@ -136,13 +144,22 @@ def main():
                              ResourceWarning, filename=__file__, lineno=0,
                              line=f'{sys.executable} {" ".join(sys.argv)}')
 
+    print('Runtime summary:')
+    print()
+    print(f'    System CPU count: {CPU_CNT}')
+    print(f'    Concurrent process: {PROC_CNT}')
+    print(f'    Sleep interval: {interval} second(s)')
+    print(f'    API token: {token}')
+    print()
+
     # update database
+    updateToBeProcessedFile()
     while True:
         pool = getCurrentPool()
         if pool:
             generateReport(pool, PROC_CNT)
         else:
-            print(f'No report in the pool, wait for another {interval} seconds.')
+            print(f'No report in the pool, wait for another {interval} second(s).')
         time.sleep(interval)
 
 
