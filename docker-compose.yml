@@ -6,13 +6,8 @@ services:
   mad_app:
     build: .
     container_name: mad_app
-    cpu_count: 2
-    cpu_percent: 50
     cpus: 0.5
-    cpu_shares: 73
-    cpu_quota: 50000
-    cpu_period: 20ms
-    cpuset: 0,1
+    cpu_shares: 75
     depends_on:
       - mad_db
       - mad_gen

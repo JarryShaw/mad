@@ -7,15 +7,15 @@
 #### System requirements
 
 - Ubuntu 16.04
-- run as `root` privilege
-- preferred using `docker`
+- run with `root` privilege
+- preferred using `docker` & `docker-compose`
 
 #### Software & Libraries
 
 - `libpcap`
 - [`pkt2flow`](https://github.com/caesar0301/pkt2flow)
+- MySQL 5.7
 - CPython 3.5+
-- MySQL (name set to be `mad_db`)
 - [`shodan`](https://www.shodan.io) API token
 
 #### Python dependencies
@@ -51,11 +51,62 @@ cd mad
 ./build.sh "v0.1b1"
 ```
 
+## Configurations
+
+### `mad_app` -- main application
+
+- [`docker-compose.yml`](docker-compose.yml)
+  - CPU usage
+    - 50% of available CPUs
+    - 75% of CPU processing shares
+  - Memory usage
+    - 2G memory limit
+    - 4G `SWAP` limit
+  - Volume path
+    - PCAP sources (`--path`) in `/home/traffic/pcapfile`
+    - dataset directory in `/home/traffic/db/mad`
+- [`init.sh`](app/init.sh)
+  - Sample source: `/mad/pcap`
+  - Rounds interval: `0s`
+  - Sampling intervar: `0`
+  - Process number: `5`
+  - `MEMLOCK` limit: `2G`
+  - `VMEM` limit: `1G`
+  - `AS` limit: `10G`
+  - `SWAP` limit: `2M`
+  - Validation: `yes`
+  - Develop mode: `no`
+
+### `mad_gen` -- report generator
+
+- [`docker-compose.yml`](docker-compose.yml)
+  - Volume path
+    - report directory in `/home/traffic/log/mad`
+    - dataset directory in `/home/traffic/db/mad`
+- [`init.sh`](gen/init.sh)
+  - Process number: `4`
+  - Sleep interval: `5m`
+  - API token: `6JJ0qCCNHzv6iLsPvUPQNst0Dpbh87io`
+
+### `mad_www` -- web dashboard
+
+- [`docker-compose.yml`](docker-compose.yml)
+  - Volume path
+    - report directory in `/home/traffic/log/mad`
+- [`init.sh`](www/init.sh)
+
+### `mad_db` -- MySQL database
+
+- [`docker-compose.yml`](docker-compose.yml)
+  - Volume path
+    - initialisation script in [`sql/MySQL.sql`](sql/MySQL.sql)
+    - database library in `/home/traffic/log/mysql`
+
 ## Entry points
 
 ### CLI
 
-```
+```text
 $ python run_mad.py --help
 usage: mad [-h] [-V] [-m {1,2,3,4,5}] [-p DIR] [-s FILE] [-n] [-t INT]
            [-c PROC] [-l MEM] [-v MEM] [-a MEM] [-w MEM] [-d] [-i] [-e SHELL]
@@ -138,40 +189,40 @@ None
 
 1. Start initialisation (`mode=1`) with all (legacy PCAP) files under `PATH`.
 
-````python
->>> from mad import main
->>> main(mode=1, path=PATH)
-````
+   ````python
+   >>> from mad import main
+   >>> main(mode=1, path=PATH)
+   ````
 
 2. Run migration (`mode=2`) with all (legacy PCAP) files from `PATH`, and start live prediction for `eth0` afterwards.
 
-```python
->>> from mad import main
->>> main(mode=2, path=PATH, iface='eth0')
-```
+   ```python
+   >>> from mad import main
+   >>> main(mode=2, path=PATH, iface='eth0')
+   ```
 
 3. Run migration (`mode=2`) with all (legacy PCAP) files from `PATH`, and start prediction for PCAP files recorded in `FILE` (JSON list) afterwards.
 
-```python
->>> from mad import main
->>> main(mode=2, path=PATH, file=FILE)
-# FILE = 'data.json' -> ["foo.pcap", "bar.pcap", "boo.pcap", ...]
-```
+   ```python
+   >>> from mad import main
+   >>> main(mode=2, path=PATH, file=FILE)
+   # FILE = 'data.json' -> ["foo.pcap", "bar.pcap", "boo.pcap", ...]
+   ```
 
 4. Directly run live prediction for `eth0`.
 
-```python
->>> from mad import main
->>> main(mode=3, iface='eth0')
-```
+   ```python
+   >>> from mad import main
+   >>> main(mode=3, iface='eth0')
+   ```
 
 5. Directly run prediction for legacy PCAP files recorded in `FILE` (JSON list).
 
-```python
->>> from mad import main
->>> main(mode=3, file=FILE)
-# FILE = 'data.json' -> ["foo.pcap", "bar.pcap", "boo.pcap", ...]
-```
+   ```python
+   >>> from mad import main
+   >>> main(mode=3, file=FILE)
+   # FILE = 'data.json' -> ["foo.pcap", "bar.pcap", "boo.pcap", ...]
+   ```
 
 ## Repo directory
 
@@ -210,6 +261,7 @@ None
 ├── build.sh
 ├── docker-compose.yml
 ├── docker.sh
+├── fingerprint.pickle              # fingerprint database
 ├── gen                             # report generator
 │   ├── SQLManager                  # database interfaces
 │   │   ├── Model.py
