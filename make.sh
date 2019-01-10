@@ -5,6 +5,11 @@ set -x
 # allow ** in glob
 shopt -s globstar
 
+# update version tag
+version=$( python -c "print('\"%s\"' % __import__('datetime').date.today().strftime('%Y.%m.%d'))" )
+sed "s/LABEL version.*/LABEL version ${version}/" Dockerfile > Dockerfile.tmp
+mv Dockerfile.tmp Dockerfile
+
 # prepare source files
 mkdir -p apt \
          apt/app \
