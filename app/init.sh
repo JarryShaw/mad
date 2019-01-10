@@ -9,7 +9,7 @@ cd app
 #   Sample source: /mad/pcap
 #   Rounds interval: 0
 #   Sampling intervar: 0
-#   Process number: 5
+#   Process number: 2
 #   MEMLOCK limit: 2G
 #   VMEM limit: 1G
 #   AS limit: 10G
@@ -19,7 +19,7 @@ cd app
 python3 run_mad.py --path /mad/pcap \
                    --wait-timeout=0 \
                    --sampling-interval=0 \
-                   --process=5 \
+                   --process=2 \
                    --memlock=2147483648 \
                    --vmem=1073741824 \
                    --address-space=10737418240 \
