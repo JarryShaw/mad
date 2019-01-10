@@ -3,6 +3,7 @@ use deepocean;
 -- drop table if exists `mad_report`;
 -- drop table if exists `mad_loss`;
 -- drop table if exists `mad_processedfile`;
+-- drop table if exists `mad_tobeprocessedfile`;
 
 create table `mad_report` (
     `id` int NOT NULL AUTO_INCREMENT,

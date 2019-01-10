@@ -29,7 +29,7 @@ def getLoss():
 
 def saveProcessedFile(file, path):
     tmp = Mad_ToBeProcessedFile(
-        name=path,
+        path=path,
         status=False
     )
     tmp.save()
