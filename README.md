@@ -252,7 +252,7 @@ None
 │   ├── mad.py                      # main entry point
 │   ├── make_stream.py              # generate stream info dict
 │   ├── run_mad.py                  # CLI entry point
-│   ├── utils.py
+│   ├── jsonutils.py
 │   └── webgraphic                  # WebGraphic filtering algo.
 │       ├── group.py
 │       ├── top-10k.txt
@@ -268,8 +268,9 @@ None
 │   │   └── __init__.py
 │   ├── generate_report.py          # main module
 │   ├── generator.py                # generators
-│   └── init.sh                     # entry point
-│   ├── server_map.py               # generator for server_map.json
+│   ├── init.sh                     # entry point
+│   ├── jsonutils.py
+│   └── server_map.py               # generator for server_map.json
 ├── make.sh
 ├── model.tar.gz
 ├── retrain.tar.gz
