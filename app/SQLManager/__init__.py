@@ -19,11 +19,18 @@ def getToBeProcessedFile():
     output = []
     for file in files:
         output.append(file.path)
+    query = Mad_ToBeProcessedFile.update(status=True).where(Mad_ToBeProcessedFile.status == False)  # noqa
+    query.execute()
     return output
 
 
 def deleteToBeProcessedFile(path):
     query = Mad_ToBeProcessedFile.delete().where(Mad_ToBeProcessedFile.path == path)
+    query.execute()
+
+
+def updateToBeProcessedFile():
+    query = Mad_ToBeProcessedFile.update(status=False).where(Mad_ToBeProcessedFile.status == True)  # noqa
     query.execute()
 
 

@@ -16,11 +16,11 @@ def saveLoss(loss, time):
 
 def getToBeProcessedFile():
     files = Mad_ToBeProcessedFile.select().where(Mad_ToBeProcessedFile.status == False)  # noqa
-    query = Mad_ToBeProcessedFile.update(status=True).where(Mad_ToBeProcessedFile.status == False)  # noqa
-    query.execute()
     output = []
     for file in files:
         output.append(file.path)
+    query = Mad_ToBeProcessedFile.update(status=True).where(Mad_ToBeProcessedFile.status == False)  # noqa
+    query.execute()
     return output
 
 
