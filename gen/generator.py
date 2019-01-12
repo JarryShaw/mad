@@ -20,7 +20,7 @@ def updateInfectedComputer(Report, Infected):
 
 def updateActiveSoftware(Report, Active):
     Exist = list()
-    time = Report[0].time
+    time = Report[0]['time']
     benign = 0
     malicious = 0
     for i in Report:
