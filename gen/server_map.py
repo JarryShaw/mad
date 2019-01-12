@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import contextlib
 import copy
 import ipaddress
 import json
@@ -17,16 +18,15 @@ def updateServerMap(reportList, serverMap):
     server_map = copy.copy(serverMap)
 
     # load failed IP addresses
-    if os.path.isfile('/mad/report/failed.json'):
+    failed = set()
+    with contextlib.suppress(Exception):
         with open('mad/report/failed.json') as file:
             failed = set(json.load(file))
-    else:
-        failed = set()
 
     # get IP addresses pool
     ip_list = list()
     for report in filter(lambda r: r['is_malicious'], reportList):
-        ip = report['dstip']
+        ip = report['dstIP']
         if ipaddress.ip_address(ip).is_private:
             continue
         ip_list.append(ip)
@@ -35,7 +35,7 @@ def updateServerMap(reportList, serverMap):
     # fetch IP addresses information
     for ip in ip_pool:
         request = requests.get(f'https://api.shodan.io/shodan/host/{ip}?key={API_KEY}')
-        print(ip, request.status_code)
+        print('Shodan Response:', ip, request.status_code, sep='\t')
         if request.ok:
             context = request.json()
             latitude = context['latitude']
@@ -50,7 +50,7 @@ def updateServerMap(reportList, serverMap):
 
     # update failed database
     with open('/mad/report/failed.json', 'w') as file:
-        json.dump(failed, file, indent=2)
+        json.dump(sorted(failed), file, indent=2)
 
     # return modified server_map
     return server_map

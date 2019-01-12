@@ -19,13 +19,12 @@ mkdir -p apt \
 cp -rf .dockerignore \
        .gitignore \
        AUTHORS.md \
+       CONTRIBUTING.md \
+       Dockerfile \
        bootstrap.sh \
        build.sh \
-       CHANGELOG.md \
-       CONTRIBUTING.md \
        docker-compose.yml \
        docker.sh \
-       Dockerfile \
        fingerprint.pickle \
        model.tar.gz \
        retrain.tar.gz apt && \
@@ -89,7 +88,6 @@ fi
 
 # update maintenance information
 cd ..
-maintainer changelog && \
 maintainer contributor && \
 maintainer contributing
 ret="$?"

@@ -37,7 +37,8 @@ class virustotal:
         while line:
             count += 1
             raw = line.split()
-            self.ip.append(raw[1].decode("gb2312")+":"+raw[2].decode("gb2312"))
+            # self.ip.append(raw[1].decode("gb2312")+":"+raw[2].decode("gb2312"))
+            self.ip.append(raw[1].decode("utf-8")+":"+raw[2].decode("utf-8"))
             line = f.readline()
             if line:
                 line = f.readline()

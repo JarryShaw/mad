@@ -62,9 +62,9 @@ def generateReport(pool, processes):
 
     # original file content
     server_map = load_file('/mad/report/server_map.json', list())
-    infected_computer = load_file('/mad/report/infected_computer.json', dict())
-    active_software = load_file('/mad/report/active_software.json', dict())
-    connection = load_file('/mad/report/connection.json', dict())
+    infected_computer = load_file('/mad/report/infected_computer.json', list())
+    active_software = load_file('/mad/report/active_software.json', list())
+    connection = load_file('/mad/report/connection.json', dict(nodes=list(), links=list()))
 
     # traverse report files
     for reportPath in pool:
@@ -77,14 +77,14 @@ def generateReport(pool, processes):
                                           reportList=reportList,
                                           serverMap=server_map)
         funcInfectedComputer = functools.partial(updateInfectedComputer,
-                                                 reportList=reportList,
-                                                 anotherReport=infected_computer)
+                                                 Report=reportList,
+                                                 Infected=infected_computer)
         funcActiveSoftware = functools.partial(updateActiveSoftware,
-                                               reportList=reportList,
-                                               anotherReport=active_software)
+                                               Report=reportList,
+                                               Active=active_software)
         funcConnection = functools.partial(updateConnection,
-                                           reportList=reportList,
-                                           anotherReport=connection)
+                                           Report=reportList,
+                                           Connection=connection)
 
         # run update process
         if processes <= 1:
@@ -106,7 +106,7 @@ def generateReport(pool, processes):
 
     # get loss
     lossList = getLoss()
-    loss = updateLoss(lossList)
+    loss = updateLoss(Report=lossList)
     dump_file('/mad/report/loss.json', loss)
 
 
