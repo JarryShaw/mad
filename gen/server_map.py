@@ -9,6 +9,8 @@ import time
 
 import requests
 
+from jsonutils import JSONEncoder, object_hook
+
 
 def updateServerMap(reportList, serverMap):
     # get API token
@@ -21,7 +23,7 @@ def updateServerMap(reportList, serverMap):
     failed = set()
     with contextlib.suppress(Exception):
         with open('mad/report/failed.json') as file:
-            failed = set(json.load(file))
+            failed = set(json.load(file, object_hook=object_hook))
 
     # get IP addresses pool
     ip_list = list()
@@ -50,7 +52,7 @@ def updateServerMap(reportList, serverMap):
 
     # update failed database
     with open('/mad/report/failed.json', 'w') as file:
-        json.dump(sorted(failed), file, indent=2)
+        json.dump(sorted(failed), file, indent=2, cls=JSONEncoder)
 
     # return modified server_map
     return server_map

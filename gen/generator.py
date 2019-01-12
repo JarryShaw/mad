@@ -26,14 +26,14 @@ def updateActiveSoftware(Report, Active):
     for i in Report:
         if i['time'] < time:
             time = i['time']
-        if i['ua'] in Exist:
+        if i['UA'] in Exist:
             continue
         if i['is_malicious']:
             malicious += 1
-            Exist.append(i['ua'])
+            Exist.append(i['UA'])
         else:
             benign += 1
-            Exist.append(i['ua'])
+            Exist.append(i['UA'])
     Active.append({
         "time": time,
         "benign": benign,

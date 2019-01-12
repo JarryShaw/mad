@@ -73,11 +73,11 @@ import dpkt
 import scapy.all
 
 from fingerprints.fingerprintsManager import fingerprintManager
+from jsonutils import JSONEncoder, object_hook
 from make_stream import JSONEncoder, dump_stream, load_stream, object_hook
 from SQLManager import getProcessedFile, saveProcessedFile
 from SQLManager.Model import minstr
 from StreamManager.StreamManager4 import StreamManager
-from utils import JSONEncoder, object_hook
 from webgraphic.webgraphic import webgraphic
 
 try:

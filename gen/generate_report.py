@@ -13,6 +13,7 @@ import warnings
 
 from generator import (updateActiveSoftware, updateConnection,
                        updateInfectedComputer, updateLoss)
+from jsonutils import JSONEncoder, object_hook
 from server_map import updateServerMap
 from SQLManager import (deleteToBeProcessedFile, getLoss, getToBeProcessedFile,
                         updateToBeProcessedFile)
@@ -48,14 +49,14 @@ def generateReport(pool, processes):
     def load_file(path, default):
         if os.path.isfile(path):
             with open(path) as file:
-                context = json.load(file)
+                context = json.load(file, object_hook=object_hook)
         else:
             context = default
         return context
 
     def dump_file(path, context):
         with open(path, 'w') as file:
-            json.dump(context, file, indent=2)
+            json.dump(context, file, indent=2, cls=JSONEncoder)
 
     print('Current worker pool:')
     pprint.pprint(pool)
@@ -93,7 +94,7 @@ def generateReport(pool, processes):
         else:
             proc_return = multiprocessing.Pool(processes).map(call_func, [funcServerMap, funcInfectedComputer,
                                                                           funcActiveSoftware, funcConnection])
-        server_map, infected_computer, active_software, connection, loss = proc_return
+        server_map, infected_computer, active_software, connection = proc_return
 
         print(f'Generated report files for {reportPath!r}...')
         deleteToBeProcessedFile(reportPath)
