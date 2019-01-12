@@ -41,23 +41,26 @@ def getCurrentPool():
     return getToBeProcessedFile()
 
 
+def call_func(func):
+    return func()
+
+
+def load_file(path, default):
+    if os.path.isfile(path):
+        with open(path) as file:
+            context = json.load(file, object_hook=object_hook)
+    else:
+        context = default
+    return context
+
+
+def dump_file(path, context):
+    with open(path, 'w') as file:
+        json.dump(context, file, indent=2, cls=JSONEncoder)
+
+
 def generateReport(pool, processes):
     """Write reports to /mad/report, and update database."""
-    def call_func(func):
-        return func()
-
-    def load_file(path, default):
-        if os.path.isfile(path):
-            with open(path) as file:
-                context = json.load(file, object_hook=object_hook)
-        else:
-            context = default
-        return context
-
-    def dump_file(path, context):
-        with open(path, 'w') as file:
-            json.dump(context, file, indent=2, cls=JSONEncoder)
-
     print('Current worker pool:')
     pprint.pprint(pool)
 

@@ -1,45 +1,47 @@
-use deepocean;
+CREATE DATABASE `deepocean`;
 
--- drop table if exists `mad_report`;
--- drop table if exists `mad_loss`;
--- drop table if exists `mad_processedfile`;
--- drop table if exists `mad_tobeprocessedfile`;
+USE `deepocean`;
 
-create table `mad_report` (
+-- DROP TABLE IF EXISTS `mad_report`;
+-- DROP TABLE IF EXISTS `mad_loss`;
+-- DROP TABLE IF EXISTS `mad_processedfile`;
+-- DROP TABLE IF EXISTS `mad_tobeprocessedfile`;
+
+CREATE TABLE `mad_report` (
     `id` int NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) not NULL,
-    `is_malicious` bool not NULL,
-    `ua` longtext not NULL,
-    `url` longtext not NULL,
-    `srcip` varchar(255) not NULL,
-    `srcport` int not NULL,
-    `dstip` varchar(255) not NULL,
-    `dstport` int not NULL,
-    `time` datetime(6) not NULL,
-    `detected_by_cnn` bool not NULL,
-    `device` varchar(255) not NULL,
-    `os` varchar(255) not NULL,
-    `browser` varchar(255) not NULL,
-    `type` varchar(255) not NULL,
+    `name` varchar(255) NOT NULL,
+    `is_malicious` bool NOT NULL,
+    `ua` longtext NOT NULL,
+    `url` longtext NOT NULL,
+    `srcip` varchar(255) NOT NULL,
+    `srcport` int NOT NULL,
+    `dstip` varchar(255) NOT NULL,
+    `dstport` int NOT NULL,
+    `time` datetime(6) NOT NULL,
+    `detected_by_cnn` bool NOT NULL,
+    `device` varchar(255) NOT NULL,
+    `os` varchar(255) NOT NULL,
+    `browser` varchar(255) NOT NULL,
+    `type` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-create table `mad_loss` (
+CREATE TABLE `mad_loss` (
     `id` int NOT NULL AUTO_INCREMENT,
-    `time` datetime(6) not NULL,
-    `loss` double not NULL,
+    `time` datetime(6) NOT NULL,
+    `loss` double NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-create table `mad_processedfile` (
+CREATE TABLE `mad_processedfile` (
     `id` int NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) not NULL,
+    `name` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-create table `mad_tobeprocessedfile` (
+CREATE TABLE `mad_tobeprocessedfile` (
     `id` int NOT NULL AUTO_INCREMENT,
-    `path` varchar(255) not NULL,
-    `status` bool not NULL,
+    `path` varchar(255) NOT NULL,
+    `status` bool NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
