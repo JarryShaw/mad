@@ -248,8 +248,10 @@ def main(mode=3, path='/mad/pcap', sample=None):
 
     # enter main loop
     while True:
-        if TIMEOUT:
-            time.sleep(TIMEOUT)
+        print(f'Wait for another {TIMEOUT} second(s) before next round.')
+        time.sleep(TIMEOUT)
+
+        # update file pool
         filelist = list()
         for item in filter(lambda e: _validate_pcap(e), os.scandir(PATH)):
             filename = item.path
@@ -257,6 +259,8 @@ def main(mode=3, path='/mad/pcap', sample=None):
                 continue
             filelist.append(filename)
         pool = _sampling(filelist)
+
+        # start new round
         make_worker(pool)
         with contextlib.suppress(ValueError):
             MAX_FILE = max(pool)

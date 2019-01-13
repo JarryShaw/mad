@@ -2,8 +2,6 @@
 
 
 def updateInfectedComputer(Report, Infected):
-    if not Report:
-        return Infected
     Exist = list()
     infected = 0
     time = Report[0]['time']
@@ -21,8 +19,6 @@ def updateInfectedComputer(Report, Infected):
 
 
 def updateActiveSoftware(Report, Active):
-    if not Report:
-        return Active
     Exist = list()
     time = Report[0]['time']
     benign = 0

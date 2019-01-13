@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import contextlib
 import functools
 import getopt
 import json
@@ -73,33 +74,38 @@ def generateReport(pool, processes):
     # traverse report files
     for reportPath in pool:
         # load reports list
-        with open(reportPath) as file:
-            reportList = json.load(file)
+        reportList = list()
+        with contextlib.suppress(Exception):
+            with open(reportPath) as file:
+                reportList = json.load(file)
 
-        # make partial functions
-        funcServerMap = functools.partial(updateServerMap,
-                                          reportList=reportList,
-                                          serverMap=server_map)
-        funcInfectedComputer = functools.partial(updateInfectedComputer,
-                                                 Report=reportList,
-                                                 Infected=infected_computer)
-        funcActiveSoftware = functools.partial(updateActiveSoftware,
+        if reportList:
+            # make partial functions
+            funcServerMap = functools.partial(updateServerMap,
+                                              reportList=reportList,
+                                              serverMap=server_map)
+            funcInfectedComputer = functools.partial(updateInfectedComputer,
+                                                     Report=reportList,
+                                                     Infected=infected_computer)
+            funcActiveSoftware = functools.partial(updateActiveSoftware,
+                                                   Report=reportList,
+                                                   Active=active_software)
+            funcConnection = functools.partial(updateConnection,
                                                Report=reportList,
-                                               Active=active_software)
-        funcConnection = functools.partial(updateConnection,
-                                           Report=reportList,
-                                           Connection=connection)
+                                               Connection=connection)
 
-        # run update process
-        if processes <= 1:
-            proc_return = [call_func(func) for func in [funcServerMap, funcInfectedComputer,
-                                                        funcActiveSoftware, funcConnection]]
+            # run update process
+            if processes <= 1:
+                proc_return = [call_func(func) for func in [funcServerMap, funcInfectedComputer,
+                                                            funcActiveSoftware, funcConnection]]
+            else:
+                proc_return = multiprocessing.Pool(processes).map(call_func, [funcServerMap, funcInfectedComputer,
+                                                                              funcActiveSoftware, funcConnection])
+            server_map, infected_computer, active_software, connection = proc_return
+
+            print(f'Generated report files for {reportPath!r}...')
         else:
-            proc_return = multiprocessing.Pool(processes).map(call_func, [funcServerMap, funcInfectedComputer,
-                                                                          funcActiveSoftware, funcConnection])
-        server_map, infected_computer, active_software, connection = proc_return
-
-        print(f'Generated report files for {reportPath!r}...')
+            print(f'Error reading CNN report from {reportPath!r}...')
         deleteToBeProcessedFile(reportPath)
 
     # save file content
