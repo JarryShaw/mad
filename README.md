@@ -51,7 +51,23 @@ cd mad
 ./build.sh "v0.1b1"
 ```
 
-## Configurations
+## Configurations (for Docker Compose only)
+
+### Automation
+
+- [`init.sh`](init.sh)
+  - `db` -- set up database tables
+  - `report` -- set up report directory (`/home/traffic/log/mad`)
+  - `dataset` -- set up dataset directory (`/home/traffic/db/mad`)
+  - `volumes` -- set up shared directories, i.e. `report` & `dataset`
+  - `all` -- set up all stuff, i.e. `report` & `dataset` & `db`
+- [`cleanup.sh`](cleanup.sh)
+  - `db` -- reset database
+  - `log` -- empty log (`/home/traffic/pcapfile/apt_log.txt`)
+  - `report` -- remove reports (`/home/traffic/log/mad`)
+  - `dataset` -- remove datasets (`/home/traffic/db/mad`)
+  - `volumes` -- cleanup shared directories, i.e. `report` & `dataset`
+  - `all` -- cleanup all stuff, i.e. `report` & `dataset` & `log` & `db`
 
 ### `mad_app` -- main application
 
@@ -252,7 +268,7 @@ None
 │   ├── mad.py                      # main entry point
 │   ├── make_stream.py              # generate stream info dict
 │   ├── run_mad.py                  # CLI entry point
-│   ├── jsonutils.py
+│   ├── jsonutil.py
 │   └── webgraphic                  # WebGraphic filtering algo.
 │       ├── group.py
 │       ├── top-10k.txt
@@ -271,7 +287,7 @@ None
 │   ├── generate_report.py          # main module
 │   ├── generator.py                # generators
 │   ├── init.sh                     # entry point
-│   ├── jsonutils.py
+│   ├── jsonutil.py
 │   └── server_map.py               # generator for server_map.json
 ├── init.sh
 ├── make.sh

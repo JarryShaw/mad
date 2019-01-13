@@ -35,7 +35,7 @@ cp -rf app/init.sh \
        app/make_stream.py \
        app/run_mad.py \
        app/Training.py \
-       app/jsonutils.py \
+       app/jsonutil.py \
        app/DataLabeler \
        app/fingerprints \
        app/SQLManager \
@@ -44,7 +44,7 @@ cp -rf app/init.sh \
 cp -rf gen/generate_report.py \
        gen/generator.py \
        gen/init.sh \
-       gen/jsonutils.py \
+       gen/jsonutil.py \
        gen/server_map.py \
        gen/SQLManager apt/gen && \
 cp -rf sql/MySQL.sql apt/sql && \

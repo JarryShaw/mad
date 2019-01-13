@@ -73,7 +73,7 @@ import dpkt
 import scapy.all
 
 from fingerprints.fingerprintsManager import fingerprintManager
-from jsonutils import JSONEncoder, object_hook
+from jsonutil import JSONEncoder, object_hook
 from make_stream import JSONEncoder, dump_stream, load_stream, object_hook
 from SQLManager import getProcessedFile, saveProcessedFile
 from SQLManager.Model import minstr
@@ -162,9 +162,11 @@ def beholder(func):
         except BaseException as error:
             with LOCK:
                 with open('/mad/mad.log', 'at', 1) as file:
-                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} {error.args}\n')
+                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} '
+                               f'{error.__class__.__name__} {error.args}\n')
                 with open('/mad/pcap/apt_log.txt', 'at', 1) as file:
-                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} {error.args}\n')
+                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} '
+                               f'{error.__class__.__name__} {error.args}\n')
             if MODE != 3:
                 raise
             elif DEVEL:

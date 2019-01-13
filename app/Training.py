@@ -18,7 +18,7 @@ import numpy as np
 import tensorflow as tf
 from user_agents import parse as _parse
 
-from jsonutils import JSONEncoder, object_hook
+from jsonutil import JSONEncoder, object_hook
 from make_stream import dump_stream, load_stream
 from SQLManager import saveLoss, saveReports
 from StreamManager.StreamManager4 import StreamManager

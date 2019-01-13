@@ -14,7 +14,7 @@ import warnings
 
 from generator import (updateActiveSoftware, updateConnection,
                        updateInfectedComputer, updateLoss)
-from jsonutils import JSONEncoder, object_hook
+from jsonutil import JSONEncoder, object_hook
 from server_map import updateServerMap
 from SQLManager import (deleteToBeProcessedFile, getLoss, getToBeProcessedFile,
                         updateToBeProcessedFile)
@@ -47,12 +47,11 @@ def call_func(func):
 
 
 def load_file(path, default):
-    if os.path.isfile(path):
+    with contextlib.suppress(Exception):
         with open(path) as file:
             context = json.load(file, object_hook=object_hook)
-    else:
-        context = default
-    return context
+        return context
+    return default
 
 
 def dump_file(path, context):
@@ -74,10 +73,13 @@ def generateReport(pool, processes):
     # traverse report files
     for reportPath in pool:
         # load reports list
-        reportList = list()
-        with contextlib.suppress(Exception):
+        try:
+            err_flag = False
             with open(reportPath) as file:
                 reportList = json.load(file)
+        except Exception as error:
+            err_flag = True
+            reportList = list()
 
         if reportList:
             # make partial functions
@@ -103,9 +105,11 @@ def generateReport(pool, processes):
                                                                               funcActiveSoftware, funcConnection])
             server_map, infected_computer, active_software, connection = proc_return
 
-            print(f'Generated report files for {reportPath!r}...')
+            print(f'Generated report files for {reportPath!r}')
+        elif err_flag:
+            print(f'Error reading CNN report from {reportPath!r} - {error}')
         else:
-            print(f'Error reading CNN report from {reportPath!r}...')
+            print(f'Empty CNN report from {reportPath!r}')
         deleteToBeProcessedFile(reportPath)
 
     # save file content

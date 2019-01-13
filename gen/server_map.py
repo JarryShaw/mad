@@ -9,7 +9,7 @@ import time
 
 import requests
 
-from jsonutils import JSONEncoder, object_hook
+from jsonutil import JSONEncoder, object_hook
 
 
 def updateServerMap(reportList, serverMap):
