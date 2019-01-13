@@ -259,6 +259,8 @@ None
 │       └── webgraphic.py
 ├── bootstrap.sh
 ├── build.sh
+├── cleanup.sh
+├── cleanup.sql
 ├── docker-compose.yml
 ├── docker.sh
 ├── fingerprint.pickle              # fingerprint database

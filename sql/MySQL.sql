@@ -2,8 +2,8 @@ CREATE DATABASE `deepocean`;
 
 USE `deepocean`;
 
--- DROP TABLE IF EXISTS `mad_report`;
 -- DROP TABLE IF EXISTS `mad_loss`;
+-- DROP TABLE IF EXISTS `mad_report`;
 -- DROP TABLE IF EXISTS `mad_processedfile`;
 -- DROP TABLE IF EXISTS `mad_tobeprocessedfile`;
 
