@@ -3,12 +3,12 @@
 set -x
 
 function cleanup_report() {
-    rm -rf /home/traffic/log/mad && \
+    rm -rf /home/traffic/log/mad
     mkdir -p /home/traffic/log/mad
 }
 
 function cleanup_dataset() {
-    rm -rf /home/traffic/db/mad && \
+    rm -rf /home/traffic/db/mad
     mkdir -p /home/traffic/db/mad
 }
 
