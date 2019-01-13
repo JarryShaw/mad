@@ -18,7 +18,7 @@ function cleanup_log() {
 
 function cleanup_db() {
     sql=$( cat cleanup.sql ) && \
-    docker-compose up mad_db --detach && \
+    docker-compose up --detach mad_db && \
     docker-compose exec mad_db mysql -uroot -pzft13917331612 -e"${sql}" && \
     docker-compose stop mad_db
 }
