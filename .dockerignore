@@ -9,6 +9,10 @@ __pycache__/
 # test scripts
 test*
 
+# Git files
+.git/
+.git*
+
 # misc files
 *_old*
 *~orig*
