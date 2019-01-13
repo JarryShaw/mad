@@ -273,6 +273,7 @@ None
 │   ├── init.sh                     # entry point
 │   ├── jsonutils.py
 │   └── server_map.py               # generator for server_map.json
+├── init.sh
 ├── make.sh
 ├── model.tar.gz
 ├── retrain.tar.gz
