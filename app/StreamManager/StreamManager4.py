@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import ast
+import contextlib
 import glob
 import os
 import pathlib
@@ -59,16 +60,18 @@ class StreamManager:
             print("流转化失败！")
             # return
             raise
-        for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_nosyn')):
-            if DEVEL:
-                shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
-            else:
-                os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
-        for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_syn')):
-            if DEVEL:
-                shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
-            else:
-                os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
+        with contextlib.suppress(OSError):
+            for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_nosyn')):
+                if DEVEL:
+                    shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
+                else:
+                    os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
+        with contextlib.suppress(OSError):
+            for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_syn')):
+                if DEVEL:
+                    shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
+                else:
+                    os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
         print("流转化完成！")
 
     def classify(self, ips):
