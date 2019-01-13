@@ -23,6 +23,8 @@ cp -rf .dockerignore \
        Dockerfile \
        bootstrap.sh \
        build.sh \
+       cleanup.sh \
+       cleanup.sql \
        docker-compose.yml \
        docker.sh \
        fingerprint.pickle \
