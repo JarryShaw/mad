@@ -86,7 +86,7 @@ cd mad
     - 4G `SWAP` limit
   - Volume path
     - PCAP sources (`/mad/pcap`) in `/home/traffic/pcapfile`
-    - dataset directory (`/mad/dataset`) in `./log/dataset:/mad/dataset`
+    - dataset directory (`/mad/dataset`) in `./log/dataset`
     - CNN models (`/mad/model`) in `/home/traffic/db/apt_model`
     - retrain dataset (`/mad/retrain`) in `/home/traffic/db/apt_retrain`
 - [`init.sh`](app/init.sh)
@@ -106,7 +106,7 @@ cd mad
 - [`docker-compose.yml`](docker-compose.yml)
   - Volume path
     - report directory (`/mad/report`) in `/home/traffic/db/apt_report`
-    - dataset directory (`/mad/dataset`) in `./log/dataset:/mad/dataset`
+    - dataset directory (`/mad/dataset`) in `./log/dataset`
 - [`init.sh`](gen/init.sh)
   - Cleanup reports: `yes`
   - Process number: `4`
