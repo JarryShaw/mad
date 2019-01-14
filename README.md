@@ -42,6 +42,8 @@ cd mad
 
 ### Docker distribution
 
+#### Develop Environment
+
 ```bash
 git clone https://github.com/JarryShaw/mad.git
 cd mad
@@ -50,6 +52,14 @@ cd mad
 # with certain tags (e.g. v0.1b1)
 ./build.sh "v0.1b1"
 ```
+
+#### Distribution Environment
+
+1. Modify `{app,gem,www}/init.sh` if you need;
+2. Modify `docket-compose.yml` if you need;
+3. Run `./init.sh volumes` to create directories;
+4. Run `./init.sh archives` to set up CNN models and retrain dataset;
+5. Run `docker-compose up --build -d` to start up MAD services in detach mode.
 
 ## Configurations (for Docker Compose only)
 
