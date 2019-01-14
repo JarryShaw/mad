@@ -26,8 +26,9 @@ cp -rf .dockerignore \
        cleanup.sh \
        cleanup.sql \
        docker-compose.yml \
+       docker-compose-v3.yml \
        docker.sh \
-       fingerprint.pickle \
+       init.sh \
        model.tar.gz \
        retrain.tar.gz apt && \
 cp -rf app/init.sh \

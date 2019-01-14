@@ -57,17 +57,23 @@ cd mad
 
 - [`init.sh`](init.sh)
   - `db` -- set up database tables
-  - `report` -- set up report directory (`/home/traffic/log/mad`)
-  - `dataset` -- set up dataset directory (`/home/traffic/db/mad`)
+  - `model` -- set up CNN models (`/home/traffic/db/apt_model`)
+  - `report` -- set up report directory (`/home/traffic/db/apt_report`)
+  - `retrain` -- set up retrain dataset (`/home/traffic/db/apt_retrain`)
+  - `dataset` -- set up dataset directory (`./log/dataset`)
   - `volumes` -- set up shared directories, i.e. `report` & `dataset`
-  - `all` -- set up all stuff, i.e. `report` & `dataset` & `db`
+  - `archives` -- set up archives, i.e. `model` & `retrain`
+  - `all` -- set up all stuff, i.e. `retrain` & `model` & `report` & `dataset` & `db`
 - [`cleanup.sh`](cleanup.sh)
   - `db` -- reset database
   - `log` -- empty log (`/home/traffic/pcapfile/apt_log.txt`)
-  - `report` -- remove reports (`/home/traffic/log/mad`)
-  - `dataset` -- remove datasets (`/home/traffic/db/mad`)
+  - `model` -- reset CNN models (`/home/traffic/db/apt_model`)
+  - `report` -- remove reports (`/home/traffic/db/apt_report`)
+  - `dataset` -- remove datasets (`./log/dataset`)
+  - `retrain` -- reset retrain dataset (`/home/traffic/db/apt_retrain`)
   - `volumes` -- cleanup shared directories, i.e. `report` & `dataset`
-  - `all` -- cleanup all stuff, i.e. `report` & `dataset` & `log` & `db`
+  - `archives` -- reset archives, i.e. `model` & `retrain`
+  - `all` -- cleanup all stuff, i.e. `retrain` & `model` & `report` & `dataset` & `log` & `db`
 
 ### `mad_app` -- main application
 
@@ -79,8 +85,10 @@ cd mad
     - 2G memory limit
     - 4G `SWAP` limit
   - Volume path
-    - PCAP sources (`--path`) in `/home/traffic/pcapfile`
-    - dataset directory in `/home/traffic/db/mad`
+    - PCAP sources (`/mad/pcap`) in `/home/traffic/pcapfile`
+    - dataset directory (`/mad/dataset`) in `./log/dataset:/mad/dataset`
+    - CNN models (`/mad/model`) in `/home/traffic/db/apt_model`
+    - retrain dataset (`/mad/retrain`) in `/home/traffic/db/apt_retrain`
 - [`init.sh`](app/init.sh)
   - Sample source: `/mad/pcap`
   - Rounds interval: `0s`
@@ -97,8 +105,8 @@ cd mad
 
 - [`docker-compose.yml`](docker-compose.yml)
   - Volume path
-    - report directory in `/home/traffic/log/mad`
-    - dataset directory in `/home/traffic/db/mad`
+    - report directory (`/mad/report`) in `/home/traffic/db/apt_report`
+    - dataset directory (`/mad/dataset`) in `./log/dataset:/mad/dataset`
 - [`init.sh`](gen/init.sh)
   - Cleanup reports: `yes`
   - Process number: `4`
@@ -109,15 +117,15 @@ cd mad
 
 - [`docker-compose.yml`](docker-compose.yml)
   - Volume path
-    - report directory in `/home/traffic/log/mad`
+    - report directory (`/mad/report`) in `/home/traffic/db/apt_report`
 - [`init.sh`](www/init.sh)
 
 ### `mad_db` -- MySQL database
 
 - [`docker-compose.yml`](docker-compose.yml)
   - Volume path
-    - initialisation script in [`sql/MySQL.sql`](sql/MySQL.sql)
-    - database library in `/home/traffic/log/mysql`
+    - initialisation script (`/docker-entrypoint-initdb.d`) in [`sql/MySQL.sql`](sql/MySQL.sql)
+    - database library (`/var/lib/mysql`) in `/home/traffic/db/apt_db`
 
 ## Entry points
 
@@ -181,7 +189,7 @@ development arguments:
 
 ```text
 $ python3 generate_report.py --help
-usage: mad_gen [-c] [-i SEC] [-p NUM] [-t KEY]
+usage: mad_gen [-h] [-c] [-f] [-i SEC] [-p NUM] [-t KEY]
 
 positional arguments:
   -t, --token           shodan.io API token
@@ -189,6 +197,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -c, --cleanup         remove processed CNN reports
+  -f, --force-cleanup   remove CNN reports regardless of processing error
   -i, --interval        sleep interval between rounds
   -p, --process         process number (default is %log2(CPU)%)
 ```
@@ -299,7 +308,6 @@ None
 ├── cleanup.sql
 ├── docker-compose.yml
 ├── docker.sh
-├── fingerprint.pickle              # fingerprint database
 ├── gen                             # report generator
 │   ├── SQLManager                  # database interfaces
 │   │   ├── Model.py
@@ -321,22 +329,14 @@ None
     │   ├── __init__.py
     │   ├── admin.py
     │   ├── apps.py
-    │   ├── migrations
-    │   │   ├── 0001_initial.py
-    │   │   └── __init__.py
     │   ├── models.py
     │   ├── templates
     │   │   ├── pages
     │   │   │   ├── index.html
-    │   │   │   ├── index_old.html
     │   │   │   ├── inner_detail.html
-    │   │   │   ├── inner_detail_old.html
     │   │   │   ├── more.html
-    │   │   │   ├── more_old.html
     │   │   │   ├── outer_detail.html
-    │   │   │   ├── outer_detail_old.html
     │   │   │   ├── ua_detail.html
-    │   │   │   └── ua_detail_old.html
     │   │   └── static
     │   │       ├── files
     │   │       │   └── 基于流量的自反馈恶意软件监测系统.pdf
@@ -396,7 +396,6 @@ None
 ```text
 /mad/
     |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready; 4-error)
-    |-- fingerprint.pickle                      # pickled fingerprint database
     |-- pcap/
     |   |-- apt_log.txt                         # log file
     |   |-- YYYY_MMDD_HHMM_SS.pcap              # PCAP files
@@ -427,6 +426,7 @@ None
     |   |           |-- ...
     |   |-- ...
     |-- model/                                  # where CNN model go
+    |   |-- fingerprint.pickle                  # pickled fingerprint database
     |   |-- Background_PC/                      # Background_PC models
     |   |   |-- ...
     |   |-- ...

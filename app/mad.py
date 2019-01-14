@@ -3,7 +3,6 @@
 
 /mad/
     |-- mad.log                                 # log file for RPC (0-start; 1-stop; 2-retrain; 3-ready; 4-error)
-    |-- fingerprint.pickle                      # pickled fingerprint database
     |-- pcap/
     |   |-- apt_log.txt                         # log file
     |   |-- YYYY_MMDD_HHMM_SS.pcap              # PCAP files
@@ -33,6 +32,7 @@
     |   |           |-- ...
     |   |-- ...
     |-- model/                                  # where CNN model go
+    |   |-- fingerprint.pickle                  # pickled fingerprint database
     |   |-- Background_PC/                      # Background_PC models
     |   |   |-- ...
     |   |-- ...

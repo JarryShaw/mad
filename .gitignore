@@ -6,6 +6,7 @@ archive/*
 deepocean
 *~orig*
 
+log/
 src/
 release/
 archive/

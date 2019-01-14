@@ -14,11 +14,11 @@ mv Dockerfile.tmp Dockerfile
 rm -rf build && \
 mkdir -p build && \
 cp -rf .dockerignore \
+       cleanup.sh \
+       cleanup.sql \
        docker-compose.yml \
        Dockerfile \
-       fingerprint.pickle \
-       model.tar.gz \
-       retrain.tar.gz build && \
+       init.sh build && \
 mkdir -p build/app && \
 cp -rf app/init.sh \
        app/mad.py \
@@ -74,5 +74,6 @@ if [[ $1 =~ ^build$ ]] ; then
     echo "Build only; not to start up docker-compose."
 else
     cd build
+    bash init.sh volumes
     docker-compose up --build
 fi

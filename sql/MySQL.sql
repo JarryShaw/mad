@@ -1,4 +1,4 @@
-CREATE DATABASE `deepocean`;
+CREATE DATABASE IF NOT EXISTS `deepocean`;
 
 USE `deepocean`;
 

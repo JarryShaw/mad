@@ -56,6 +56,7 @@
         "getrlimit",
         "gftpl",
         "gmasj",
+        "initdb",
         "ipua",
         "jary",
         "jvectormap",

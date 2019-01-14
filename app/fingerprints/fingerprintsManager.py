@@ -11,7 +11,7 @@ class fingerprintManager:
     def __init__(self):
         # self.filepath="/home/ubuntu/MaliciousApplicationDetector/fingerprints/fingerprints"
         # self.filepath=os.path.dirname(os.path.abspath(__file__))+"fingerprints"
-        self.filepath = "/mad/fingerprint.pickle"
+        self.filepath = "/mad/model/fingerprint.pickle"
         self.fingerprints = {}
         self.detector = DetectionModule()
         if os.path.exists(self.filepath):

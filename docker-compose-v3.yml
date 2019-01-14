@@ -1,23 +1,31 @@
 # docker-compose version
-version: "2.2"
+version: "3"
 
 # MAD services
 services:
   mad_app:
     build: .
     container_name: mad_app
-    cpus: 0.5
-    cpu_shares: 75
     depends_on:
       - mad_db
       - mad_gen
       - mad_www
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 4G
+        reservations:
+          cpus: '0.25'
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
     entrypoint: ["wait-for-it", "--timeout=0", "mad_www:80", "--", "bash", "/app/init.sh"]
     image: mad
     links:
       - mad_db
-    mem_limit: 2G
-    memswap_limit: 4G
     restart: always
     volumes:
       - ./log/dataset:/mad/dataset

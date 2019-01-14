@@ -53,10 +53,7 @@ RUN echo 'Asia/Shanghai' > /etc/timezone \
  && ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
  && dpkg-reconfigure -f noninteractive tzdata
 
-# copy source files and archives
-ADD model.tar.gz /mad
-ADD retrain.tar.gz /mad
-COPY fingerprint.pickle /mad
+# copy source files
 COPY app /app
 COPY gen /gen
 COPY www /www
