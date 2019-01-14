@@ -84,7 +84,7 @@ cd mad
 - [`init.sh`](app/init.sh)
   - Sample source: `/mad/pcap`
   - Rounds interval: `0s`
-  - Sampling intervar: `0`
+  - Sampling interval: `0`
   - Process number: `5`
   - `MEMLOCK` limit: `2G`
   - `VMEM` limit: `1G`
@@ -100,6 +100,7 @@ cd mad
     - report directory in `/home/traffic/log/mad`
     - dataset directory in `/home/traffic/db/mad`
 - [`init.sh`](gen/init.sh)
+  - Cleanup reports: `yes`
   - Process number: `4`
   - Sleep interval: `5m`
   - API token: `6JJ0qCCNHzv6iLsPvUPQNst0Dpbh87io`
@@ -122,10 +123,13 @@ cd mad
 
 ### CLI
 
+#### Main Application
+
 ```text
 $ python run_mad.py --help
-usage: mad [-h] [-V] [-m {1,2,3,4,5}] [-p DIR] [-s FILE] [-n] [-t INT]
-           [-c PROC] [-l MEM] [-v MEM] [-a MEM] [-w MEM] [-d] [-i] [-e SHELL]
+usage: mad_app [-h] [-V] [-m {1,2,3,4,5}] [-p DIR] [-s FILE] [-n]
+               [-t INT] [-c PROC] [-l MEM] [-v MEM] [-a MEM] [-w MEM]
+               [-d] [-i] [-e SHELL]
 
 Malicious Application Detector
 
@@ -171,6 +175,22 @@ development arguments:
   -i, --interactive     enter interactive mode (running SHELL)
   -e SHELL, --shell SHELL
                         shell for interactive mode (default is '/bin/sh')
+```
+
+#### Report Generator
+
+```text
+$ python3 generate_report.py --help
+usage: mad_gen [-c] [-i SEC] [-p NUM] [-t KEY]
+
+positional arguments:
+  -t, --token           shodan.io API token
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c, --cleanup         remove processed CNN reports
+  -i, --interval        sleep interval between rounds
+  -p, --process         process number (default is %log2(CPU)%)
 ```
 
 ### API

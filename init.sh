@@ -25,4 +25,5 @@ case $1 in
     dataset)    init_dataset ;;
     report)     init_report ;;
     db)         init_db ;;
+    *)          echo "Invalid option." ;;
 esac

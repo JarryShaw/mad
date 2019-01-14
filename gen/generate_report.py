@@ -8,6 +8,7 @@ import json
 import math
 import os
 import pprint  # ##
+import shutil
 import sys
 import time
 import warnings
@@ -36,6 +37,20 @@ else:
 finally:
     PROC_CNT = int(math.log2(CPU_CNT))
 
+# help message
+HELP = f'''\
+usage: mad_gen [-c] [-i SEC] [-p NUM] [-t KEY]
+
+positional arguments:
+  -t, --token           shodan.io API token
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c, --cleanup         remove processed CNN reports
+  -i, --interval        sleep interval between rounds
+  -p, --process         process number (default is {PROC_CNT})
+'''
+
 
 def getCurrentPool():
     """Return newly generated report names from the pool."""
@@ -59,7 +74,7 @@ def dump_file(path, context):
         json.dump(context, file, indent=2, cls=JSONEncoder)
 
 
-def generateReport(pool, processes):
+def generateReport(pool, processes, cleanup=False):
     """Write reports to /mad/report, and update database."""
     print('Current worker pool:')
     pprint.pprint(pool)
@@ -77,6 +92,11 @@ def generateReport(pool, processes):
             err_flag = False
             with open(reportPath) as file:
                 reportList = json.load(file)
+
+            # remove reports
+            if cleanup:
+                path = os.path.dirname(reportPath)
+                shutil.rmtree(path, ignore_errors=True)
         except Exception as error:
             err_flag = True
             reportList = list()
@@ -126,25 +146,28 @@ def generateReport(pool, processes):
 
 def main():
     # default interval
+    cleanup = False
     interval = 300
     process = PROC_CNT
     token = None
 
     # parse CLI
-    opts, _ = getopt.getopt(sys.argv[1:], 'i:p:t:', ['interval=', 'process=', 'token='])
+    opts, _ = getopt.getopt(sys.argv[1:], 'ci:p:t:', ['cleanup', 'interval=', 'process=', 'token='])
     for key, val in opts:
-        if key in ('-i', '--interval'):
+        if key in ('-c', '--cleanup'):
+            cleanup = True
+        elif key in ('-i', '--interval'):
             interval = int(val)
         elif key in ('-p', '--process'):
             process = int(val)
         elif key in ('-t', '--token'):
             token = val
         else:
-            sys.exit(f'usage: {sys.argv[0]} [-i SEC] [-p NUM] [-t KEY]')
+            sys.exit(HELP)
 
     # setup environ
     if token is None:
-        sys.exit(f'usage: {sys.argv[0]} [-i SEC] [-p NUM] [-t KEY]\n'
+        sys.exit(f'usage: mad_gen [-c] [-i SEC] [-p NUM] [-t KEY]\n'
                  'mad_gen: error: argument KEY: no valid API token found')
     os.environ['MAD_TOKEN'] = token
 
@@ -171,7 +194,7 @@ def main():
     while True:
         pool = getCurrentPool()
         if pool:
-            generateReport(pool, PROC_CNT)
+            generateReport(pool, PROC_CNT, cleanup)
         else:
             print(f'No report in the pool, wait for another {interval} second(s).')
         time.sleep(interval)

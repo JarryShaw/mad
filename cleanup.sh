@@ -30,6 +30,7 @@ case $1 in
     report)     cleanup_report ;;
     log)        cleanup_log ;;
     db)         cleanup_db ;;
+    *)          echo "Invalid option." ;;
 esac
 
 # # cleanup volumes

@@ -67,7 +67,7 @@ with contextlib.suppress(AttributeError, ValueError):
 
 
 def get_parser():
-    parser = argparse.ArgumentParser(prog='mad',
+    parser = argparse.ArgumentParser(prog='mad_app',
                                      description='Malicious Application Detector')
     parser.add_argument('-V', '--version', action='version', version=time.strftime(r'%Y.%m.%d:%s'))
 

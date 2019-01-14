@@ -7,7 +7,7 @@ cd www
 
 # setup db
 python3 manage.py makemigrations && \
-python3 manage.py migrate
+python3 manage.py migrate 2>/dev/null
 if [[ $? -ne "0" ]] ; then
     python3 manage.py migrate --fake mad
     returncode=$?
