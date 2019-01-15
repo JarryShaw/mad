@@ -8,6 +8,7 @@ import json
 import os
 import pathlib
 import pprint  # ##
+import random
 import shutil
 import signal
 import sys
@@ -35,6 +36,13 @@ ppid = int(sys.argv[5])
 PATH = os.environ['MAD_PATH']
 # no validate flag
 MAD_NOVAL = ast.literal_eval(os.environ['MAD_NOVAL'])
+# validation sampling radio
+MAD_RATIO = ast.literal_eval(os.environ['MAD_RATIO'])
+
+if MAD_RATIO == 0:
+    MAD_NOVAL = True
+else:
+    RATIO = MAD_RATIO / 100
 
 TrainRate = 0.8
 
@@ -565,8 +573,14 @@ def main(unused):
             val = list()
             url = list()
         else:
+            # sampling group_dict
+            sampling_from = group_dict[T]
+            random.shuffle(sampling_from)
+            sampling_pool = int(len(sampling_from) * RATIO)
+            sampling_dict = {T: sampling_from[:sampling_pool]}
+
             # validate process
-            val, url = StreamManager(NotImplemented, DataPath).validate(group_dict)
+            val, url = StreamManager(NotImplemented, DataPath).validate(sampling_dict)
             for item in Malicious:
                 flag = int(item["name"]+".pcap" in val)
                 item["is_malicious"] = flag

@@ -14,10 +14,10 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 4G
+          memory: 96G
         reservations:
           cpus: '0.25'
-          memory: 1G
+          memory: 48G
       restart_policy:
         condition: on-failure
         delay: 5s

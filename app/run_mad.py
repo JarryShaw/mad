@@ -86,6 +86,8 @@ def get_parser():
                                help='wait for %%SEC%% seconds between each round (mode=3; default is 0)')
     runtime_group.add_argument('-t', '--sampling-interval', action='store', type=int, default=0, metavar='INT',
                                help='sample every %%INT%% file(s) (mode=3; default is 0, i.e. sampling from all files)')
+    runtime_group.add_argument('-r', '--validate-ratio', action='store', type=float, default=10.0, metavar='PCT',
+                               help='validate %%PCT%% percent of CNN detection results (mode=3; default is 10)')
 
     resource_group = parser.add_argument_group(title='resource arguments')
     resource_group.add_argument('-c', '--process', action='store', default=PROC_CNT, type=int, metavar='PROC',
@@ -122,6 +124,13 @@ if __name__ == '__main__':
     if args.interactive:
         shell = args.shell
         os.execlp(shell, shell)
+
+    if not (0 <= args.validate_ratio <= 100):
+        warnings.showwarning(f'invalid sampling ratio: {args.validate_ratio}; '
+                             f'using 10% validation ratio instead',
+                             RuntimeWarning, filename=__file__, lineno=0,
+                             line=f'{sys.executable} {" ".join(sys.argv)}')
+        args.validate_ratio = 10
 
     if args.sampling_interval < 0:
         warnings.showwarning(f'invalid sampling interval: {args.sampling_interval}; '
@@ -223,6 +232,7 @@ if __name__ == '__main__':
     os.environ['MAD_PATH'] = str(args.path)
     os.environ['MAD_DEVEL'] = str(args.devel)
     os.environ['MAD_NOVAL'] = str(args.no_validate)
+    os.environ['MAD_RATIO'] = str(args.validate_ratio)
     os.environ['MAD_TIMEOUT'] = str(args.wait_timeout)
     os.environ['MAD_INTERVAL'] = str(args.sampling_interval)
 

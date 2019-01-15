@@ -103,6 +103,7 @@ cd mad
   - Sample source: `/mad/pcap`
   - Rounds interval: `0s`
   - Sampling interval: `0`
+  - Validation ratio: `10%`
   - Process number: `15`
   - `MEMLOCK` limit: `unlimited`
   - `VMEM` limit: `unlimited`
@@ -145,8 +146,8 @@ cd mad
 
 ```text
 $ python run_mad.py --help
-usage: mad_app [-h] [-V] [-m {1,2,3,4,5}] [-p DIR] [-s FILE] [-n]
-               [-t INT] [-c PROC] [-l MEM] [-v MEM] [-a MEM] [-w MEM]
+usage: mad_app [-h] [-V] [-m {1,2,3,4,5}] [-p DIR] [-s FILE] [-n] [-o SEC]
+               [-t INT] [-r PCT] [-c PROC] [-l MEM] [-v MEM] [-a MEM] [-w MEM]
                [-d] [-i] [-e SHELL]
 
 Malicious Application Detector
@@ -170,6 +171,9 @@ runtime arguments:
   -t INT, --sampling-interval INT
                         sample every %INT% file(s) (mode=3; default is 0, i.e.
                         sampling from all files)
+  -r PCT, --validate-ratio PCT
+                        validate %PCT% percent of CNN detection results
+                        (mode=3; default is 10)
 
 resource arguments:
   -c PROC, --process PROC

@@ -16,6 +16,7 @@ cd app
 #   SWAP limit: unlimited
 #   Validation: yes
 #   Develop mode: no
+#   Validation ratio: 10%
 python3 run_mad.py --path /mad/pcap \
                    --wait-timeout=0 \
                    --sampling-interval=0 \
@@ -23,7 +24,8 @@ python3 run_mad.py --path /mad/pcap \
                    --memlock=-1 \
                    --vmem=-1 \
                    --address-space=-1 \
-                   --swap=-1
+                   --swap=-1 \
+                   --validate-ratio=10
 returncode=$?
 if [[ $returncode -ne "0" ]] ; then
     exit $returncode
