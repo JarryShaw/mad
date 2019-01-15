@@ -92,8 +92,8 @@ cd mad
     - 50% of available CPUs
     - 75% of CPU processing shares
   - Memory usage
-    - 2G memory limit
-    - 4G `SWAP` limit
+    - 96G memory limit
+    - 192G `SWAP` limit
   - Volume path
     - PCAP sources (`/mad/pcap`) in `/home/traffic/pcapfile`
     - dataset directory (`/mad/dataset`) in `./log/dataset`
@@ -103,11 +103,11 @@ cd mad
   - Sample source: `/mad/pcap`
   - Rounds interval: `0s`
   - Sampling interval: `0`
-  - Process number: `5`
-  - `MEMLOCK` limit: `2G`
-  - `VMEM` limit: `1G`
-  - `AS` limit: `10G`
-  - `SWAP` limit: `2M`
+  - Process number: `15`
+  - `MEMLOCK` limit: `unlimited`
+  - `VMEM` limit: `unlimited`
+  - `AS` limit: `unlimited`
+  - `SWAP` limit: `unlimited`
   - Validation: `yes`
   - Develop mode: `no`
 
@@ -333,66 +333,141 @@ None
 ├── retrain.tar.gz
 ├── sql                             # database utility
 │   └── MySQL.sql                   # MySQL initialisation script
-└── www                             # web dashboard implementation
-    ├── init.sh                     # entry point
-    ├── mad
-    │   ├── __init__.py
-    │   ├── admin.py
-    │   ├── apps.py
-    │   ├── models.py
-    │   ├── templates
-    │   │   ├── pages
-    │   │   │   ├── index.html
-    │   │   │   ├── inner_detail.html
-    │   │   │   ├── more.html
-    │   │   │   ├── outer_detail.html
-    │   │   │   ├── ua_detail.html
-    │   │   └── static
-    │   │       ├── files
-    │   │       │   └── 基于流量的自反馈恶意软件监测系统.pdf
-    │   │       ├── img
-    │   │       │   ├── System.png
-    │   │       │   ├── favicon.ico
-    │   │       │   ├── favicon.png
-    │   │       │   ├── logo.png
-    │   │       │   ├── sidebar1.jpg
-    │   │       │   ├── sliderImg1.jpg
-    │   │       │   ├── sliderImg2.jpg
-    │   │       │   ├── sliderImg3.jpg
-    │   │       │   └── sliderImg4.jpg
-    │   │       └── vendors
-    │   │           ├── bower_components
-    │   │           │   ├── awesome-bootstrap-checkbox
-    │   │           │   │   └── awesome-bootstrap-checkbox.css
-    │   │           │   ├── datatables
-    │   │           │   │   └── media
-    │   │           │   │       ├── css
-    │   │           │   │       │   └── jquery.dataTables.min.css
-    │   │           │   │       └── js
-    │   │           │   │           └── jquery.dataTables.min.js
-    │   │           │   ├── datatables.net-buttons
-    │   │           │   │   └── js
-    │   │           │   │       ├── buttons.flash.min.js
-    │   │           │   │       ├── buttons.html5.min.js
-    │   │           │   │       ├── buttons.print.min.js
-    │   │           │   │       └── dataTables.buttons.min.js
-    │   │           │   ├── jquery.counterup
-    │   │           │   │   └── jquery.counterup.min.js
-    │   │           │   ├── morris.js
-    │   │           │   │   ├── morris.css
-    │   │           │   │   └── morris.min.js
-    │   │           │   └── raphael
-    │   │           │       └── raphael.min.js
-    │   │           └── vectormap
-    │   │               ├── jquery-jvectormap-2.0.2.css
-    │   │               ├── jquery-jvectormap-2.0.2.min.js
-    │   │               ├── jquery-jvectormap-au-mill.js
-    │   │               ├── jquery-jvectormap-in-mill.js
-    │   │               ├── jquery-jvectormap-uk-mill-en.js
-    │   │               ├── jquery-jvectormap-us-aea-en.js
-    │   │               └── jquery-jvectormap-world-mill-en.js
-    │   ├── urls.py
-    │   └── views.py
+├── www                             # web dashboard implementation
+    ├── init.sh                     # entry point
+    ├── mad
+    │   ├── __init__.py
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── models.py
+    │   ├── templates
+    │   │   ├── pages
+    │   │   │   ├── connection.html
+    │   │   │   ├── index.html
+    │   │   │   ├── innerIp.html
+    │   │   │   ├── inner_detail.html
+    │   │   │   ├── more.html
+    │   │   │   ├── outerIp.html
+    │   │   │   ├── outer_detail.html
+    │   │   │   ├── ua.html
+    │   │   │   └── ua_detail.html
+    │   │   └── static
+    │   │       ├── dist
+    │   │       │   ├── css
+    │   │       │   │   ├── animate.css
+    │   │       │   │   ├── filter.css
+    │   │       │   │   ├── font-awesome.min.css
+    │   │       │   │   ├── lightgallery.css
+    │   │       │   │   ├── linea-icon.css
+    │   │       │   │   ├── material-design-iconic-font.min.css
+    │   │       │   │   ├── pe-icon-7-stroke.css
+    │   │       │   │   ├── pe-icon-7-styles.css
+    │   │       │   │   ├── simple-line-icons.css
+    │   │       │   │   ├── style.css
+    │   │       │   │   └── themify-icons.css
+    │   │       │   ├── fonts
+    │   │       │   │   ├── fontawesome
+    │   │       │   │   │   ├── fontawesome-webfont.woff
+    │   │       │   │   │   └── fontawesome-webfont.woff2
+    │   │       │   │   ├── simple-line-icons
+    │   │       │   │   │   └── Simple-Line-Icons4c82.ttf
+    │   │       │   │   ├── themify-icons
+    │   │       │   │   │   └── themify.woff
+    │   │       │   │   └── themify.ttf
+    │   │       │   └── js
+    │   │       │       ├── dataTool.min.js
+    │   │       │       ├── download.js
+    │   │       │       ├── dropdown-bootstrap-extended.js
+    │   │       │       ├── echarts.min.js
+    │   │       │       ├── index
+    │   │       │       │   └── init.js
+    │   │       │       ├── index_data.js
+    │   │       │       ├── index_init.js
+    │   │       │       ├── index_map.js
+    │   │       │       ├── inner_detail.js
+    │   │       │       ├── jquery.slimscroll.js
+    │   │       │       ├── outer_detail.js
+    │   │       │       └── ua_detail.js
+    │   │       ├── files
+    │   │       │   └── 基于流量的自反馈恶意软件监测系统.pdf
+    │   │       ├── img
+    │   │       │   ├── System.png
+    │   │       │   ├── favicon.ico
+    │   │       │   ├── favicon.png
+    │   │       │   ├── logo.png
+    │   │       │   ├── sidebar1.jpg
+    │   │       │   ├── sliderImg1.jpg
+    │   │       │   ├── sliderImg2.jpg
+    │   │       │   ├── sliderImg3.jpg
+    │   │       │   └── sliderImg4.jpg
+    │   │       └── vendors
+    │   │           ├── bower_components
+    │   │           │   ├── awesome-bootstrap-checkbox
+    │   │           │   │   └── awesome-bootstrap-checkbox.css
+    │   │           │   ├── bootstrap
+    │   │           │   │   └── dist
+    │   │           │   │       ├── css
+    │   │           │   │       │   └── bootstrap.min.css
+    │   │           │   │       ├── fonts
+    │   │           │   │       │   ├── glyphicons-halflings-regular.woff
+    │   │           │   │       │   └── glyphicons-halflings-regular.woff2
+    │   │           │   │       └── js
+    │   │           │   │           └── bootstrap.min.js
+    │   │           │   ├── datatables
+    │   │           │   │   └── media
+    │   │           │   │       ├── css
+    │   │           │   │       │   └── jquery.dataTables.min.css
+    │   │           │   │       └── js
+    │   │           │   │           └── jquery.dataTables.min.js
+    │   │           │   ├── datatables.net-buttons
+    │   │           │   │   └── js
+    │   │           │   │       ├── buttons.flash.min.js
+    │   │           │   │       ├── buttons.html5.min.js
+    │   │           │   │       ├── buttons.print.min.js
+    │   │           │   │       └── dataTables.buttons.min.js
+    │   │           │   ├── jquery
+    │   │           │   │   └── dist
+    │   │           │   │       └── jquery.min.js
+    │   │           │   ├── jquery-toast-plugin
+    │   │           │   │   └── dist
+    │   │           │   │       └── jquery.toast.min.js
+    │   │           │   ├── jquery.counterup
+    │   │           │   │   └── jquery.counterup.min.js
+    │   │           │   ├── jszip
+    │   │           │   │   └── dist
+    │   │           │   │       └── jszip.min.js
+    │   │           │   ├── morris.js
+    │   │           │   │   ├── morris.css
+    │   │           │   │   └── morris.min.js
+    │   │           │   ├── owl.carousel
+    │   │           │   │   └── dist
+    │   │           │   │       ├── assets
+    │   │           │   │       │   ├── owl.carousel.min.css
+    │   │           │   │       │   └── owl.theme.default.min.css
+    │   │           │   │       └── owl.carousel.min.js
+    │   │           │   ├── pdfmake
+    │   │           │   │   └── build
+    │   │           │   │       ├── pdfmake.min.js
+    │   │           │   │       └── vfs_fonts.js
+    │   │           │   ├── raphael
+    │   │           │   │   └── raphael.min.js
+    │   │           │   └── switchery
+    │   │           │       └── dist
+    │   │           │           ├── switchery.min.css
+    │   │           │           └── switchery.min.js
+    │   │           ├── jquery.sparkline
+    │   │           │   └── dist
+    │   │           │       └── jquery.sparkline.min.js
+    │   │           └── vectormap
+    │   │               ├── jquery-jvectormap-2.0.2.css
+    │   │               ├── jquery-jvectormap-2.0.2.min.js
+    │   │               ├── jquery-jvectormap-au-mill.js
+    │   │               ├── jquery-jvectormap-in-mill.js
+    │   │               ├── jquery-jvectormap-uk-mill-en.js
+    │   │               ├── jquery-jvectormap-us-aea-en.js
+    │   │               └── jquery-jvectormap-world-mill-en.js
+    │   ├── urls.py
+    │   └── views.py
     ├── manage.py
     └── www
         ├── __init__.py

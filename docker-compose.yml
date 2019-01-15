@@ -16,8 +16,8 @@ services:
     image: mad
     links:
       - mad_db
-    mem_limit: 2G
-    memswap_limit: 4G
+    mem_limit: 96G
+    memswap_limit: 192G
     restart: always
     volumes:
       - ./log/dataset:/mad/dataset
