@@ -2,6 +2,9 @@
 # submodules
 vendor/wait-for-it
 archive/*
+web/
+
+/build/
 
 deepocean
 *~orig*
@@ -50,9 +53,9 @@ media
 
 # Distribution / packaging
 .Python
-build/
+#build/
 develop-eggs/
-dist/
+#dist/
 downloads/
 eggs/
 .eggs/
