@@ -10,3 +10,6 @@
 [submodule "vendor/wait-for-it"]
 	path = vendor/wait-for-it
 	url = https://github.com/vishnubob/wait-for-it
+[submodule "vendor/pkt2flow"]
+	path = vendor/pkt2flow
+	url = https://github.com/caesar0301/pkt2flow.git
