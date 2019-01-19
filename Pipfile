@@ -13,6 +13,7 @@ requests = "*"
 scapy = "*"
 tensorflow = "*"
 user-agents = "*"
+pypcapkit = "*"
 
 [dev-packages]
 f2format = "*"

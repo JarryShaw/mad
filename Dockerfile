@@ -1,6 +1,6 @@
 # basic info
 FROM library/ubuntu:16.04
-LABEL version "2019.01.15"
+LABEL version "2019.01.19"
 
 # set up environment variables
 ENV LANG "C.UTF-8"

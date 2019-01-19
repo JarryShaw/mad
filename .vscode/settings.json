@@ -47,6 +47,7 @@
         "dstip",
         "dstport",
         "dsts",
+        "exptr",
         "filetered",
         "fname",
         "fplist",

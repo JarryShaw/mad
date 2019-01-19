@@ -55,6 +55,7 @@ import collections
 import contextlib
 import datetime as dt
 import functools
+import ipaddress
 import json
 import math
 import os
@@ -118,12 +119,12 @@ INTERVAL = ast.literal_eval(os.environ['MAD_INTERVAL'])
 # current proc info
 if multiprocessing is None:
     PROC = threading.local()
-    PROC.src = '<undefined>'
-    PROC.dst = '<undefined>'
+    PROC.src = '<unknown>'
+    PROC.dst = '<unknown>'
 else:
     PROC = argparse.Namespace(
-        src='<undefined>',
-        dst='<undefined>'
+        src='<unknown>',
+        dst='<unknown>'
     )
 
 # file lock
@@ -449,13 +450,27 @@ def make_group(name, fp, path):
 
     # WebGraphic
     builder = webgraphic()
-    builder.read_in(name)
-    IPS = builder.GetIPS()
 
     # StreamManager
     stream = StreamManager(name, str(path))
     stream.generate()
-    stream.classify(IPS)
+
+    file_dict = collections.defaultdict(list)
+    for entry in os.scandir(path):
+        src, _, dst, _ = entry.name.split('_', maxsplit=3)
+        src_ip = ipaddress.ip_address(src)
+        dst_ip = ipaddress.ip_address(dst)
+        if src_ip.is_private:
+            file_dict[src_ip].append(entry.path)
+        if dst_ip.is_private:
+            file_dict[dst_ip].append(entry.path)
+
+    for file_list in file_dict.values():
+        for name in file_list:
+            builder.read_in(name)
+        IPS = builder.GetIPS()
+        stream.classify(IPS)
+
     stream.Group()
     if MODE != 3:
         stream.labelGroups()
