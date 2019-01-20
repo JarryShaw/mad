@@ -78,5 +78,5 @@ if [[ $1 =~ ^build$ ]] ; then
 else
     cd build
     bash init.sh volumes
-    docker-compose up --build
+    docker-compose up
 fi

@@ -2,7 +2,6 @@
 
 import ast
 import contextlib
-import glob
 import os
 import pathlib
 import random

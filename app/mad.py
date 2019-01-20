@@ -70,7 +70,6 @@ import time
 import traceback
 import warnings
 
-import dpkt
 import scapy.all
 
 from fingerprints.fingerprintsManager import fingerprintManager
@@ -154,6 +153,13 @@ MODE_DICT = {
     4: 'retrain',  # adaptation
 }
 
+PCAP_MN = (
+    b'\xd4\xc3\xb2\xa1',
+    b'\xa1\xb2\xc3\xd4',
+    b'\x4d\x3c\xb2\xa1',
+    b'\xa1\xb2\x3c\x4d',
+)
+
 
 def beholder(func):
     @functools.wraps(func)
@@ -180,12 +186,11 @@ def beholder(func):
 
 def _validate_pcap(entry):
     if entry.is_file():
-        try:
-            with open(entry.path, 'rb') as file:
-                dpkt.pcap.Reader(file)
+        with open(entry.path, 'rb') as file:
+            magic_number = file.read(4)
+        if magic_number in PCAP_MN:
             return True
-        except (ValueError, dpkt.dpkt.Error):
-            return False
+        return False
     return False
 
 
@@ -446,16 +451,36 @@ def make_sniff(path):
     return name
 
 
+def _build_graphic(file_list, fp, path):
+    # WebGraphic
+    builder = webgraphic()
+    for name in file_list:
+        builder.read_in(name)
+    IPS = builder.GetIPS()
+
+    # StreamManager
+    stream = StreamManager(name, str(path))
+    stream.classify(IPS)
+    stream.Group()
+    if MODE != 3:
+        stream.labelGroups()
+
+    # labels & fingerprints
+    record = dict()
+    for kind, group in FLOW_DICT.items():
+        groups = group(stream)
+        record[kind] = groups
+        if MODE != 3:
+            fp.GenerateAndUpdate(f'{path}/stream', groups)
+    return record
+
+
 def make_group(name, fp, path):
     """Generate WebGraphic and fingerprints."""
     print(f'Now grouping packets @ {path}')
 
-    # WebGraphic
-    builder = webgraphic()
-
-    # StreamManager
-    stream = StreamManager(name, str(path))
-    stream.generate()
+    # pkt2flow
+    StreamManager(name, str(path)).generate()
 
     file_path = os.path.join(str(path), 'stream')
     file_dict = collections.defaultdict(list)
@@ -472,23 +497,19 @@ def make_group(name, fp, path):
         if dst_ip.is_private:
             file_dict[dst_ip].append(entry.path)
 
+    # build graphic
+    record = dict(
+        # Browser_PC=collections.defaultdict(list),
+        Background_PC=collections.defaultdict(list),
+        # Browser_Phone=collections.defaultdict(list),
+        Background_Phone=collections.defaultdict(list),
+        Suspicious=collections.defaultdict(list),
+    )
     for file_list in file_dict.values():
-        for name in file_list:
-            builder.read_in(name)
-        IPS = builder.GetIPS()
-        stream.classify(IPS)
-
-    stream.Group()
-    if MODE != 3:
-        stream.labelGroups()
-
-    # labels & fingerprints
-    record = dict()
-    for kind, group in FLOW_DICT.items():
-        groups = group(stream)
-        record[kind] = groups
-        if MODE != 3:
-            fp.GenerateAndUpdate(f'{path}/stream', groups)
+        graphic = _build_graphic(file_list, fp, path)
+        for kind, group in graphic.items():
+            for ipua, data in group.items():
+                record[kind][ipua].extend(data)
 
     # dump record
     dump_stream(record, path=path)

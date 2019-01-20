@@ -23,7 +23,7 @@
 - `Django`
 - `dpkt`
 - `peewee`
-- `pymysql`
+- `PyMySQL`
 - `requests`
 - `scapy`
 - `tensorflow`
