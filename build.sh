@@ -64,6 +64,8 @@ fi
 # parse tag
 if [[ $1 =~ ^build$ ]] ; then
     tag="latest"
+elif [[ -z $1 ]] ; then
+    tag="latest"
 else
     tag=$1
 fi

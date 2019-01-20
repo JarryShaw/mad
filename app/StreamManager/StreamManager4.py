@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import ast
-import contextlib
+import ipaddress
 import os
 import pathlib
 import random
@@ -59,19 +59,26 @@ class StreamManager:
             print("流转化失败！")
             # return
             raise
-        with contextlib.suppress(OSError):
-            for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_nosyn')):
-                if DEVEL:
-                    shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
-                else:
-                    os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
-        with contextlib.suppress(OSError):
-            for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_syn')):
-                if DEVEL:
-                    shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
-                else:
-                    os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
         print("流转化完成！")
+        # with contextlib.suppress(OSError):
+        #     for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_nosyn')):
+        #         if DEVEL:
+        #             shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
+        #         else:
+        #             os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
+        # with contextlib.suppress(OSError):
+        #     for entry in filter(lambda e: e.is_file(), os.scandir(f'{self.datapath}/tmp/tcp_syn')):
+        #         if DEVEL:
+        #             shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
+        #         else:
+        #             os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
+        verb = 'cp' if DEVEL else 'mv'
+        try:
+            subprocess.check_output(f'{verb} -f {self.datapath}/tmp/*/*.pcap {self.datapath}/stream/', shell=True)
+        except subprocess.CalledProcessError:
+            print("流转移失败！")
+            raise
+        print("流转移完成！")
 
     def classify(self, ips):
         files = os.listdir(self.datapath+"/stream")
@@ -472,12 +479,13 @@ class StreamManager:
         return uri_tmp
 
     def isLocalIP(self, IP):
-        local = ["10\\..*", "192\\.168\\..*", "172\\.16\\..*", "172\\.17\\..*", "172\\.18\\..*", "172\\.19\\..*", "172\\.20\\..*", "172\\.21\\..*", "172\\.22\\..*",  # noqa
-                 "172\\.23\\..*", "172\\.24\\..*", "172\\.25\\..*", "172\\.26\\..*", "172\\.27\\..*", "172\\.28\\..*", "172\\.29\\..*", "172\\.30\\..*", "172\\.31\\..*"]  # noqa
-        for x in local:
-            if re.match(x, IP):
-                return True
-        return False
+        # local = ["10\\..*", "192\\.168\\..*", "172\\.16\\..*", "172\\.17\\..*", "172\\.18\\..*", "172\\.19\\..*", "172\\.20\\..*", "172\\.21\\..*", "172\\.22\\..*",  # noqa
+        #          "172\\.23\\..*", "172\\.24\\..*", "172\\.25\\..*", "172\\.26\\..*", "172\\.27\\..*", "172\\.28\\..*", "172\\.29\\..*", "172\\.30\\..*", "172\\.31\\..*"]  # noqa
+        # for x in local:
+        #     if re.match(x, IP):
+        #         return True
+        # return False
+        return ipaddress.ip_address(IP).is_private
 
 
 def dpkt_next(reader):
