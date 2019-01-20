@@ -119,8 +119,10 @@
                                                     <tr>
                                                         <td><a  href="/inner/{{ report.srcip }}/">{{ report.srcip }}</a></td>
                                                         <td>{{ report.ua_num }}</td>
-                                                    {% if report.malicious %}
+                                                    {% if report.malicious > 1 %}
                                                         <td><span class="label label-danger">{{ report.malicious }}</span></td>
+                                                    {% elif report.malicious == 1 %}
+                                                        <td><span class="label label-danger">{{ 1 }}</span></td>
                                                     {% else %}
                                                         <td><span class="label label-success">{{ 0 }}</span></td>
                                                     {% endif %}
