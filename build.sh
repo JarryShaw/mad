@@ -61,12 +61,15 @@ if [[ $returncode -ne "0" ]] ; then
     exit $returncode
 fi
 
-# build docker
-if [[ -z $1 ]] ; then
-    docker build --rm --tag mad build
+# parse tag
+if [[ $1 =~ ^build$ ]] ; then
+    tag="latest"
 else
-    docker build --rm --tag mad:$1 build
+    tag=$1
 fi
+
+# build docker
+docker build --rm --tag "mad:${tag}" build
 returncode="$?"
 if [[ $returncode -ne "0" ]] ; then
     exit $returncode
