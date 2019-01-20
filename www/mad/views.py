@@ -76,7 +76,7 @@ def ua(request):
 def uaDetail(request, userAgent):
     template = loader.get_template('pages/ua_detail.html')
     context = {
-        "info": Mad_Report.objects.filter(ua=userAgent).values("ua", "device", "os", "browser", "type").distinct("ua"),
+        "info": Mad_Report.objects.filter(ua=userAgent).values("ua", "device", "os", "browser", "type")[:1],
         "connections": Mad_Report.objects.filter(ua=userAgent).values("srcip", "srcport", "dstip", "dstport", "is_malicious").annotate(stime=Min("time"), etime=Max("time"))
     }
     return HttpResponse(template.render(context, request))

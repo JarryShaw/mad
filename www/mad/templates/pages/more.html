@@ -161,7 +161,11 @@
                                                         <td>{{ report.dstport }}</td>
                                                         <td>{{ report.ua }}</td>
                                                         <td>{{ report.time }}</td>
-                                                        <td>{{ report.is_malicious }}</td>
+                                                    {% if report.is_malicious %}
+                                                        <td><span class="label label-danger">恶意</span></td>
+                                                    {% else %}
+                                                        <td><span class="label label-success">良性</span></td>
+                                                    {% endif %}
                                                     </tr>
                                                 {% endfor %}
 												</tbody>
