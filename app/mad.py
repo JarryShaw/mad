@@ -51,6 +51,7 @@
 """
 import argparse
 import ast
+import builtins
 import collections
 import contextlib
 import datetime as dt
@@ -161,19 +162,25 @@ PCAP_MN = (
 )
 
 
+def print(*args, sep=' ', end=os.linesep, file=sys.stdout, flush=False):
+    with LOCK:
+        with open('/mad/pcap/apt_log.txt', 'at', 1) as log:
+            builtins.print(*args, sep=sep, end=end, file=log, flush=flush)
+    builtins.print(*args, sep=sep, end=end, file=file, flush=flush)
+
+
 def beholder(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except BaseException as error:
+        except BaseException:
+            error = traceback.format_exc().splitlines()[-1]
             with LOCK:
                 with open('/mad/mad.log', 'at', 1) as file:
-                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} '
-                               f'{error.__class__.__name__} {error.args}\n')
+                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} {error!r}\n')
                 with open('/mad/pcap/apt_log.txt', 'at', 1) as file:
-                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} '
-                               f'{error.__class__.__name__} {error.args}\n')
+                    file.write(f'4 {dt.datetime.now().isoformat()} {PROC.src} {PROC.dst} {MODE} {error!r}\n')
             if MODE != 3:
                 raise
             elif DEVEL:
@@ -312,7 +319,7 @@ def make_worker(pool, sample=None):
     # start child in prediction
     # using worker Pool or sequential solution
     if MODE == 3:
-        print('Current worker pool:')
+        builtins.print('Current worker pool:')
         pprint.pprint(pool)
         if pool:
             if CPU_CNT <= 1:
@@ -340,6 +347,7 @@ def make_worker(pool, sample=None):
 def start_worker(path):
     """Start child process."""
     milestone_0 = time.time()
+    proc_time_0 = time.process_time()
 
     # first, we sniff packets using Scapy
     # or load data from an existing PCAP file
@@ -373,14 +381,16 @@ def start_worker(path):
             file.write(f'0 {dt.datetime.now().isoformat()} {path} {osname} {MODE}\n')
 
     milestone_1 = time.time()
-    print(f'Bootstrapped for {milestone_1-milestone_0} seconds')
+    proc_time_1 = time.process_time()
+    print(f'Bootstrapped for {milestone_1-milestone_0} seconds (CPU time: {proc_time_1-proc_time_0}) @ {path}')
 
     # then, generate WebGraphic & fingerprints for each flow
     # through reconstructed functions and methods
     group = make_group(name, fp, path=path)
 
     milestone_2 = time.time()
-    print(f'Grouped for {milestone_2-milestone_1} seconds')
+    proc_time_2 = time.process_time()
+    print(f'Grouped for {milestone_2-milestone_1} seconds (CPU time: {proc_time_2-proc_time_1}) @ {path}')
 
     # and make dataset for each flow in accordance with the group
     # using PyPCAPKit with its reassembly interface
@@ -388,7 +398,8 @@ def start_worker(path):
         make_dataset(group, fp, path=path)
 
     milestone_3 = time.time()
-    print(f'Dumped for {milestone_3-milestone_2} seconds')
+    proc_time_3 = time.process_time()
+    print(f'Dumped for {milestone_3-milestone_2} seconds (CPU time: {proc_time_3-proc_time_2}) @ {path}')
 
     # and now, time for the neural network
     # reports should be placed in a certain directory
@@ -396,7 +407,8 @@ def start_worker(path):
         run_cnn(path=path)
 
     milestone_4 = time.time()
-    print(f'Predicted for {milestone_4-milestone_3} seconds')
+    proc_time_4 = time.process_time()
+    print(f'Predicted for {milestone_4-milestone_3} seconds (CPU time: {proc_time_4-proc_time_3}) @ {path}')
 
     # afterwards, write a log file to record state of accomplish
     # the back-end of webpage shall check this file periodically
@@ -422,7 +434,8 @@ def start_worker(path):
                 shutil.rmtree(os.path.join(str(path), name))
 
     milestone_5 = time.time()
-    print(f'Worked for {milestone_5-milestone_0} seconds')
+    proc_time_5 = time.process_time()
+    print(f'Worked for {milestone_5-milestone_0} seconds (CPU time: {proc_time_5-proc_time_0}) @ {path}')
 
     # return processed file
     return name
