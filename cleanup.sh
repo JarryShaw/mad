@@ -4,12 +4,12 @@ set -x
 
 function cleanup_model() {
     rm -rf /home/traffic/db/apt_model
-    tar -xzvf model.tar.gz -C /home/traffic/db
+    tar -xzvf lib/archive/model.tar.gz -C /home/traffic/db
 }
 
 function cleanup_retrain() {
     rm -rf /home/traffic/db/apt_retrain
-    tar -xzvf retrain.tar.gz -C /home/traffic/db
+    tar -xzvf lib/archive/retrain.tar.gz -C /home/traffic/db
 }
 
 function cleanup_report() {

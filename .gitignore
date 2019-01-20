@@ -1,8 +1,7 @@
 
 # submodules
-vendor/wait-for-it
-archive/*
-web/
+/archive/*
+/web/
 
 /build/
 
@@ -12,7 +11,6 @@ deepocean
 log/
 src/
 release/
-archive/
 test*
 check.sh
 nohop.out
@@ -22,9 +20,6 @@ fingerprints/fingerprints
 
 # uploaded to iCloud
 *.icloud
-mad.tar.gz
-model.tar.gz
-retrain.tar.gz
 latest.json
 
 # Created by https://www.gitignore.io/api/python,macos,windows,linux,vim,pycharm,visualstudiocode,django

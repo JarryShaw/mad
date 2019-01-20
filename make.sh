@@ -14,6 +14,7 @@ mv Dockerfile.tmp Dockerfile
 mkdir -p apt \
          apt/app \
          apt/gen \
+         apt/lib \
          apt/sql \
          apt/www && \
 cp -rf .dockerignore \
@@ -28,9 +29,9 @@ cp -rf .dockerignore \
        docker-compose.yml \
        docker-compose-v3.yml \
        docker.sh \
+       download.sh \
        init.sh \
-       model.tar.gz \
-       retrain.tar.gz apt && \
+       requirements.txt apt && \
 cp -rf app/init.sh \
        app/mad.py \
        app/make_stream.py \
@@ -48,6 +49,8 @@ cp -rf gen/generate_report.py \
        gen/jsonutil.py \
        gen/server_map.py \
        gen/SQLManager apt/gen && \
+cp -rf lib/archive \
+       lib/python apt/lib && \
 cp -rf sql/MySQL.sql apt/sql && \
 cp -rf www/init.sh \
        www/manage.py \

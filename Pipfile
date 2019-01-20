@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 Django = "*"
 dpkt = "*"
-geocoder = "*"
 peewee = "*"
 pymysql = "*"
 requests = "*"

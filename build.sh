@@ -38,6 +38,9 @@ cp -rf gen/generate_report.py \
        gen/jsonutil.py \
        gen/server_map.py \
        gen/SQLManager build/gen && \
+mkdir -p build/lib && \
+cp -rf lib/archive \
+       lib/python build/lib && \
 mkdir -p build/sql && \
 cp -rf sql/MySQL.sql build/sql && \
 mkdir -p build/www && \

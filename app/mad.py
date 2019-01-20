@@ -178,6 +178,28 @@ def beholder(func):
     return wrapper
 
 
+def _validate_pcap(entry):
+    if entry.is_file():
+        try:
+            with open(entry.path, 'rb') as file:
+                dpkt.pcap.Reader(file)
+            return True
+        except (ValueError, dpkt.dpkt.Error):
+            return False
+    return False
+
+
+def _sampling(filelist):
+    if INTERVAL == 0:
+        return sorted(filelist)
+    pool = list()
+    modulus = INTERVAL + 1
+    for index, filename in enumerate(sorted(filelist)):
+        if index % modulus == 0:
+            pool.append(filename)
+    return sorted(pool)
+
+
 def main(mode=3, path='/mad/pcap', sample=None):
     """Main interface for MAD."""
     print(f'Manager process: {PID}')
@@ -207,26 +229,6 @@ def main(mode=3, path='/mad/pcap', sample=None):
     #             _, _, _, name, _ = shlex.split(line)
     #     MAX_FILE = name
     print(f'Current MAX_FILE: {MAX_FILE!r}')
-
-    def _validate_pcap(entry):
-        if entry.is_file():
-            try:
-                with open(entry.path, 'rb') as file:
-                    dpkt.pcap.Reader(file)
-                return True
-            except (ValueError, dpkt.dpkt.Error):
-                return False
-        return False
-
-    def _sampling(filelist):
-        if INTERVAL == 0:
-            return sorted(filelist)
-        pool = list()
-        modulus = INTERVAL + 1
-        for index, filename in enumerate(sorted(filelist)):
-            if index % modulus == 0:
-                pool.append(filename)
-        return sorted(pool)
 
     # update file list
     filelist = list()
@@ -455,15 +457,26 @@ def make_group(name, fp, path):
     stream = StreamManager(name, str(path))
     stream.generate()
 
+    file_path = os.path.join(str(path), 'stream')
     file_dict = collections.defaultdict(list)
-    for entry in os.scandir(path):
-        src, _, dst, _ = entry.name.split('_', maxsplit=3)
+    for entry in filter(lambda e: _validate_pcap(e), os.scandir(file_path)):
+        try:
+            src, _, dst, _ = entry.name.split('_', maxsplit=3)
+        except ValueError:
+            print(f'Abnormal stream file: {entry.path!r}')
+            continue
         src_ip = ipaddress.ip_address(src)
         dst_ip = ipaddress.ip_address(dst)
         if src_ip.is_private:
             file_dict[src_ip].append(entry.path)
         if dst_ip.is_private:
             file_dict[dst_ip].append(entry.path)
+
+    def build_webgraphic(file_list):
+        for name in file_list:
+            builder.read_in(name)
+        IPS = builder.GetIPS()
+        stream.classify(IPS)
 
     for file_list in file_dict.values():
         for name in file_list:
