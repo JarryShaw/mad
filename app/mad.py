@@ -472,12 +472,6 @@ def make_group(name, fp, path):
         if dst_ip.is_private:
             file_dict[dst_ip].append(entry.path)
 
-    def build_webgraphic(file_list):
-        for name in file_list:
-            builder.read_in(name)
-        IPS = builder.GetIPS()
-        stream.classify(IPS)
-
     for file_list in file_dict.values():
         for name in file_list:
             builder.read_in(name)
