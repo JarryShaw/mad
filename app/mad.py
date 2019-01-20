@@ -162,13 +162,6 @@ PCAP_MN = (
 )
 
 
-def print(*args, sep=' ', end=os.linesep, file=sys.stdout, flush=False):
-    with LOCK:
-        with open('/mad/pcap/apt_log.txt', 'at', 1) as log:
-            builtins.print(*args, sep=sep, end=end, file=log, flush=flush)
-    builtins.print(*args, sep=sep, end=end, file=file, flush=flush)
-
-
 def beholder(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -319,7 +312,7 @@ def make_worker(pool, sample=None):
     # start child in prediction
     # using worker Pool or sequential solution
     if MODE == 3:
-        builtins.print('Current worker pool:')
+        print('Current worker pool:')
         pprint.pprint(pool)
         if pool:
             if CPU_CNT <= 1:
@@ -346,6 +339,12 @@ def make_worker(pool, sample=None):
 @beholder
 def start_worker(path):
     """Start child process."""
+    def print(*args, sep=' ', end=os.linesep, file=sys.stdout, flush=False):
+        with LOCK:
+            with open('/mad/pcap/apt_log.txt', 'at', 1) as log:
+                builtins.print(*args, sep=sep, end=end, file=log, flush=flush)
+        builtins.print(*args, sep=sep, end=end, file=file, flush=flush)
+
     milestone_0 = time.time()
     proc_time_0 = time.process_time()
 
