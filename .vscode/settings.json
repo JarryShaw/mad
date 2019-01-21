@@ -79,6 +79,7 @@
         "qsize",
         "referer",
         "relu",
+        "rmdir",
         "scandir",
         "sched",
         "scons",

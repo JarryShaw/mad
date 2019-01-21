@@ -342,7 +342,7 @@ def start_worker(path):
     """Start child process."""
     def print(*args, sep=' ', end=os.linesep, file=sys.stdout, flush=False):
         with LOCK:
-            with open('/mad/pcap/apt_log.txt', 'at', 1) as log:
+            with open('/mad/dataset/mad_app.log', 'at', 1) as log:
                 builtins.print(*args, sep=sep, end=end, file=log, flush=flush)
         builtins.print(*args, sep=sep, end=end, file=file, flush=flush)
 
@@ -429,9 +429,11 @@ def start_worker(path):
     if DEVEL:
         print(f'Not to remove temporary files @ {str(path)!r}.')
     else:
-        for name in {'Background_PC', 'stream', 'tmp'}:
-            with contextlib.suppress(FileNotFoundError):
-                shutil.rmtree(os.path.join(str(path), name))
+        temp_path = {'Background_PC', 'stream', 'tmp'}
+        path_list = [os.path.join(str(path), name) for name in temp_path]
+        rmdir_cmd = f'rm -rfv {" ".join(path_list)} &'
+        print(f'Removing temporary files with command {rmdir_cmd!r}')
+        os.system(rmdir_cmd)
 
     milestone_5 = time.time()
     proc_time_5 = time.process_time()

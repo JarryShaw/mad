@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import builtins
 import contextlib
 import functools
 import getopt
@@ -77,8 +78,13 @@ def dump_file(path, context):
 
 def generateReport(pool, processes, cleanup=False, force_cleanup=False):
     """Write reports to /mad/report, and update database."""
-    print('Current worker pool:')
+    builtins.print('Current worker pool:')
     pprint.pprint(pool)
+
+    def print(*args, sep=' ', end=os.linesep, file=sys.stdout, flush=False):
+        with open('/mad/dataset/mad_gen.log', 'at', 1) as log:
+            builtins.print(*args, sep=sep, end=end, file=log, flush=flush)
+        builtins.print(*args, sep=sep, end=end, file=file, flush=flush)
 
     # original file content
     server_map = load_file('/mad/report/server_map.json', list())
@@ -95,6 +101,7 @@ def generateReport(pool, processes, cleanup=False, force_cleanup=False):
                 reportList = json.load(file)
         except Exception as error:
             err_flag = True
+            err_obj = error
             reportList = list()
 
         if reportList:
@@ -123,7 +130,7 @@ def generateReport(pool, processes, cleanup=False, force_cleanup=False):
 
             print(f'Generated report files for {reportPath!r}')
         elif err_flag:
-            print(f'Error reading CNN report from {reportPath!r} - {error}')
+            print(f'Error reading CNN report from {reportPath!r} - {err_obj}')
         else:
             print(f'Empty CNN report from {reportPath!r}')
         deleteToBeProcessedFile(reportPath)
