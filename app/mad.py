@@ -71,6 +71,7 @@ import time
 import traceback
 import warnings
 
+import dpkt
 import scapy.all
 
 from fingerprints.fingerprintsManager import fingerprintManager
@@ -467,7 +468,12 @@ def _build_graphic(file_list, fp, path):
     # WebGraphic
     builder = webgraphic()
     for name in file_list:
-        builder.read_in(name)
+        print(f'Loading {name!r}...')
+        try:
+            builder.read_in(name)
+        except dpkt.dpkt.Error:
+            print(f'Failed loading {name!r}...', file=sys.stderr)
+            traceback.print_exc()
     IPS = builder.GetIPS()
 
     # StreamManager

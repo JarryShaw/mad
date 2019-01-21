@@ -40,7 +40,7 @@ RUN echo 'Asia/Shanghai' > /etc/timezone \
  && rm -f /etc/localtime \
  && ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
  && dpkg-reconfigure -f noninteractive tzdata \
- && apt remove -y tzdata
+ && apt autoremove -y
 
 # install Python packages & dependencies
 COPY lib/python /tmp/python
@@ -53,8 +53,7 @@ RUN python3 -m pip install --no-deps --cache-dir=/tmp/pip \
            /tmp/python/wheel-* \
  && python3 -m pip install --no-deps --cache-dir=/tmp/pip \
        /tmp/python/* \
- && rm -rf /tmp/pip /tmp/python \
- && apt autoremove -y
+ && rm -rf /tmp/pip /tmp/python
 
 # copy source files
 COPY app /app

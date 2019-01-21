@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import ast
-import glob
 import ipaddress
 import os
 import pathlib
 import random
 import re
-import shlex
 import subprocess
 
 import dpkt
@@ -71,11 +69,19 @@ class StreamManager:
         #         else:
         #             os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
         verb = 'ln' if DEVEL else 'mv'
-        file_list = glob.glob(f'{self.datapath}/tmp/*/*.pcap')
-        for file in file_list:
-            cmd = f'{verb} -f {file} {self.datapath}/stream/'
+        # file_list = glob.glob(f'{self.datapath}/tmp/*/*.pcap')
+        # for file in file_list:
+        #     cmd = f'{verb} -f {file} {self.datapath}/stream/'
+        #     print(f"执行命令：{cmd!r}")
+        #     os.system(cmd)
+        try:
+            cmd = f'find {self.datapath}/tmp -name "*.pcap" -print0 | xargs -0 {verb} -fvt {self.datapath}/stream/'
             print(f"执行命令：{cmd!r}")
-            os.system(cmd)
+            subprocess.check_call(cmd, shell=True)
+        except subprocess.CalledProcessError:
+            print("流转移失败！")
+            raise
+        print("流转移完成！")
 
     def classify(self, ips):
         files = os.listdir(self.datapath+"/stream")

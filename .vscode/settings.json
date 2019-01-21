@@ -96,7 +96,8 @@
         "tzdata",
         "wanyong",
         "wrpcap",
-        "wsgi"
+        "wsgi",
+        "xargs"
     ],
     "python.pythonPath": "/Users/jarryshaw/.local/share/virtualenvs/mad-tCBWswa7/bin/python",
     "python.linting.pylintEnabled": true
