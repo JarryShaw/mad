@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import ast
+import glob
 import ipaddress
 import os
 import pathlib
 import random
 import re
 import shlex
-import shutil
 import subprocess
 
 import dpkt
 
 from DataLabeler.DataLabeler import Datalabler  # pylint: disable=E0401
-
-# from scapy.all import *
 
 # devel flag
 DEVEL = ast.literal_eval(os.environ['MAD_DEVEL'])
@@ -50,9 +48,9 @@ class StreamManager:
         # os.system("rm -r tcp_syn/")
         # os.chdir(back)
         pathlib.Path(f"{self.datapath}/stream").mkdir(parents=True, exist_ok=True)
-        cmd = shlex.split(f"pkt2flow -xv -o {self.datapath}/tmp {self.filename}")
+        cmd = ['pkt2flow', '-xv', '-o', f'{self.datapath}/tmp', self.filename]
         try:
-            print(f"执行命令：{cmd!r}")
+            print(f"执行命令：{' '.join(cmd)!r}")
             subprocess.check_call(cmd)
         except subprocess.CalledProcessError:
             # if subp.returncode != 0:
@@ -72,13 +70,12 @@ class StreamManager:
         #             shutil.copy(entry.path, f'{self.datapath}/stream/{entry.name}')
         #         else:
         #             os.rename(entry.path, f'{self.datapath}/stream/{entry.name}')
-        verb = 'cp' if DEVEL else 'mv'
-        try:
-            subprocess.check_output(f'{verb} -f {self.datapath}/tmp/*/*.pcap {self.datapath}/stream/', shell=True)
-        except subprocess.CalledProcessError:
-            print("流转移失败！")
-            raise
-        print("流转移完成！")
+        verb = 'ln' if DEVEL else 'mv'
+        file_list = glob.glob(f'{self.datapath}/tmp/*/*.pcap')
+        for file in file_list:
+            cmd = f'{verb} -f {file} {self.datapath}/stream/'
+            print(f"执行命令：{cmd!r}")
+            os.system(cmd)
 
     def classify(self, ips):
         files = os.listdir(self.datapath+"/stream")
@@ -237,9 +234,9 @@ class StreamManager:
         if not urls:
             print("无内容需要标记")
             return
-        l = Datalabler()  # noqa
-        l.setThreadNum(20)
-        result = l.lable(urls)
+        ll = Datalabler()
+        ll.setThreadNum(20)
+        result = ll.lable(urls)
         for x in result:
             url_tmp = x["url"]
             for i in range(len(urls)):
@@ -282,9 +279,9 @@ class StreamManager:
         true_alarm = []
         true_malicious_urls = []
 
-        l = Datalabler()  # noqa
-        l.setThreadNum(20)
-        result = l.lable(url_to_scan)
+        ll = Datalabler()
+        ll.setThreadNum(20)
+        result = ll.lable(url_to_scan)
         for x in result:
             if x["state"] == 0:
                 url_tmp = x["url"]

@@ -13,6 +13,10 @@ test*
 .git/
 .git*
 
+# archives
+/log/
+/lib/archive/
+
 # misc files
 *_old*
 *~orig*
