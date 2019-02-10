@@ -17,7 +17,9 @@ cd app
 #   Validation: yes
 #   Develop mode: no
 #   Validation ratio: 10%
-python3 run_mad.py --path /mad/pcap \
+#################################################################################
+python3 -m cProfile -o del.out run_mad.py --path /mad/pcap \
+#################################################################################
                    --wait-timeout=0 \
                    --sampling-interval=0 \
                    --process=15 \
