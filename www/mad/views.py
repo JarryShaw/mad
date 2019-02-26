@@ -88,6 +88,6 @@ def connection(request, srcIP, dstIP):
     context = {
         "srcIP": srcIP,
         "dstIP": dstIP,
-        "connections": Mad_Report.objects.filter(dstip=dstIP, srcip=srcIP).values("time", "ua", "srcport", "dstport", "is_malicious", "detected_by_cnn")
+        "connections": Mad_Report.objects.filter(dstip=dstIP, srcip=srcIP).values("time", "url", "ua", "srcport", "dstport", "is_malicious", "detected_by_cnn")
     }
     return HttpResponse(template.render(context, request))

@@ -121,17 +121,15 @@
 												</thead>
 												<tbody>
                                                 {% for outer in outers %}
+                                                    {% if outer.is_malicious %}
                                                     <tr>
                                                         <td><a href="/connection/{{ srcIP }}/{{ outer.dstip }}/">{{ outer.dstip }}</a></td>
-                                                    {% if outer.is_malicious %}
                                                         <td><span class="label label-danger">恶意</span></td>
-                                                    {% else %}
-                                                        <td><span class="label label-success">良性</span></td>
-                                                    {% endif %}
                                                         <td>{{ outer.ua }}</td>
                                                         <td>{{ outer.stime }}</td>
                                                         <td>{{ outer.etime }}</td>
                                                     </tr>
+                                                    {% endif %}
                                                 {% endfor %}
 												</tbody>
 												</tbody>

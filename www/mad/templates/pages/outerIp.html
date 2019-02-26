@@ -112,23 +112,23 @@
 														<th>服务器IP地址</th>
 														<th>首次活动时间</th>
 														<th>最后活动时间</th>
-														<th>评级</th>
+														<th>次数</th>
 													</tr>
 												</thead>
 												<tbody>
                                                 {% for report in reports %}
+                                                    {% if report.malicious >= 1 %}
                                                     <tr>
                                                         <td><a href="/outer/{{ report.dstip }}/">{{ report.dstip }}</a></td>
                                                         <td>{{ report.stime }}</td>
                                                         <td>{{ report.etime }}</td>
                                                     {% if report.malicious > 1 %}
                                                         <td><span class="label label-danger">{{ report.malicious }}</span></td>
-                                                    {% elif report.malicious == 1 %}
-                                                        <td><span class="label label-danger">{{ 1 }}</span></td>
                                                     {% else %}
-                                                        <td><span class="label label-success">{{ 0 }}</span></td>
+                                                        <td><span class="label label-danger">{{ 1 }}</span></td>
                                                     {% endif %}
                                                     </tr>
+                                                    {% endif %}
                                                 {% endfor %}
 												</tbody>
 											</table>

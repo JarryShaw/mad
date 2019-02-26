@@ -113,10 +113,11 @@
 												<thead>
 													<tr>
 														<th>时间</th>
+														<th>URL</th>
 														<th>User Agent</th>
 														<th>源端口</th>
 														<th>目的端口</th>
-														<th>评级</th>
+														<th>次数</th>
 														<th>检测者</th>
 													</tr>
 												</thead>
@@ -124,6 +125,7 @@
                                                 {% for connection in connections %}
                                                     <tr>
                                                         <td>{{ connection.time }}</td>
+                                                        <td>{{ connection.url }}</td>
                                                         <td>{{ connection.ua }}</td>
                                                         <td>{{ connection.srcport }}</td>
                                                         <td>{{ connection.dstport }}</td>

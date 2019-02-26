@@ -21,8 +21,8 @@ services:
     restart: always
     volumes:
       - ./log/dataset:/mad/dataset
-      - /root/traffic/pcapfile/tmp:/mad/pcap
-#      - /home/traffic/pcapfile:/mad/pcap
+#      - /root/traffic/pcapfile/tmp:/mad/pcap
+      - /home/traffic/pcapfile:/mad/pcap
       - /home/traffic/db/apt_model:/mad/model
       - /home/traffic/db/apt_retrain:/mad/retrain
   mad_gen:
