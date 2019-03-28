@@ -540,12 +540,16 @@ repo hosting on [GitLab](http://gitlab.opensdns.com/contest/apt). Then run
 `f2format` command to make them Python 3.5 compatible. Afterwards, it shall
 upload both repositories to where it belongs.
 
-## License
+## Licensing
 
-This work (original development branch of the MAD project as hosted on
-[GitHub](https://github.com/JarryShaw/mad)) is licensed under
-[GNU GPLv3](LICENSE). The `f2format` transformed distribution branch, as hosted
-on [GitLab](http://gitlab.opensdns.com/contest/apt), is licensed under a
+This software and associated documentation files (the "Software") are
+generally licensed under the [GNU GPLv3 License](LICENSE). The original
+development branch of the MAD project as hosted on
+[GitHub](https://github.com/JarryShaw/mad)) is licensed under the
+[GNU GPLv3 License](LICENSE). The [`f2format`](https://github.com/JarryShaw/f2format)
+transformed distribution branch, as hosted on [GitLab](http://gitlab.opensdns.com/contest/apt),
+is licensed under the
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
 Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License
-</a>.
+</a>. No permits are foreordained unless granted by the authors and
+maintainers of the Software.
