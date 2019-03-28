@@ -8,7 +8,7 @@ absl-py==0.6.1
 astor==0.7.1
 certifi==2018.11.29
 chardet==3.0.4
-Django==2.1.5
+Django>=2.1.6
 dpkt==1.9.2
 gast==0.2.2
 grpcio==1.17.1
