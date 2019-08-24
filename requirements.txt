@@ -1,3 +1,8 @@
+# Python sources
+-i https://pypi.tuna.tsinghua.edu.cn/simple
+--extra-index-url https://mirrors.sjtug.sjtu.edu.cn/pypi/web/simple
+--extra-index-url https://pypi.org/simple
+
 # Python packages
 pip==18.1
 setuptools==40.6.3
