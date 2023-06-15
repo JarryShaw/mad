@@ -24,7 +24,7 @@ Keras-Preprocessing==1.0.5
 Markdown==3.0.1
 numpy==1.16.0
 peewee==3.8.1
-protobuf==3.6.1
+protobuf==3.18.3
 PyMySQL==0.9.3
 pytz==2018.9
 requests==2.21.0
